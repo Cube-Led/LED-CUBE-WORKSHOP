@@ -1,0 +1,12 @@
+/****** FORMAT : [codeOp]:[number of arguments]:[Description (optional)] ******/
+/**/
+255:0:Eteindre le cube
+1:1:Ajouter un delai
+2:2:Allumer des LED sur un niveau
+3:3:Allumer une LED par son numéro et son niveau
+4:1:Allumer toutes les LED d'un niveau
+5:0:Faire une boucle infinie
+6:0:Fin de boucle
+7:0:Faire une boucle simple
+8:1
+9:2
