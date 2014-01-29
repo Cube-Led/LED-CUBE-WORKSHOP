@@ -12,25 +12,40 @@ public class ConsoleDisplay implements Display {
 	public void displayChoiceOfInstruction(Instruction[] inst) {
 		
 		for(int i=0; i < inst.length; i++)
-			printlnString((int)inst[i].getCodeOp() + "-" + inst[i].getDescription()); 
+			println((int)inst[i].getCodeOp() + "-" + inst[i].getDescription()); 
 
 	}
 
 	/**
-	 * @see Display#printlnString(java.lang.String)
+	 * @see Display#println(java.lang.String)
 	 */
-	public void printlnString(String str) {
+	public void println(String str) {
 		System.out.println(str);
 		
 	}
 
 	
 	/**
-	 * @see Display#printString(java.lang.String)
+	 * @see Display#print(java.lang.String)
 	 */
-	public void printString(String str) {
+	public void print(String str) {
 		System.out.print(str);
 		
 	}
 
+	@Override
+	public void setUserPolling(UserPolling poll) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void displayBuffer(Instruction[] inst, int countInstructions) {
+		println("Instructions : ");
+		for (int i = 0; i < countInstructions; i++) {
+			println("" + inst[i]);
+		}
+		println("");
+	}
+	
+	
 }

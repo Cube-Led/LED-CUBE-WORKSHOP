@@ -1,4 +1,3 @@
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -6,76 +5,76 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
-import java.util.TreeSet;
-
 
 /**
  * Define the application and his main features
+ * 
  * @author clement
- *
+ * 
  */
-public class Application {
+public class Application implements UserPolling{
 
 	/**
-	 * Size in bytes of an instruction for the cube (codeOP : 1 byte, arguments : 4 bytes)
+	 * Size in bytes of an instruction for the cube (codeOP : 1 byte, arguments
+	 * : 4 bytes)
 	 */
 	public static final int MAX_LENGTH_BUFFER = 5;
 
 	/**
 	 * Max size of the list of instruction
 	 */
-	public static final int MAX_NUMBER_OF_INSTRUCTION_TO_SAVE = 3;
+	public static final int MAX_NUMBER_OF_INSTRUCTION_TO_SAVE = 150;
 
 	/**
-	 * Instruction who will be write in file "instructions.bin" in order to be send to the cube
+	 * Number for ending the editing of instructions
 	 */
-	private  Instruction instructionToWrite[];
+	public static final int END_OF_RECORDING_INSTRUCTION = 11;
 
 	/**
-	 * TODO : make an interface for this
+	 * Instruction who will be write in file "instructions.bin" in order to be
+	 * send to the cube
 	 */
-	private  Scanner sc = new Scanner(System.in);
-
+	private Instruction instructionToWrite[];
 
 	/**
-	 * Number of instructions saved
+	 * Number of saved instructions
 	 */
-	private  int countInstructions;
-
+	private int countInstructions;
 
 	/**
 	 * The general display for this application
 	 */
-	private Display display;
+	private final Display display;
 
-
+	private final ChoiceAsker choice;
+	
 	/**
-	 * Read only list of instructions supported by the cube
-	 * they are loaded from the file "instructionsSupportedByTheCube.inst"
-	 * TODO : think about a better solution, because it need a comparator
+	 * Read only list of instructions supported by the cube they are loaded from
+	 * the file "instructionsSupportedByTheCube.inst"
 	 */
-	private final Set<Instruction> cubesInstructions;
+	private final List<Instruction> cubesInstructions;
 
-	
-	
 	/**
 	 * Application constructor, set the display and the instructions list
-	 * @param d The display used
+	 * 
+	 * @param d
+	 *            The display used
 	 */
-	public Application(Display d)
-	{
+	public Application(Display d, ChoiceAsker ch) {
 		this.display = d;
-		this.instructionToWrite =  new Instruction[MAX_NUMBER_OF_INSTRUCTION_TO_SAVE];
-		this.cubesInstructions = new TreeSet<Instruction>(new InstructionComparator());
+		this.choice = ch;
+		
+		this.instructionToWrite = new Instruction[MAX_NUMBER_OF_INSTRUCTION_TO_SAVE];
+		this.cubesInstructions = new ArrayList<Instruction>();
+		this.countInstructions = 0;
+		
+		this.display.setUserPolling(this);
 		try {
 			loadInstructionFromFile();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -83,123 +82,123 @@ public class Application {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		this.display.displayChoiceOfInstruction(this.cubesInstructions
+				.toArray(new Instruction[this.cubesInstructions.size()]));
 	}
 
 	/**
-	 * Take instruction from file "instructionsSupportedByTheCube.inst" and put them into a list
+	 * Take instruction from file "instructionsSupportedByTheCube.inst" and put
+	 * them into a list
+	 * 
 	 * @throws IOException
 	 * @throws FileOfInstructionCorruptedException
 	 */
-	private void loadInstructionFromFile() throws IOException, FileOfInstructionCorruptedException
-	{
+	@SuppressWarnings("deprecation")
+	private void loadInstructionFromFile() throws IOException,
+			FileOfInstructionCorruptedException {
 		File f = new File("instructionsSupportedByTheCube.inst");
 		DataInputStream r = new DataInputStream(new FileInputStream(f));
 		String buffer;
-
-		while((buffer = r.readLine()) != null)
-		{
-			if(buffer.toCharArray()[0] != '/' && buffer.toCharArray()[0] != '*' )
-			{
+		int count = 0;
+		while ((buffer = r.readLine()) != null) {
+			if (buffer.toCharArray()[0] != '/'
+					&& buffer.toCharArray()[0] != '*') {
 				String str[] = null;
 				str = buffer.split(":");
-				if(str.length <=1)
+				if (str.length <= 1)
 					throw new FileOfInstructionCorruptedException();
-				else
-				{
-					if(str.length > 2)
-					{
-						this.cubesInstructions.add(new Instruction((byte)Integer.parseInt(str[0]), str[2], Integer.parseInt(str[1])));
-					}
-					else
-					{
-						this.cubesInstructions.add(new Instruction((byte)Integer.parseInt(str[0]), Integer.parseInt(str[1])));
+				else {
+					if (str.length > 2) {
+						this.cubesInstructions.add(new Instruction(
+								(byte) Integer.parseInt(str[0]), str[2],
+								Integer.parseInt(str[1])));
+						if (str.length > 3) {
+							String[] strArgDesc = str[3].split(";");
+							this.cubesInstructions.get(count)
+									.setDescriptionArguments(strArgDesc);
+						}
+					} else {
+						this.cubesInstructions.add(new Instruction(
+								(byte) Integer.parseInt(str[0]), Integer
+										.parseInt(str[1])));
 					}
 				}
+				count++;
 			}
 		}
 	}
 
-
 	/**
-	 * Record instructions until the user stop it or until the instruction tab is full
+	 * Record instructions until the user stop it or until the instruction tab
+	 * is full
 	 */
-	public void recordInstructions()
-	{
+	public void recordInstructions() {
 		Instruction current;
-		for (countInstructions = 0 ; (countInstructions < MAX_NUMBER_OF_INSTRUCTION_TO_SAVE); countInstructions++)
-		{
-			this.display.printlnString("Que souhaitez-vous faire ?");
+		for (this.countInstructions = 0; (this.countInstructions < MAX_NUMBER_OF_INSTRUCTION_TO_SAVE); this.countInstructions++) {
+			this.display.println("Que souhaitez-vous faire ?");
 
-			Instruction[] x = this.cubesInstructions.toArray(new Instruction[this.cubesInstructions.size()]);
+			Instruction[] x = this.cubesInstructions
+					.toArray(new Instruction[this.cubesInstructions.size()]);
+
 			this.display.displayChoiceOfInstruction(x);
 
-			this.display.printlnString("11-Envoyer les instructions");
-			
-			int codeOpCurrent = sc.nextInt();
-			
-			if(codeOpCurrent != 11)
+			this.display.print(END_OF_RECORDING_INSTRUCTION
+					+ "-Envoyer les instructions \n");
+
+			int codeOpCurrent = choice.askInteger("Choix (taper "+END_OF_RECORDING_INSTRUCTION+" pour finir)");
+
+			if (codeOpCurrent != END_OF_RECORDING_INSTRUCTION) 
 			{
-				Iterator<Instruction> iterator = this.cubesInstructions.iterator();
+				Iterator<Instruction> iterator = this.cubesInstructions
+						.iterator();
 				Instruction newInstruct;
-				while(iterator.hasNext())
+				boolean finded = false;
+				while (iterator.hasNext()) 
 				{
 					current = iterator.next();
-					if(current.getCodeOp() == codeOpCurrent)
-					{
+					if (current.getCodeOp() == codeOpCurrent) {
+						finded = true;
 						byte[] args = new byte[MAX_LENGTH_BUFFER - 1];
-						for (int j = 0 ; j < current.getNbArgs() ; j++)
-						{
-							System.out.println("Argument " + (j+1));
-							int tempArg = Integer.parseInt(sc.next());
-							if(tempArg > 0xFF)
-							{
-								args[j] = (byte) (tempArg &  0xFF);
+						for (int j = 0; j < current.getNbArgs(); j++) {
+							String desc = current.getDescriptionArguments()[j];
+							if (desc == null)
+								desc = "Argument " + j + 1;
+							int tempArg = choice.askInteger(desc + " : ");
+							if (tempArg > 0xFF) {
+								args[j] = (byte) (tempArg & 0xFF);
 								j++;
 								args[j] = (byte) (tempArg >> 8);
-							}
-							else args[j] = (byte) tempArg;
+							} else
+								args[j] = (byte) tempArg;
 						}
-						newInstruct = new Instruction((byte)codeOpCurrent, current.getDescription(), current.getNbArgs());
+						newInstruct = new Instruction((byte) codeOpCurrent,
+								current.getDescription(), current.getNbArgs());
 						newInstruct.setArgs(args);
-						instructionToWrite[countInstructions] = newInstruct;
+						instructionToWrite[this.countInstructions] = newInstruct;
+						display.displayBuffer(instructionToWrite, countInstructions);
 					}
 				}
-				
-			}
-			else break;
-			if(countInstructions == Application.MAX_NUMBER_OF_INSTRUCTION_TO_SAVE)display.printlnString("You have reached the end of the instruction buffer"); 
+				if(!finded)countInstructions--;
+			} 
+			else
+				break;
+			if (this.countInstructions == Application.MAX_NUMBER_OF_INSTRUCTION_TO_SAVE)
+				display.println("You have reached the end of the instruction buffer");
 		}
-	}
-
-	/**
-	 * Display the current tab of instruction
-	 * TODO : think to move it to Display class
-	 */
-	public  void displayBuffer()
-	{
-		this.display.printlnString("Instructions : ");
-		for (int i = 0 ; i < instructionToWrite.length ; i++)
-		{
-			this.display.printlnString("" + instructionToWrite[i]);
-		}
-		this.display.printlnString("");
 	}
 
 	/**
 	 * Write the current tab of instruction into the file "instructions.bin"
 	 */
-	public  void writeSavedInstructionsInSavefile()
-	{
+	public void writeSavedInstructionsInSavefile() {
 		File file = new File("instructions.bin");
 		try {
-
-			DataOutputStream r = new DataOutputStream(new FileOutputStream(file));
-			for (int i = 0 ; i < instructionToWrite.length && instructionToWrite[i] != null; i++)
-			{
-				int nbByte = 1 + instructionToWrite[i].getArgs().length;
+			DataOutputStream r = new DataOutputStream(
+					new FileOutputStream(file));
+			for (int i = 0; i < instructionToWrite.length
+					&& instructionToWrite[i] != null; i++) {
 				r.write(instructionToWrite[i].getCodeOp());
 				r.write(instructionToWrite[i].getArgs());
-
 			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -210,4 +209,8 @@ public class Application {
 		}
 	}
 
+	public void start()
+	{
+		while(true);
+	}
 }

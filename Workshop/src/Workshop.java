@@ -1,27 +1,34 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
-import java.util.Scanner;
-
-
 /**
  * Application launcher (main class)
+ * 
  * @author clement
- *
+ * 
  */
 public class Workshop {
-	
 
 	/**
 	 * Main class
+	 * 
 	 * @param args
 	 */
-	public static void main(String[] args) 
-	{
-		Application app = new Application(new ConsoleDisplay());
+	public static void main(String[] args) {
 		
-		app.recordInstructions();
-		app.displayBuffer();
-		app.writeSavedInstructionsInSavefile();
+		GUIDisplay display = new GUIDisplay();
+		GuiChoiceAsker choice = new GuiChoiceAsker();
+		
+		//ConsoleDisplay display = new ConsoleDisplay();
+		//ScannerChoiceAsker choice = new ScannerChoiceAsker();
+
+		Application app = new Application(display, choice);
+		
+		if(display instanceof GUIDisplay)
+		{
+			app.start();
+		}
+		else
+		{
+			app.recordInstructions();
+			app.writeSavedInstructionsInSavefile();
+		}
 	}
 }
