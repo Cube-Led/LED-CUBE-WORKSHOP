@@ -27,11 +27,14 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
 		this.setSize(600, 400);
-		JPanel pan = new JPanel();
+		/*JPanel pan = new JPanel();
 		pan.setLayout(new FlowLayout());
 		this.setContentPane(pan);
 		this.setResizable(true);
-		this.configureComponents();
+		this.configureComponents();*/
+		
+		this.setContentPane(new GUIMainMenu(this));
+		
 	}
 	private void configureComponents()
 	{

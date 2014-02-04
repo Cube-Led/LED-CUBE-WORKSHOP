@@ -20,7 +20,7 @@ public class Workshop {
 		//ScannerChoiceAsker choice = new ScannerChoiceAsker();
 
 		Application app = new Application(display, choice);
-		
+		app.sendFile();
 		if(display instanceof GUIDisplay)
 		{
 			app.start();
