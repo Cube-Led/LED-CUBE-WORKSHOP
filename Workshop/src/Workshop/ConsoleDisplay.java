@@ -1,3 +1,4 @@
+package Workshop;
 
 /**
  * Console implementation of Display interface
@@ -45,6 +46,12 @@ public class ConsoleDisplay implements Display {
 			println("" + inst[i]);
 		}
 		println("");
+	}
+
+	@Override
+	public void displayAskingOfAnArgument(String str) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

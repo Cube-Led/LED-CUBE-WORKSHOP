@@ -1,3 +1,4 @@
+package Workshop;
 import java.util.Scanner;
 
 
@@ -18,8 +19,7 @@ public class ScannerChoiceAsker implements ChoiceAsker {
 	}
 	
 	@Override
-	public int askInteger(String str) {
-		System.out.println(str);
+	public int askInteger() {
 		return this.sc.nextInt();
 	}
 

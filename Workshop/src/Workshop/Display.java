@@ -1,3 +1,4 @@
+package Workshop;
 /**
  * Interface who define general methods for display the application
  * 
@@ -34,4 +35,6 @@ public interface Display {
 	public void setUserPolling(UserPolling poll);
 	
 	public void displayBuffer(Instruction[] inst,int countInstructions);
+	
+	public void displayAskingOfAnArgument(String str);
 }

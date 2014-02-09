@@ -1,32 +1,42 @@
+package gui;
+
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+
+import Workshop.Display;
+import Workshop.Instruction;
+import Workshop.UserPolling;
 
 
+/**
+ * Graphical implementation of the display
+ * @author Clement
+ *
+ */
 public class GUIDisplay extends JFrame implements Display, ActionListener{
 
 	private UserPolling polling;
 	private JButton bt_save;
 	private JButton bt_record;
-	private JList cb_ReadOnlyInstructions;
-	private JList cb_instructionsList;
+	private JList list_ReadOnlyInstructions;
+	private JList list_instructionsList;
+	private GuiChoiceAsker choiceComponent;
 	
-	public GUIDisplay()
+	public GUIDisplay(GuiChoiceAsker choice)
 	{
+		this.choiceComponent = choice;
 		this.setBackground(Color.white);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setTitle("Worshop");
 		this.setVisible(true);
-		this.setSize(600, 400);
+		this.setSize(350, 175);
+		
 		/*JPanel pan = new JPanel();
 		pan.setLayout(new FlowLayout());
 		this.setContentPane(pan);
@@ -44,13 +54,13 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 		this.bt_record = new JButton("Record Instructions");
 		this.bt_record.addActionListener(this);
 		
-		cb_ReadOnlyInstructions=new JList();
-		cb_instructionsList= new JList();
+		list_ReadOnlyInstructions=new JList();
+		list_instructionsList= new JList();
 		
 		this.getContentPane().add(bt_save);
 		this.getContentPane().add(bt_record);
-		this.getContentPane().add(cb_ReadOnlyInstructions);
-		this.getContentPane().add(cb_instructionsList);
+		this.getContentPane().add(list_ReadOnlyInstructions);
+		this.getContentPane().add(list_instructionsList);
 		this.getContentPane().validate();
 	}
 	public void setUserPolling(UserPolling poll)
@@ -60,16 +70,10 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 	
 	@Override
 	public void displayChoiceOfInstruction(Instruction[] inst) {
-		//this.remove(cb_ReadOnlyInstructions);
-		String str[] = new String[inst.length];
-		
-		for(int i=0; i<inst.length; i++)
-			str[i] = inst[i].toString();
-		
-		//this.cb_ReadOnlyInstructions = new JList(str);
-		//this.add(cb_ReadOnlyInstructions);
-		this.cb_ReadOnlyInstructions.setListData(str);
-		this.getContentPane().validate();
+		if(this.getContentPane() instanceof CreateProgram)
+		{
+			((CreateProgram)this.getContentPane()).displayChoiceOfInstruction(inst);
+		}
 	}
 
 	@Override
@@ -103,14 +107,26 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 	@Override
 	public void displayBuffer(Instruction[] inst, int countInstructions) {
 
-		String str[] = new String[countInstructions+1];
-		
-		for(int i=0; i<=countInstructions; i++)
-			str[i] = inst[i].toString();
-		
-		//this.cb_instructionsList = new JList(str);
-		this.cb_instructionsList.setListData(str);
-		this.getContentPane().validate();
+		if(this.getContentPane() instanceof CreateProgram)
+		{
+			((CreateProgram)this.getContentPane()).displayBuffer(inst, countInstructions);
+		}
 
 		}
+	
+
+	public UserPolling getPolling() {
+		return polling;
+	}
+
+	public GuiChoiceAsker getChoice() {
+		return choiceComponent;
+	}
+	@Override
+	public void displayAskingOfAnArgument(String str) {
+		if(this.getContentPane() instanceof CreateProgram)
+		{
+			((CreateProgram)this.getContentPane()).askArgument(str);
+		}
+	}
 }

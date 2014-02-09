@@ -1,3 +1,4 @@
+package Workshop;
 import gnu.io.PortInUseException;
 import gnu.io.RXTXPort;
 import gnu.io.SerialPort;
@@ -144,7 +145,6 @@ public class Application implements UserPolling{
 	public void recordInstructions() {
 		Instruction current;
 		for (this.countInstructions = 0; (this.countInstructions < MAX_NUMBER_OF_INSTRUCTION_TO_SAVE); this.countInstructions++) {
-			this.display.println("Que souhaitez-vous faire ?");
 
 			Instruction[] x = this.cubesInstructions
 					.toArray(new Instruction[this.cubesInstructions.size()]);
@@ -154,8 +154,10 @@ public class Application implements UserPolling{
 			this.display.print(END_OF_RECORDING_INSTRUCTION
 					+ "-Envoyer les instructions \n");
 
-			int codeOpCurrent = choice.askInteger("Choix (taper "+END_OF_RECORDING_INSTRUCTION+" pour finir)");
-
+			display.displayAskingOfAnArgument("Choix (taper "+END_OF_RECORDING_INSTRUCTION+" pour finir)");
+			
+				int codeOpCurrent = choice.askInteger();
+				
 			if (codeOpCurrent != END_OF_RECORDING_INSTRUCTION) 
 			{
 				Iterator<Instruction> iterator = this.cubesInstructions
@@ -172,7 +174,8 @@ public class Application implements UserPolling{
 							String desc = current.getDescriptionArguments()[j];
 							if (desc == null)
 								desc = "Argument " + j + 1;
-							int tempArg = choice.askInteger(desc + " : ");
+							display.displayAskingOfAnArgument(desc + " : ");
+							int tempArg = choice.askInteger();
 							if (tempArg > 0xFF) {
 								args[j] = (byte) (tempArg & 0xFF);
 								j++;
@@ -218,10 +221,6 @@ public class Application implements UserPolling{
 		}
 	}
 
-	public void start()
-	{
-		while(true);
-	}
 
 	@Override
 	public void sendFile() {
