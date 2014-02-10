@@ -221,7 +221,6 @@ public class Application implements UserPolling{
 		}
 	}
 
-
 	@Override
 	public void sendFile() {
 		
