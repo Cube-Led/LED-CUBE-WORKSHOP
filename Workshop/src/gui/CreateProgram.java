@@ -1,19 +1,15 @@
 package gui;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Scrollbar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JTextField;
 
 import Workshop.Instruction;
@@ -22,16 +18,22 @@ public class CreateProgram extends JPanel implements ActionListener{
 
 	private final GUIDisplay motherFrame;
 	private JList list_instructionsList;
-	private JList list_ReadOnlyInstructions;
-	private JButton bt_start;
+	private JComboBox cb_ReadOnlyInstructions;
+	private JButton bt_loadInstructions;
+	private JButton bt_saveOneInstruction;
 	private JLabel tx_argument;
-	private JTextField tx_choix;
+	
+	private final String saveOneInstructionIdentifier = "bt_saveInst";
+	private final String loadInstructionsIdentifier = "bt_loadAll";
 	
 	public CreateProgram(GUIDisplay motherFrame)
 	{
 		this.motherFrame = motherFrame;
-		this.motherFrame.setSize(600, 600);
+		this.motherFrame.setSize(600, 200);
 		init();
+
+		this.motherFrame.getPolling().requestDisplayOfPrimitiveInstructions();
+
 		this.updateUI();
 	}
 	
@@ -42,27 +44,27 @@ public class CreateProgram extends JPanel implements ActionListener{
 		Box right = new Box(BoxLayout.PAGE_AXIS);
 		
 		list_instructionsList= new JList();
-		list_ReadOnlyInstructions=new JList();
-		tx_argument = new JLabel("Choix");
-		tx_choix = new JTextField();
-		tx_choix.addActionListener(motherFrame.getChoice());
-		
 		right.add(list_instructionsList);
-		//list_instructionsList.add(new Scrollbar());
+		
+		tx_argument = new JLabel("Choix");
 		right.add(tx_argument);
 		
-		this.bt_start = new JButton("Start recording");
-		this.bt_start.addActionListener(this);
+
+		cb_ReadOnlyInstructions=new JComboBox();
+		left.add(cb_ReadOnlyInstructions);
 		
-		right.add(tx_choix);
-		left.add(list_ReadOnlyInstructions);
-		left.add(bt_start);
+		bt_loadInstructions = new JButton("Charger les annimations");
+		bt_loadInstructions.addActionListener(this);
+		bt_loadInstructions.setName(this.loadInstructionsIdentifier);
+		left.add(bt_loadInstructions);
 		
+		bt_saveOneInstruction = new JButton("Enregistrer cette instruction");
+		bt_saveOneInstruction.addActionListener(this);
+		bt_saveOneInstruction.setEnabled(false);
+		left.add(bt_saveOneInstruction);
 		
 		this.add(left);
 		this.add(right);
-		
-		
 	}
 	
 	public void displayBuffer(Instruction[] inst, int countInstructions) {
@@ -82,8 +84,8 @@ public class CreateProgram extends JPanel implements ActionListener{
 		String str[] = new String[inst.length];
 		
 		for(int i=0; i<inst.length; i++)
-			str[i] = inst[i].toString();
-		this.list_ReadOnlyInstructions.setListData(str);
+			this.cb_ReadOnlyInstructions.addItem(inst[i].toString());
+			/*str[i] = inst[i].toString();*/
 		this.validate();
 	}
 
@@ -97,11 +99,20 @@ public class CreateProgram extends JPanel implements ActionListener{
 
 		if(e.getSource() instanceof JButton)
 		{
-			this.motherFrame.getPolling().recordInstructions();
+			if(((JButton)e.getSource()).getText().equals("Charger les annimations"))
+			{
+				this.motherFrame.getPolling().requestDisplayOfPrimitiveInstructions();
+				this.bt_saveOneInstruction.setEnabled(true);
+			}
+			else
+			{
+				
+			}
 		}
 		else
-			System.out.println("helpppppp");
-		
+		{
+			
+		}
 	}
 	
 	

@@ -237,4 +237,31 @@ public class Application implements UserPolling{
 				e.printStackTrace();
 			}
 		}
+
+	@Override
+	public void saveOneInstruction(byte codeOp, int nbArg, byte[] args) {
+		
+		Instruction inst = new Instruction(codeOp,nbArg);
+		inst.setArgs(args);
+		instructionToWrite[this.countInstructions] = inst;
+		this.countInstructions++;
+		
+		
+	}
+
+public void saveOneInstruction(byte codeOp, String desc, int nbArg, byte[] args) {
+		
+		Instruction inst = new Instruction(codeOp,desc,nbArg);
+		inst.setArgs(args);
+		instructionToWrite[this.countInstructions] = inst;
+		this.countInstructions++;
+		
+	}
+
+@Override
+public void requestDisplayOfPrimitiveInstructions() {
+
+	this.display.displayChoiceOfInstruction(this.cubesInstructions
+			.toArray(new Instruction[this.cubesInstructions.size()]));
+}
 }
