@@ -33,6 +33,7 @@ public class GUIMainMenu extends JPanel implements ActionListener{
 		this.motherFrame = motherF;
 		init();
 		this.motherFrame.setContentPane(this);
+		this.updateUI();
 	}
 	
 	public void init()

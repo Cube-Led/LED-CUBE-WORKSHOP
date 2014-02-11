@@ -222,10 +222,7 @@ public class Application implements UserPolling{
 	}
 
 	@Override
-	public void sendFile() {
-		
-		
-			
+	public void sendFile() {			
 	 
 			COMListener l=new COMListener();
 					l.setRate(9600);
@@ -238,22 +235,15 @@ public class Application implements UserPolling{
 			}
 		}
 
-	@Override
-	public void saveOneInstruction(byte codeOp, int nbArg, byte[] args) {
-		
-		Instruction inst = new Instruction(codeOp,nbArg);
-		inst.setArgs(args);
-		instructionToWrite[this.countInstructions] = inst;
-		this.countInstructions++;
-		
-		
-	}
 
-public void saveOneInstruction(byte codeOp, String desc, int nbArg, byte[] args) {
+public void saveOneInstruction(byte codeOp, String desc, int nbArg, String[] descriptionArgs, byte[] args) {
 		
 		Instruction inst = new Instruction(codeOp,desc,nbArg);
 		inst.setArgs(args);
+		inst.setDescriptionArguments(descriptionArgs);
 		instructionToWrite[this.countInstructions] = inst;
+		
+		this.display.displayBuffer(instructionToWrite, countInstructions);
 		this.countInstructions++;
 		
 	}

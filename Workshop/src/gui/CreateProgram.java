@@ -61,6 +61,7 @@ public class CreateProgram extends JPanel implements ActionListener{
 		bt_saveOneInstruction = new JButton("Enregistrer cette instruction");
 		bt_saveOneInstruction.addActionListener(this);
 		bt_saveOneInstruction.setEnabled(false);
+		bt_saveOneInstruction.setName(this.saveOneInstructionIdentifier);
 		left.add(bt_saveOneInstruction);
 		
 		this.add(left);
@@ -69,12 +70,7 @@ public class CreateProgram extends JPanel implements ActionListener{
 	
 	public void displayBuffer(Instruction[] inst, int countInstructions) {
 
-		String str[] = new String[countInstructions+1];
-		
-		for(int i=0; i<=countInstructions; i++)
-			str[i] = inst[i].toString();
-		
-		this.list_instructionsList.setListData(str);
+		this.list_instructionsList.setListData(inst);
 		this.validate();
 
 		}
@@ -99,14 +95,19 @@ public class CreateProgram extends JPanel implements ActionListener{
 
 		if(e.getSource() instanceof JButton)
 		{
-			if(((JButton)e.getSource()).getText().equals("Charger les annimations"))
+			System.out.println(((JButton)e.getSource()).getName());
+			if(((JButton)e.getSource()).getName().equals(this.loadInstructionsIdentifier))
 			{
 				this.motherFrame.getPolling().requestDisplayOfPrimitiveInstructions();
 				this.bt_saveOneInstruction.setEnabled(true);
 			}
-			else
+			else if(((JButton)e.getSource()).getName().equals(this.saveOneInstructionIdentifier))
 			{
-				
+				byte[] b = new byte[1];
+				String[] s = new String[1];
+				s[0] = "Couche";
+				b[0] = 0x4;
+				this.motherFrame.getPolling().saveOneInstruction((byte)0x4, "Allumer toutes les leds" ,1,s, b);
 			}
 		}
 		else

@@ -59,7 +59,21 @@ public class Instruction {
 	}
 
 	public String toString() {
-		String str = "" + (int) codeOp + " : " + this.description;;
+		String str = "";
+		
+		if(args[0] == '\0')
+		{
+			str = "" + (int) codeOp + " : " + this.description;;
+		}
+		else
+		{
+			str = "" + (int) codeOp + " : " + this.description + "Arguments : ";
+					for(int i=0; i< nbArgs; i++)
+					{
+						str = str + " " + descriptionArguments[i] +" : " + args[i];
+					}
+		}
+		
 		return str;
 
 	}

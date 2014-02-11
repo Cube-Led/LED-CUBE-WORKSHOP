@@ -44,7 +44,6 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 		this.configureComponents();*/
 		
 		this.setContentPane(new GUIMainMenu(this));
-		
 	}
 	private void configureComponents()
 	{
