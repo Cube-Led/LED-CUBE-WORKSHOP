@@ -6,9 +6,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
+import javax.sql.rowset.serial.SerialDatalink;
+import javax.sql.rowset.serial.SerialStruct;
+
 import gnu.io.CommPort;
+import gnu.io.RXTXCommDriver;
+import gnu.io.RXTXPort;
 import gnu.io.SerialPort;
 import gnu.io.CommPortIdentifier;
+import gnu.io.SerialPortEvent;
 
 
 public class COMListener {
@@ -25,17 +31,19 @@ public class COMListener {
 		} else {
 			CommPort commPort = portIdentifier.open(this.getClass().getName(),
 					2000);
- 
+			
 			if (commPort instanceof SerialPort) {
 				SerialPort serialPort = (SerialPort) commPort;
 				//serialPort.setSerialPortParams(57600, SerialPort.DATABITS_8,SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
 				//serialPort.setSerialPortParams(9600, SerialPort.DATABITS_8,SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
 				serialPort.setSerialPortParams(getRate(), SerialPort.DATABITS_8,SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
- 
+				
+				serialPort.close();
  
 				InputStream in = serialPort.getInputStream();
 				OutputStream out = serialPort.getOutputStream();
  
+				
 				(new Thread(new SerialReader(in))).start();
 				(new Thread(new SerialWriter(out))).start();
  

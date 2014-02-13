@@ -9,7 +9,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.border.Border;
 
 
@@ -18,19 +17,22 @@ import javax.swing.border.Border;
  * @author Clement
  *
  */
-public class GUIMainMenu extends JPanel implements ActionListener{
+public class ViewMainMenu extends View implements ActionListener{
 
-	private final GUIDisplay motherFrame;
-	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2607L;
 	private JLabel txt_title;
 	private JButton bt_creaPicture;
 	private JButton bt_creaProg;
 	private JButton bt_loadProg;
 	private JButton bt_exit;
 	
-	public GUIMainMenu(GUIDisplay motherF)
+	public ViewMainMenu(GUIDisplay motherF)
 	{
-		this.motherFrame = motherF;
+		super(motherF);
+		motherFrame.setSize(GUIDisplay.DEFAULT_DIMENSION);
 		init();
 		this.motherFrame.setContentPane(this);
 		this.updateUI();
@@ -95,7 +97,7 @@ public class GUIMainMenu extends JPanel implements ActionListener{
 		}
 		else if (e.getSource() instanceof JButton && ((JButton)e.getSource()).equals(this.bt_creaProg))
 		{
-			this.motherFrame.setContentPane(new CreateProgram(motherFrame));
+			this.motherFrame.setContentPane(new ViewCreateProgram(motherFrame));
 			//this.motherFrame.getPolling().recordInstructions();
 		}
 	}

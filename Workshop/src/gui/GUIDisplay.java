@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -28,6 +29,8 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 	private JList list_instructionsList;
 	private GuiChoiceAsker choiceComponent;
 	
+	public static final Dimension DEFAULT_DIMENSION = new Dimension(375,175);
+	
 	public GUIDisplay(GuiChoiceAsker choice)
 	{
 		this.choiceComponent = choice;
@@ -43,7 +46,7 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 		this.setResizable(true);
 		this.configureComponents();*/
 		
-		this.setContentPane(new GUIMainMenu(this));
+		this.setContentPane(new ViewMainMenu(this));
 	}
 	private void configureComponents()
 	{
@@ -69,9 +72,9 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 	
 	@Override
 	public void displayChoiceOfInstruction(Instruction[] inst) {
-		if(this.getContentPane() instanceof CreateProgram)
+		if(this.getContentPane() instanceof ViewCreateProgram)
 		{
-			((CreateProgram)this.getContentPane()).displayChoiceOfInstruction(inst);
+			((ViewCreateProgram)this.getContentPane()).displayChoiceOfInstruction(inst);
 		}
 	}
 
@@ -106,9 +109,9 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 	@Override
 	public void displayBuffer(Instruction[] inst, int countInstructions) {
 
-		if(this.getContentPane() instanceof CreateProgram)
+		if(this.getContentPane() instanceof ViewCreateProgram)
 		{
-			((CreateProgram)this.getContentPane()).displayBuffer(inst, countInstructions);
+			((ViewCreateProgram)this.getContentPane()).displayBuffer(inst, countInstructions);
 		}
 
 		}
@@ -123,9 +126,9 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 	}
 	@Override
 	public void displayAskingOfAnArgument(String str) {
-		if(this.getContentPane() instanceof CreateProgram)
+		if(this.getContentPane() instanceof ViewCreateProgram)
 		{
-			((CreateProgram)this.getContentPane()).askArgument(str);
+			((ViewCreateProgram)this.getContentPane()).askArgument(str);
 		}
 	}
 }

@@ -14,30 +14,32 @@ import javax.swing.JTextField;
 
 import Workshop.Instruction;
 
-public class CreateProgram extends JPanel implements ActionListener{
+public class ViewCreateProgram extends View implements ActionListener{
 
-	private final GUIDisplay motherFrame;
 	private JList list_instructionsList;
 	private JComboBox cb_ReadOnlyInstructions;
 	private JButton bt_loadInstructions;
 	private JButton bt_saveOneInstruction;
+	private JButton bt_retourMenu;
 	private JLabel tx_argument;
 	
 	private final String saveOneInstructionIdentifier = "bt_saveInst";
 	private final String loadInstructionsIdentifier = "bt_loadAll";
+	private final String retourMenuIdentifier = "bt_return";
 	
-	public CreateProgram(GUIDisplay motherFrame)
+	public ViewCreateProgram(GUIDisplay motherFrame)
 	{
+		super(motherFrame);
 		this.motherFrame = motherFrame;
 		this.motherFrame.setSize(600, 200);
 		init();
 
 		this.motherFrame.getPolling().requestDisplayOfPrimitiveInstructions();
-
+		
 		this.updateUI();
 	}
 	
-	private void init()
+	public void init()
 	{
 		this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 		Box left = new Box(BoxLayout.PAGE_AXIS);
@@ -64,8 +66,17 @@ public class CreateProgram extends JPanel implements ActionListener{
 		bt_saveOneInstruction.setName(this.saveOneInstructionIdentifier);
 		left.add(bt_saveOneInstruction);
 		
+		bt_retourMenu = new JButton("Retour menu");
+		bt_retourMenu.addActionListener(this);
+		bt_retourMenu.setName(this.retourMenuIdentifier);
+		right.add(bt_retourMenu);
+		
 		this.add(left);
 		this.add(right);
+
+		left.setSize(motherFrame.getSize().width/2, motherFrame.getSize().height);
+		right.setSize(motherFrame.getSize().width/2, motherFrame.getSize().height);
+		
 	}
 	
 	public void displayBuffer(Instruction[] inst, int countInstructions) {
@@ -108,6 +119,10 @@ public class CreateProgram extends JPanel implements ActionListener{
 				s[0] = "Couche";
 				b[0] = 0x4;
 				this.motherFrame.getPolling().saveOneInstruction((byte)0x4, "Allumer toutes les leds" ,1,s, b);
+			}
+			else if(((JButton)e.getSource()).getName().equals(this.retourMenuIdentifier))
+			{
+				this.motherFrame.setContentPane(new ViewMainMenu(motherFrame));
 			}
 		}
 		else
