@@ -55,7 +55,7 @@ public class ViewMainMenu extends View implements ActionListener{
 		this.txt_title = new JLabel("Bienvenue");
 		this.txt_title.setFont(new Font("Serif",Font.BOLD, 28));
 		
-		EmptySpace empty1 = new EmptySpace(20), empty2 = new EmptySpace(60);
+		HorizontalEmptySpace empty1 = new HorizontalEmptySpace(20), empty2 = new HorizontalEmptySpace(60);
 		
 		Box b1 = new Box(BoxLayout.LINE_AXIS);
 	    b1.add(txt_title);

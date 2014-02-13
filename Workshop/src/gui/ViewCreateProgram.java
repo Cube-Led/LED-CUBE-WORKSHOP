@@ -1,8 +1,11 @@
 package gui;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -10,6 +13,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import Workshop.Instruction;
@@ -21,7 +25,7 @@ public class ViewCreateProgram extends View implements ActionListener{
 	private JButton bt_loadInstructions;
 	private JButton bt_saveOneInstruction;
 	private JButton bt_retourMenu;
-	private JLabel tx_argument;
+	private Box pan_enterArguments;
 	
 	private final String saveOneInstructionIdentifier = "bt_saveInst";
 	private final String loadInstructionsIdentifier = "bt_loadAll";
@@ -31,7 +35,7 @@ public class ViewCreateProgram extends View implements ActionListener{
 	{
 		super(motherFrame);
 		this.motherFrame = motherFrame;
-		this.motherFrame.setSize(600, 200);
+		this.motherFrame.setSize(800, 600);
 		init();
 
 		this.motherFrame.getPolling().requestDisplayOfPrimitiveInstructions();
@@ -45,25 +49,34 @@ public class ViewCreateProgram extends View implements ActionListener{
 		Box left = new Box(BoxLayout.PAGE_AXIS);
 		Box right = new Box(BoxLayout.PAGE_AXIS);
 		
-		list_instructionsList= new JList();
-		right.add(list_instructionsList);
+		JScrollPane scrollPane = new JScrollPane();
 		
-		tx_argument = new JLabel("Choix");
-		right.add(tx_argument);
+		list_instructionsList= new JList();
+		/*list_instructionsList.setMaximumSize(new Dimension(motherFrame.getSize().width/2 -50, motherFrame.getSize().height-50));
+		scrollPane.setMaximumSize(new Dimension(motherFrame.getSize().width/2 -50, motherFrame.getSize().height-50));*/
+		scrollPane.setViewportView(list_instructionsList);
+		right.add(scrollPane);
 		
 
 		cb_ReadOnlyInstructions=new JComboBox();
+		cb_ReadOnlyInstructions.setMaximumSize(new Dimension(motherFrame.getSize().width/2 -10 ,26));
+		cb_ReadOnlyInstructions.setAlignmentX(CENTER_ALIGNMENT);
+		cb_ReadOnlyInstructions.addActionListener(this);
 		left.add(cb_ReadOnlyInstructions);
 		
-		bt_loadInstructions = new JButton("Charger les annimations");
+		
+		bt_loadInstructions = new JButton("Charger les animations");
 		bt_loadInstructions.addActionListener(this);
 		bt_loadInstructions.setName(this.loadInstructionsIdentifier);
+
+		bt_loadInstructions.setAlignmentX(CENTER_ALIGNMENT);
 		left.add(bt_loadInstructions);
 		
 		bt_saveOneInstruction = new JButton("Enregistrer cette instruction");
 		bt_saveOneInstruction.addActionListener(this);
 		bt_saveOneInstruction.setEnabled(false);
 		bt_saveOneInstruction.setName(this.saveOneInstructionIdentifier);
+		bt_saveOneInstruction.setAlignmentX(CENTER_ALIGNMENT);
 		left.add(bt_saveOneInstruction);
 		
 		bt_retourMenu = new JButton("Retour menu");
@@ -71,11 +84,17 @@ public class ViewCreateProgram extends View implements ActionListener{
 		bt_retourMenu.setName(this.retourMenuIdentifier);
 		right.add(bt_retourMenu);
 		
+
+		left.setBorder(BorderFactory.createLineBorder(Color.black));
+		left.setMaximumSize(new Dimension(motherFrame.getSize().width/2, motherFrame.getSize().height));
+		right.setBorder(BorderFactory.createLineBorder(Color.black));
+		right.setMaximumSize(new Dimension(motherFrame.getSize().width/2 , motherFrame.getSize().height));
+		
+		this.pan_enterArguments = new Box(BoxLayout.PAGE_AXIS);
+		left.add(this.pan_enterArguments);
+		
 		this.add(left);
 		this.add(right);
-
-		left.setSize(motherFrame.getSize().width/2, motherFrame.getSize().height);
-		right.setSize(motherFrame.getSize().width/2, motherFrame.getSize().height);
 		
 	}
 	
@@ -91,13 +110,13 @@ public class ViewCreateProgram extends View implements ActionListener{
 		String str[] = new String[inst.length];
 		
 		for(int i=0; i<inst.length; i++)
-			this.cb_ReadOnlyInstructions.addItem(inst[i].toString());
+			this.cb_ReadOnlyInstructions.addItem(inst[i]);
 			/*str[i] = inst[i].toString();*/
 		this.validate();
 	}
 
 	public void askArgument(String str) {
-		this.tx_argument.setText(str);
+		
 		this.updateUI();
 	}
 
@@ -106,7 +125,6 @@ public class ViewCreateProgram extends View implements ActionListener{
 
 		if(e.getSource() instanceof JButton)
 		{
-			System.out.println(((JButton)e.getSource()).getName());
 			if(((JButton)e.getSource()).getName().equals(this.loadInstructionsIdentifier))
 			{
 				this.motherFrame.getPolling().requestDisplayOfPrimitiveInstructions();
@@ -114,21 +132,52 @@ public class ViewCreateProgram extends View implements ActionListener{
 			}
 			else if(((JButton)e.getSource()).getName().equals(this.saveOneInstructionIdentifier))
 			{
-				byte[] b = new byte[1];
-				String[] s = new String[1];
-				s[0] = "Couche";
-				b[0] = 0x4;
-				this.motherFrame.getPolling().saveOneInstruction((byte)0x4, "Allumer toutes les leds" ,1,s, b);
+				
+				Instruction current = (Instruction) this.cb_ReadOnlyInstructions.getSelectedItem();
+				byte[] b = new byte[current.getNbArgs()];
+				int j=1;
+				for(int i =0; i< current.getNbArgs(); i++)
+				{
+					b[i] = (Integer.valueOf(((JTextField)(pan_enterArguments.getComponent(j))).getText())).byteValue();
+					j=j+2;
+				}
+				this.motherFrame.getPolling().saveOneInstruction(current.getCodeOp(), current.getDescription(), current.getNbArgs(),
+																current.getDescriptionArguments(), b);
 			}
 			else if(((JButton)e.getSource()).getName().equals(this.retourMenuIdentifier))
 			{
 				this.motherFrame.setContentPane(new ViewMainMenu(motherFrame));
 			}
 		}
-		else
+		else if(e.getSource() instanceof JComboBox)
 		{
-			
+			createFormForArguments();
 		}
+	}
+	
+	private void createFormForArguments()
+	{
+		Instruction current = (Instruction) this.cb_ReadOnlyInstructions.getSelectedItem();
+		this.pan_enterArguments.removeAll();
+		for(int i = 0; i< current.getNbArgs(); i++)
+		{
+			JLabel temp = new JLabel(current.getDescriptionArguments()[i]);
+			
+			
+			JTextField temp2 = new JTextField();
+			
+			temp.setAlignmentX(CENTER_ALIGNMENT);
+			
+			temp2.setMaximumSize(new Dimension(motherFrame.getSize().width/2, 26));
+			temp2.setName(current.getDescriptionArguments()[i]);
+			temp2.setAlignmentX(CENTER_ALIGNMENT);
+			
+			this.pan_enterArguments.add(temp);
+			this.pan_enterArguments.add(temp2);
+		}
+		
+		System.out.println("hhhh");
+		this.updateUI();
 	}
 	
 	

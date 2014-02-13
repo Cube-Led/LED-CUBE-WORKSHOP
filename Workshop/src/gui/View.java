@@ -6,6 +6,10 @@ import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 
 
+/**
+ * @author Clement
+ *
+ */
 public class View extends JPanel implements ActionListener{
 
 	protected GUIDisplay motherFrame;

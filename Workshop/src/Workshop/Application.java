@@ -212,6 +212,7 @@ public class Application implements UserPolling{
 				r.write(instructionToWrite[i].getCodeOp());
 				r.write(instructionToWrite[i].getArgs());
 			}
+			r.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
