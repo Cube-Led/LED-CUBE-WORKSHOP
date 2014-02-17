@@ -1,5 +1,6 @@
 package Workshop;
 import gnu.io.PortInUseException;
+import gnu.io.*;
 import gnu.io.RXTXPort;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEventListener;
@@ -19,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.TooManyListenersException;
+
+import communication.COMManager;
 
 /**
  * Define the application and his main features
@@ -225,7 +228,8 @@ public class Application implements UserPolling{
 	@Override
 	public void sendFile() {			
 	 
-			COMListener l=new COMListener();
+		
+			COMManager l=new COMManager();
 					l.setRate(9600);
 					
 			try {

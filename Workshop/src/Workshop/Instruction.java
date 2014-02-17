@@ -38,7 +38,6 @@ public class Instruction {
 		this.codeOp = codeOp;
 		this.description = "Unknown instruction";
 		this.nbArgs = nbArgs;
-		this.args = new byte[Application.MAX_LENGTH_BUFFER - 1];
 		this.descriptionArguments = new String[nbArgs];
 	}
 
@@ -54,23 +53,23 @@ public class Instruction {
 		this.codeOp = codeOp;
 		this.description = description;
 		this.nbArgs = nbArgs;
-		this.args = new byte[Application.MAX_LENGTH_BUFFER - 1];
+		//this.args = new byte[Application.MAX_LENGTH_BUFFER - 1];
 		this.descriptionArguments = new String[nbArgs];
 	}
 
 	public String toString() {
 		String str = "";
 		
-		if(args[0] == '\0')
+		if(args == null || args.length == 0)
 		{
 			str = "" + (int) codeOp + " : " + this.description;;
 		}
 		else
 		{
-			str = "" + (int) codeOp + " : " + this.description + "Arguments : ";
+			str = "" + (int) codeOp + " : " + this.description + " ";
 					for(int i=0; i< nbArgs; i++)
 					{
-						str = str + " " + descriptionArguments[i] +" : " + args[i];
+						str = str + " " + descriptionArguments[i] +" : " + (args[i] & 0xFF);
 					}
 		}
 		

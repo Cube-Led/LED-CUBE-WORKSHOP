@@ -39,6 +39,7 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 		this.setTitle("Worshop");
 		this.setVisible(true);
 		this.setSize(350, 175);
+		this.setResizable(false);
 		
 		/*JPanel pan = new JPanel();
 		pan.setLayout(new FlowLayout());

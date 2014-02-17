@@ -38,7 +38,6 @@ public class ViewCreateProgram extends View implements ActionListener{
 		this.motherFrame.setSize(800, 600);
 		init();
 
-		this.motherFrame.getPolling().requestDisplayOfPrimitiveInstructions();
 		
 		this.updateUI();
 	}
@@ -95,7 +94,8 @@ public class ViewCreateProgram extends View implements ActionListener{
 		
 		this.add(left);
 		this.add(right);
-		
+
+		motherFrame.getPolling().requestDisplayOfPrimitiveInstructions();
 	}
 	
 	public void displayBuffer(Instruction[] inst, int countInstructions) {
