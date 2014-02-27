@@ -1,10 +1,5 @@
 package Workshop;
-import gnu.io.PortInUseException;
 import gnu.io.*;
-import gnu.io.RXTXPort;
-import gnu.io.SerialPort;
-import gnu.io.SerialPortEventListener;
-import gnu.io.UnsupportedCommOperationException;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -12,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -183,8 +179,11 @@ public class Application implements UserPolling{
 								args[j] = (byte) (tempArg & 0xFF);
 								j++;
 								args[j] = (byte) (tempArg >> 8);
-							} else
+							} else{
+								args[j] = 0;
+								j++;
 								args[j] = (byte) tempArg;
+							}
 						}
 						newInstruct = new Instruction((byte) codeOpCurrent,
 								current.getDescription(), current.getNbArgs());
@@ -234,6 +233,13 @@ public class Application implements UserPolling{
 					
 			try {
 				l.connect("COM6");
+				int len;
+				FileInputStream f = new FileInputStream("instructions.bin");
+				
+				byte[] buffer = new byte[100];
+				f.read(buffer);
+				l.writeData(buffer);
+				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

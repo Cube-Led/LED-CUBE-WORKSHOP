@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import Workshop.Application;
 import Workshop.Instruction;
 
 public class ViewCreateProgram extends View implements ActionListener{
@@ -25,6 +26,7 @@ public class ViewCreateProgram extends View implements ActionListener{
 	private JButton bt_loadInstructions;
 	private JButton bt_saveOneInstruction;
 	private JButton bt_retourMenu;
+	private JButton bt_saveAll;
 	private Box pan_enterArguments;
 	
 	private final String saveOneInstructionIdentifier = "bt_saveInst";
@@ -67,6 +69,12 @@ public class ViewCreateProgram extends View implements ActionListener{
 		bt_loadInstructions = new JButton("Charger les animations");
 		bt_loadInstructions.addActionListener(this);
 		bt_loadInstructions.setName(this.loadInstructionsIdentifier);
+		
+		bt_saveAll = new JButton("save");
+		bt_saveAll.addActionListener(this);
+		bt_saveAll.setName("save");
+		left.add(bt_saveAll);
+		
 
 		bt_loadInstructions.setAlignmentX(CENTER_ALIGNMENT);
 		left.add(bt_loadInstructions);
@@ -119,6 +127,30 @@ public class ViewCreateProgram extends View implements ActionListener{
 		
 		this.updateUI();
 	}
+	
+	private void recomposeInstruction()
+	{
+		Instruction current = (Instruction) this.cb_ReadOnlyInstructions.getSelectedItem();
+		byte[] b = new byte[Application.MAX_LENGTH_BUFFER - 1];
+		
+		int j=1;
+		for(int i =0; i < current.getNbArgs(); i++)
+		{
+			int tempArg = (Integer.valueOf(((JTextField)(pan_enterArguments.getComponent(j))).getText()));
+			if (tempArg > 0xFF) {
+				b[i] = (byte) (tempArg & 0xFF);
+				i++;
+				b[i] =  (byte) (tempArg >> 8);
+			}
+			else
+			{
+				b[i] =  (byte) tempArg;
+			}
+			j=j+2;
+		}
+		this.motherFrame.getPolling().saveOneInstruction(current.getCodeOp(), current.getDescription(), current.getNbArgs(),
+														current.getDescriptionArguments(), b);
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -133,16 +165,11 @@ public class ViewCreateProgram extends View implements ActionListener{
 			else if(((JButton)e.getSource()).getName().equals(this.saveOneInstructionIdentifier))
 			{
 				
-				Instruction current = (Instruction) this.cb_ReadOnlyInstructions.getSelectedItem();
-				byte[] b = new byte[current.getNbArgs()];
-				int j=1;
-				for(int i =0; i< current.getNbArgs(); i++)
-				{
-					b[i] = (Integer.valueOf(((JTextField)(pan_enterArguments.getComponent(j))).getText())).byteValue();
-					j=j+2;
-				}
-				this.motherFrame.getPolling().saveOneInstruction(current.getCodeOp(), current.getDescription(), current.getNbArgs(),
-																current.getDescriptionArguments(), b);
+				recomposeInstruction();
+			}
+			else if(((JButton)e.getSource()).getName().equals("save"))
+			{
+				this.motherFrame.getPolling().writeSavedInstructionsInSavefile();
 			}
 			else if(((JButton)e.getSource()).getName().equals(this.retourMenuIdentifier))
 			{
