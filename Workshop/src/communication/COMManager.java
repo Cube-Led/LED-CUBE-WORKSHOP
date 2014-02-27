@@ -15,7 +15,7 @@ import gnu.io.CommPortIdentifier;
 
 public class COMManager {
 	private int rate=9600;
-	private SerialReader comReader;
+	public SerialReader comReader;
 	private SerialWriter comWriter;
 	
 	
@@ -53,7 +53,7 @@ public class COMManager {
 	public void writeData(byte[] data)
 	{
 		this.comWriter.setDataToBeWrite(data);
-		this.comWriter.run();
+		this.comWriter.start();
 	}
 	
 	public String readData() 

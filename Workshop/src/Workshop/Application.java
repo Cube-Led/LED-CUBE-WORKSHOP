@@ -233,9 +233,9 @@ public class Application implements UserPolling{
 					
 			try {
 				l.connect("COM6");
+				l.comReader.start();
 				int len;
 				FileInputStream f = new FileInputStream("instructions.bin");
-				
 				byte[] buffer = new byte[100];
 				f.read(buffer);
 				l.writeData(buffer);
