@@ -89,7 +89,7 @@ public class ViewMainMenu extends View implements ActionListener{
 		}
 		else if (e.getSource() instanceof JButton && ((JButton)e.getSource()).equals(this.bt_loadProg))
 		{
-			
+			this.motherFrame.setContentPane(new ViewDynamicLED(motherFrame));
 		}
 		else if (e.getSource() instanceof JButton && ((JButton)e.getSource()).equals(this.bt_creaPicture))
 		{
