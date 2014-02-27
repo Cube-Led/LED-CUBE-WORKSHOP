@@ -18,8 +18,13 @@ public class SerialWriter extends Thread {
 	
 	public void run() {
 		try {
-			while(dataToWrite == null);
-			this.out.write(dataToWrite);
+			int i = 0;
+			while(i < dataToWrite.length)
+			{
+				System.out.println("data to write " + dataToWrite[i]);
+				this.out.write(dataToWrite[i]);
+				i++;
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
