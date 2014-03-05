@@ -1,5 +1,7 @@
 package gui;
 
+import java.awt.Rectangle;
+
 
 
 public class Led {
@@ -7,21 +9,34 @@ public class Led {
 	public static final int ON = 1;
 	public static final int OFF = 0;
 	
-	public int state;
+	private int state;
 	private final int number;
-	private Position position;
+	private Rectangle led;
 	
-	public Led(int number, int state, int x, int y){
+	public Led(int number, int state, Rectangle Led){
 		this.number = number;
-		this.state = state;
-		this.position = new Position((float)x, (float)y);
+		this.setState(state);
+		this.setLed(Led);
 	}
 	
 	public int getNumber() {
 		return number;
 	}
 
-	public Position getPosition() {
-		return position;
+	public int getState() {
+		return state;
 	}
+
+	public void setState(int state) {
+		this.state = state;
+	}
+
+	public Rectangle getLed() {
+		return led;
+	}
+
+	public void setLed(Rectangle led) {
+		this.led = led;
+	}
+	
 }

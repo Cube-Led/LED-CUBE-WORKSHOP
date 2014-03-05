@@ -1,20 +1,14 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-
 import Workshop.Instruction;
 
 public class ViewDynamicLED extends View implements ActionListener {
@@ -23,7 +17,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 	
 	private JPanel pictureLED;
 	
-	private JList list_instructionsList;
+	private JList<Instruction> list_instructionsList;
 	private JButton bt_loadInstructions;
 	private JButton bt_saveOneInstruction;
 	private JButton bt_retourMenu;
@@ -39,9 +33,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 	
 	/* ------------------ Les LEDs ------------------ */
 	
-	private int[][] ledGrid;
-	private static final int ON = 1;
-	private static final int OFF = 0;
+	private Led[] ledGrid;
 	private static final float RATIO_LED = 0.04f;
 	private int led_size;
 	public int cube_size;
@@ -63,7 +55,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 	public void init() {
 		
 		this.cube_size = 8;
-		this.ledGrid = new int[cube_size][cube_size];
+		this.ledGrid = new Led[this.cube_size*this.cube_size];
 		
 		this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 		Box left = new Box(BoxLayout.PAGE_AXIS);
@@ -74,7 +66,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 		
 		
 		JScrollPane scrollPane = new JScrollPane();
-		list_instructionsList= new JList();
+		list_instructionsList= new JList<Instruction>();
 		scrollPane.setViewportView(list_instructionsList);
 		right.add(scrollPane);
 		
@@ -129,9 +121,5 @@ public class ViewDynamicLED extends View implements ActionListener {
 		this.add(left);
 		this.add(right, BorderLayout.EAST);
 	}
-	
-
-
-	
 	
 }
