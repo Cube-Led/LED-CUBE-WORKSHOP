@@ -131,21 +131,13 @@ public class ViewCreateProgram extends View implements ActionListener{
 	private void recomposeInstruction()
 	{
 		Instruction current = (Instruction) this.cb_ReadOnlyInstructions.getSelectedItem();
-		byte[] b = new byte[Application.MAX_LENGTH_BUFFER - 1];
+		short[] b = new short[Application.MAX_LENGTH_BUFFER - 1];
 		
 		int j=1;
 		for(int i =0; i < current.getNbArgs(); i++)
 		{
 			int tempArg = (Integer.valueOf(((JTextField)(pan_enterArguments.getComponent(j))).getText()));
-			if (tempArg > 0xFF) {
-				b[i] = (byte) (tempArg & 0xFF);
-				i++;
-				b[i] =  (byte) (tempArg >> 8);
-			}
-			else
-			{
-				b[i] =  (byte) tempArg;
-			}
+			b[i] = (short) tempArg;
 			j=j+2;
 		}
 		this.motherFrame.getPolling().saveOneInstruction(current.getCodeOp(), current.getDescription(), current.getNbArgs(),

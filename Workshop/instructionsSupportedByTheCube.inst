@@ -6,7 +6,7 @@
 3:2:Allumer une LED par son numéro et son niveau:couche;Numero de la led
 4:1:Allumer toutes les LED d'un niveau:Couche
 5:0:Faire une boucle infinie
-6:0:Fin de boucle
+6:1:Fin de boucle:Instruction de retour
 7:0:Faire une boucle simple
 8:0:Tester le cube
 9:3:Allumer une led par ses coordonnées:Couche;Coordonnee x;Coordonnee y

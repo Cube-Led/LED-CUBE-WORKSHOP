@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,12 +40,15 @@ public class ViewDynamicLED extends View implements ActionListener {
 	/* ------------------ Les LEDs ------------------ */
 	
 	private int[][] ledGrid;
-	private static final int ON = 1;
-	private static final int OFF = 0;
 	private static final float RATIO_LED = 0.04f;
 	private int led_size;
 	public int cube_size;
 	
+	public int getCube_size() {
+		return cube_size;
+	}
+
+
 	public ViewDynamicLED(GUIDisplay motherFrame) {
 		super(motherFrame);
 		this.motherFrame = motherFrame;
@@ -56,7 +60,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 	
 	public void init() {
 		
-		this.cube_size = 4;
+		this.cube_size = 8;
 		this.ledGrid = new int[cube_size][cube_size];
 		
 		this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
@@ -80,11 +84,13 @@ public class ViewDynamicLED extends View implements ActionListener {
 		bt_upLevel = new JButton("Monter au niveau suivant");
 		bt_upLevel.addActionListener(this);
 		bt_upLevel.setName(this.upLevelIdentifier);
+		bt_upLevel.setAlignmentX(RIGHT_ALIGNMENT);
 		left.add(bt_upLevel, BorderLayout.NORTH);
 		
 		bt_downLevel = new JButton("Descendre au niveau précédent");
 		bt_downLevel.addActionListener(this);
 		bt_downLevel.setName(this.downLevelIdentifier);
+		bt_downLevel.setAlignmentX(RIGHT_ALIGNMENT);
 		left.add(bt_downLevel, BorderLayout.NORTH);
 		
 		
@@ -92,8 +98,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 		
 		this.led_size = (int)(this.motherFrame.getWidth()*ViewDynamicLED.RATIO_LED);
 		
-		pictureLED = new JPanel();
-		pictureLED.paint(getGraphics());
+		pictureLED = new LedJPan(this.cube_size, this.led_size, this.ledGrid);
 		left.add(pictureLED,BorderLayout.CENTER);
 		
 		
@@ -101,51 +106,26 @@ public class ViewDynamicLED extends View implements ActionListener {
 		
 		bt_saveOneInstruction = new JButton("Enregistrer cette instruction");
 		bt_saveOneInstruction.addActionListener(this);
-		bt_saveOneInstruction.setEnabled(false);
 		bt_saveOneInstruction.setName(this.saveOneInstructionIdentifier);
-		bt_saveOneInstruction.setAlignmentX(CENTER_ALIGNMENT);
 		bt_saveOneInstruction.setLocation(100, 600);
 		left.add(bt_saveOneInstruction, BorderLayout.SOUTH);
 		
 		bt_loadInstructions = new JButton("Charger les animations");
 		bt_loadInstructions.addActionListener(this);
 		bt_loadInstructions.setName(this.loadInstructionsIdentifier);
+		bt_loadInstructions.setPreferredSize(new Dimension(bt_saveOneInstruction.getWidth(), bt_saveOneInstruction.getHeight()));
 		bt_loadInstructions.setLocation(100, 650);
 		left.add(bt_loadInstructions, BorderLayout.SOUTH);
 		
 		bt_retourMenu = new JButton("Retour menu");
 		bt_retourMenu.addActionListener(this);
 		bt_retourMenu.setName(this.retourMenuIdentifier);
+		bt_retourMenu.setSize(bt_saveOneInstruction.getWidth(), bt_saveOneInstruction.getHeight());
 		bt_retourMenu.setLocation(100, 700);
 		left.add(bt_retourMenu, BorderLayout.SOUTH);
 		
-		
-		
 		this.add(left);
 		this.add(right, BorderLayout.EAST);
-	}
-	
-	public void paintComponent(Graphics g){
-		
-		g.setColor(Color.red);
-    	g.fillRect(0, 0, 800, 600);
-    	
-    	for( int i = 0; i < this.cube_size; i++){
-    		for(int j = 0; j < this.cube_size; j++){
-    			switch (this.ledGrid[i][j]){
-    			case ON :
-    				g.setColor(Color.yellow);
-    		    	g.fillOval(i*this.led_size + pictureLED.getX(), j*this.led_size + pictureLED.getY(), this.led_size, this.led_size);
-    		    	break;
-    			case OFF :
-    				g.setColor(Color.gray);
-    		    	g.fillOval(i*this.led_size + pictureLED.getX(), j*this.led_size + pictureLED.getY(), this.led_size, this.led_size);
-    		    	break;
-    			}
-    		}
-    	}
-    }
-	
-	
+	}	
 	
 }

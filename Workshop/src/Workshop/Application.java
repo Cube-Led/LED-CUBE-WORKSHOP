@@ -28,10 +28,10 @@ import communication.COMManager;
 public class Application implements UserPolling{
 
 	/**
-	 * Size in bytes of an instruction for the cube (codeOP : 1 byte, arguments
-	 * : 4 bytes)
+	 * Size in bytes of an instruction for the cube ((codeOP : 1 byte, arguments
+	 * : 5 bytes )*2)
 	 */
-	public static final int MAX_LENGTH_BUFFER = 5;
+	public static final int MAX_LENGTH_BUFFER = 6;
 
 	/**
 	 * Max size of the list of instruction
@@ -168,7 +168,7 @@ public class Application implements UserPolling{
 					current = iterator.next();
 					if (current.getCodeOp() == codeOpCurrent) {
 						finded = true;
-						byte[] args = new byte[MAX_LENGTH_BUFFER - 1];
+						short[] args = new short[MAX_LENGTH_BUFFER - 1];
 						for (int j = 0; j < current.getNbArgs(); j++) {
 							String desc = current.getDescriptionArguments()[j];
 							if (desc == null)
@@ -176,13 +176,13 @@ public class Application implements UserPolling{
 							display.displayAskingOfAnArgument(desc + " : ");
 							int tempArg = choice.askInteger();
 							if (tempArg > 0xFF) {
-								args[j] = (byte) (tempArg & 0xFF);
+								args[j] = (short) (tempArg & 0xFF);
 								j++;
-								args[j] = (byte) (tempArg >> 8);
+								args[j] = (short) (tempArg >> 8);
 							} else{
 								args[j] = 0;
 								j++;
-								args[j] = (byte) tempArg;
+								args[j] = (short) tempArg;
 							}
 						}
 						newInstruct = new Instruction((byte) codeOpCurrent,
@@ -210,9 +210,11 @@ public class Application implements UserPolling{
 			DataOutputStream r = new DataOutputStream(
 					new FileOutputStream(file));
 			for (int i = 0; i < instructionToWrite.length
-					&& instructionToWrite[i] != null; i++) {
+					&& instructionToWrite[i] != null; i++) 
+			{
 				r.write(instructionToWrite[i].getCodeOp());
-				r.write(instructionToWrite[i].getArgs());
+				for(int j=0;j<instructionToWrite[i].getArgs().length;j++)
+				r.write(instructionToWrite[i].getArgs()[i]);
 			}
 			r.close();
 		} catch (FileNotFoundException e) {
@@ -247,7 +249,7 @@ public class Application implements UserPolling{
 		}
 
 
-public void saveOneInstruction(byte codeOp, String desc, int nbArg, String[] descriptionArgs, byte[] args) {
+public void saveOneInstruction(short codeOp, String desc, int nbArg, String[] descriptionArgs, short[] args) {
 		
 		Instruction inst = new Instruction(codeOp,desc,nbArg);
 		inst.setArgs(args);

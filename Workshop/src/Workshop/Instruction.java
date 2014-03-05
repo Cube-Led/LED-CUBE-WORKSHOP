@@ -5,7 +5,7 @@ public class Instruction {
 	 * Code op of the instruction, coded on one byte, allow 255 different
 	 * instructions
 	 */
-	private final byte codeOp;
+	private final short codeOp;
 
 	/**
 	 * General description of this instruction, used only in the application for
@@ -21,7 +21,7 @@ public class Instruction {
 	/**
 	 * Tab of parameters for the instruction, coded on bytes
 	 */
-	private byte args[];
+	private short args[];
 
 	private String[] descriptionArguments;
 
@@ -34,7 +34,7 @@ public class Instruction {
 	 * @param nbArgs
 	 *            Instruction's number of params
 	 */
-	public Instruction(byte codeOp, int nbArgs) {
+	public Instruction(short codeOp, int nbArgs) {
 		this.codeOp = codeOp;
 		this.description = "Unknown instruction";
 		this.nbArgs = nbArgs;
@@ -49,7 +49,7 @@ public class Instruction {
 	 * @param description
 	 * @param nbArgs
 	 */
-	public Instruction(byte codeOp, String description, int nbArgs) {
+	public Instruction(short codeOp, String description, int nbArgs) {
 		this.codeOp = codeOp;
 		this.description = description;
 		this.nbArgs = nbArgs;
@@ -82,7 +82,7 @@ public class Instruction {
 	 * 
 	 * @return a byte tab who represent params
 	 */
-	public byte[] getArgs() {
+	public short[] getArgs() {
 		return args;
 	}
 
@@ -92,7 +92,7 @@ public class Instruction {
 	 * @param args
 	 *            a tab of parameters
 	 */
-	public void setArgs(byte[] args) {
+	public void setArgs(short[] args) {
 		this.args = args;
 	}
 
@@ -101,7 +101,7 @@ public class Instruction {
 	 * 
 	 * @return codeOp
 	 */
-	public byte getCodeOp() {
+	public short getCodeOp() {
 		return codeOp;
 	}
 
