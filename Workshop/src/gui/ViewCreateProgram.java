@@ -137,6 +137,7 @@ public class ViewCreateProgram extends View implements ActionListener{
 		for(int i =0; i < current.getNbArgs(); i++)
 		{
 			int tempArg = (Integer.valueOf(((JTextField)(pan_enterArguments.getComponent(j))).getText()));
+			System.out.println(tempArg);
 			b[i] = (short) tempArg;
 			j=j+2;
 		}

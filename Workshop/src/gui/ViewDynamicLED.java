@@ -17,7 +17,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 	
 	private JPanel pictureLED;
 	
-	private JList<Instruction> list_instructionsList;
+	private JList list_instructionsList;
 	private JButton bt_loadInstructions;
 	private JButton bt_saveOneInstruction;
 	private JButton bt_retourMenu;
@@ -66,7 +66,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 		
 		
 		JScrollPane scrollPane = new JScrollPane();
-		list_instructionsList= new JList<Instruction>();
+		list_instructionsList= new JList();
 		scrollPane.setViewportView(list_instructionsList);
 		right.add(scrollPane);
 		

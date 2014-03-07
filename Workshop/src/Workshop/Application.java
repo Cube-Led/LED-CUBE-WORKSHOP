@@ -212,9 +212,17 @@ public class Application implements UserPolling{
 			for (int i = 0; i < instructionToWrite.length
 					&& instructionToWrite[i] != null; i++) 
 			{
-				r.write(instructionToWrite[i].getCodeOp());
+				byte c1 = (byte) (instructionToWrite[i].getCodeOp() >> 8);
+				byte c2 = (byte) (instructionToWrite[i].getCodeOp() & 0x00FF);
+				r.write(c1);
+				r.write(c2);
 				for(int j=0;j<instructionToWrite[i].getArgs().length;j++)
-				r.write(instructionToWrite[i].getArgs()[i]);
+				{
+					byte b1 = (byte) (instructionToWrite[i].getArgs()[j] >> 8);
+					byte b2 = (byte) (instructionToWrite[i].getArgs()[j] & 0x00FF);
+					r.write(b1);
+					r.write(b2);
+				}
 			}
 			r.close();
 		} catch (FileNotFoundException e) {
@@ -235,10 +243,10 @@ public class Application implements UserPolling{
 					
 			try {
 				l.connect("COM6");
-				l.comReader.start();
 				int len;
-				FileInputStream f = new FileInputStream("instructions.bin");
-				byte[] buffer = new byte[100];
+				File file = new File("instructions.bin");
+				FileInputStream f = new FileInputStream(file);
+				byte[] buffer = new byte[(int) file.length()];
 				f.read(buffer);
 				l.writeData(buffer);
 				
@@ -255,7 +263,7 @@ public void saveOneInstruction(short codeOp, String desc, int nbArg, String[] de
 		inst.setArgs(args);
 		inst.setDescriptionArguments(descriptionArgs);
 		instructionToWrite[this.countInstructions] = inst;
-		
+		System.out.println(inst);
 		this.display.displayBuffer(instructionToWrite, countInstructions);
 		this.countInstructions++;
 		

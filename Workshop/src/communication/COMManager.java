@@ -17,7 +17,8 @@ public class COMManager {
 	private int rate=9600;
 	public SerialReader comReader;
 	private SerialWriter comWriter;
-	
+	public static final byte SIG_BEGIN = 0x02;
+	public static final byte SIG_END = 0x03;
 	
 	public COMManager() {
 	}
@@ -34,15 +35,15 @@ public class COMManager {
 				SerialPort serialPort = (SerialPort) commPort;
 				//serialPort.setSerialPortParams(57600, SerialPort.DATABITS_8,SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
 				//serialPort.setSerialPortParams(9600, SerialPort.DATABITS_8,SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-				serialPort.setSerialPortParams(getRate(), SerialPort.DATABITS_8,SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-				
+				serialPort.setSerialPortParams(9600, SerialPort.DATABITS_8,SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+
  
 				InputStream in = serialPort.getInputStream();
 				OutputStream out = serialPort.getOutputStream();
 				
 				this.comReader = new SerialReader(in);
 				this.comWriter = new SerialWriter(out);
- 
+				System.out.println(comReader.isAlive());
 			} else {
 				System.out
 						.println("Error: Only serial ports are handled by this example.");
@@ -52,8 +53,36 @@ public class COMManager {
  
 	public void writeData(byte[] data)
 	{
-		this.comWriter.setDataToBeWrite(data);
 		this.comWriter.start();
+		this.comReader.start();
+		System.out.println("debut de transmision");
+		
+		while(!this.comReader.acknowledgement){
+			this.comWriter.willSend = SIG_BEGIN;
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println("réponse de l'arduino, envoie en cours ...");
+		
+		this.comReader.acknowledgement = false;
+		this.comWriter.setDataToBeWrite(data);
+		this.comWriter.willWrite = true;
+		
+		while(!this.comReader.acknowledgement)
+		{
+			this.comWriter.willSend =0;
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Fin de transmision");
 	}
 	
 	public String readData() 
