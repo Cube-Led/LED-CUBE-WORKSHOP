@@ -1,34 +1,44 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
 import Workshop.Instruction;
 
 public class ViewDynamicLED extends View implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	
-	private JPanel pictureLED;
+	private int numberLayer;
 	
+	private LedJPan pictureLED;
+	
+<<<<<<< HEAD
 	private JList list_instructionsList;
 	private JButton bt_loadInstructions;
 	private JButton bt_saveOneInstruction;
 	private JButton bt_retourMenu;
+=======
+	private JList<Instruction> list_instructionsList;
+>>>>>>> branch 'master' of https://github.com/soulierc/LED-CUBE-WORKSHOP.git
 	private JButton bt_upLevel;
 	private JButton bt_downLevel;
+	private JButton bt_saveOneInstruction;
+	private JButton bt_loadInstructions;
+	private JButton bt_retourMenu;
 	
+	private final String upLevelIdentifier = "bt_upLevel";
+	private final String downLevelIdentifier = "bt_downLevel";
 	private final String saveOneInstructionIdentifier = "bt_saveInst";
 	private final String loadInstructionsIdentifier = "bt_loadAll";
 	private final String retourMenuIdentifier = "bt_return";
-	private final String upLevelIdentifier = "bt_upLevel";
-	private final String downLevelIdentifier = "bt_downLevel";
 	
 	
 	/* ------------------ Les LEDs ------------------ */
@@ -42,7 +52,6 @@ public class ViewDynamicLED extends View implements ActionListener {
 		return cube_size;
 	}
 
-
 	public ViewDynamicLED(GUIDisplay motherFrame) {
 		super(motherFrame);
 		this.motherFrame = motherFrame;
@@ -51,11 +60,11 @@ public class ViewDynamicLED extends View implements ActionListener {
 		this.updateUI();
 	}
 	
-	
 	public void init() {
 		
-		this.cube_size = 8;
+		this.cube_size = 4;
 		this.ledGrid = new Led[this.cube_size*this.cube_size];
+		this.numberLayer = 1;
 		
 		this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 		Box left = new Box(BoxLayout.PAGE_AXIS);
@@ -85,6 +94,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 		bt_downLevel.addActionListener(this);
 		bt_downLevel.setName(this.downLevelIdentifier);
 		bt_downLevel.setAlignmentX(RIGHT_ALIGNMENT);
+		bt_downLevel.setEnabled(false);
 		left.add(bt_downLevel, BorderLayout.NORTH);
 		
 		
@@ -93,6 +103,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 		this.led_size = (int)(this.motherFrame.getWidth()*ViewDynamicLED.RATIO_LED);
 		
 		pictureLED = new LedJPan(this.cube_size, this.led_size, this.ledGrid);
+		pictureLED.init();
 		left.add(pictureLED,BorderLayout.CENTER);
 		
 		
@@ -101,14 +112,13 @@ public class ViewDynamicLED extends View implements ActionListener {
 		bt_saveOneInstruction = new JButton("Enregistrer cette instruction");
 		bt_saveOneInstruction.addActionListener(this);
 		bt_saveOneInstruction.setName(this.saveOneInstructionIdentifier);
-		bt_saveOneInstruction.setLocation(100, 600);
+		bt_saveOneInstruction.setLocation(100, 500);
 		left.add(bt_saveOneInstruction, BorderLayout.SOUTH);
-		
-		bt_loadInstructions = new JButton("Charger les animations");
+
+		bt_loadInstructions = new JButton("Charger l'animation");
 		bt_loadInstructions.addActionListener(this);
 		bt_loadInstructions.setName(this.loadInstructionsIdentifier);
-		bt_loadInstructions.setPreferredSize(new Dimension(bt_saveOneInstruction.getWidth(), bt_saveOneInstruction.getHeight()));
-		bt_loadInstructions.setLocation(100, 650);
+		bt_loadInstructions.setLocation(100, 600);
 		left.add(bt_loadInstructions, BorderLayout.SOUTH);
 		
 		bt_retourMenu = new JButton("Retour menu");
@@ -122,4 +132,63 @@ public class ViewDynamicLED extends View implements ActionListener {
 		this.add(right, BorderLayout.EAST);
 	}
 	
+	private void createInstruction()
+	{
+		double number = 0;
+		for (int i = 0; i < this.cube_size * this.cube_size; i++){
+			if (this.ledGrid[i].getState() == Led.ON)
+				number += Math.pow(2, i);
+		}
+		/*Instruction current = (Instruction) this.cb_ReadOnlyInstructions.getSelectedItem();
+		short[] b = new short[Application.MAX_LENGTH_BUFFER - 1];
+		
+		int j=1;
+		for(int i =0; i < current.getNbArgs(); i++)
+		{
+			int tempArg = (Integer.valueOf(((JTextField)(pan_enterArguments.getComponent(j))).getText()));
+			b[i] = (short) tempArg;
+			j=j+2;
+		}
+		this.motherFrame.getPolling().saveOneInstruction(current.getCodeOp(), current.getDescription(), current.getNbArgs(),
+														current.getDescriptionArguments(), b);*/
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+
+		if(e.getSource() instanceof JButton)
+		{
+			if(((JButton)e.getSource()).getName().equals(this.upLevelIdentifier))
+			{
+				this.numberLayer++;
+				if (this.numberLayer == this.cube_size)
+					this.bt_upLevel.setEnabled(false);
+				this.bt_downLevel.setEnabled(true);
+				System.out.println(this.numberLayer);
+			}
+			else if(((JButton)e.getSource()).getName().equals(this.downLevelIdentifier))
+			{
+				this.numberLayer--;
+				if (this.numberLayer == 1)
+					this.bt_downLevel.setEnabled(false);
+				this.bt_upLevel.setEnabled(true);
+				System.out.println(this.numberLayer);
+			}
+			else if(((JButton)e.getSource()).getName().equals(this.saveOneInstructionIdentifier))
+			{
+				createInstruction();
+			}
+			/*else if(((JButton)e.getSource()).getName().equals("save"))
+			{
+				this.motherFrame.getPolling().writeSavedInstructionsInSavefile();
+			}
+			else if(((JButton)e.getSource()).getName().equals(this.retourMenuIdentifier))
+			{
+				this.motherFrame.setContentPane(new ViewMainMenu(motherFrame));
+			}
+		}
+		else if(e.getSource() instanceof JComboBox)
+		{
+			createFormForArguments();*/
+		}
+	}
 }

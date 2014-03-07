@@ -22,27 +22,31 @@ public class LedJPan extends JPanel implements MouseListener, MouseMotionListene
 		
 	public LedJPan(int cube_size, int led_size, Led ledGrid[]){
 		super();
-		this.half_picture_size = (this.cube_size * this.led_size) /2;
-		this.initial_position_width = ((int)(this.getSize().getWidth() / 2)) - this.half_picture_size;
-		this.initial_position_height = ((int)(this.getHeight() / 2)) + this.half_picture_size;
+		this.addMouseListener(this);
+		this.addMouseMotionListener(this);
 		this.cube_size = cube_size;
 		this.led_size = led_size;
+		this.ledGrid = ledGrid;
+	}
+	
+	public void init(){
+		this.half_picture_size = (cube_size * led_size) /2;
+		this.initial_position_width = ((int)(this.getWidth() / 2)) + this.half_picture_size;
+		this.initial_position_height = ((int)(this.getHeight() / 2)) + this.half_picture_size;
 		int count = 0;
 		for (int j = this.cube_size -1; j >= 0; j--){
 			for (int i = 0; i < this.cube_size; i++){
-				System.out.println((this.cube_size * this.led_size) /2);
-				System.out.println(this.half_picture_size);
 				ledGrid[count] = new Led(i, Led.OFF, new Rectangle((i*this.led_size) + this.initial_position_width, (j*this.led_size) + this.initial_position_height, 
 																	this.led_size, this.led_size));
 				count++;
 			}
 		}
-		this.ledGrid = ledGrid;
 	}
 
 	public void paintComponent(Graphics g){
 		g.setColor(Color.red);
     	g.fillRect(0, 0, this.getWidth(), this.getHeight());
+    	System.out.println(this.getWidth());
     	for( int i = 0; i < this.cube_size*this.cube_size; i++){
     			switch (this.ledGrid[i].getState()){
     			case Led.ON :
@@ -58,35 +62,21 @@ public class LedJPan extends JPanel implements MouseListener, MouseMotionListene
     		}
     	}
     }
+	
+	public void changeState(Led currentLed){
+		if ( currentLed.getState() == Led.ON)
+			currentLed.setState(Led.OFF);
+		else
+			currentLed.setState(Led.ON);
+	}
 
 	@Override
-	public void mouseClicked(MouseEvent arg0) {
-		/*int numberColumn;
-		int numberLine;
-		switch((int)(arg0.getPoint().getX()) % this.initial_position_width){
-			case 0 :
-				numberColumn = 0;
-				break;
-			case 1 :
-				numberColumn = 1;
-				break;
-			case 2 :
-				numberColumn = 2;
-				break;
-			case 3 :
-				numberColumn = 3;
-				break;
-			case 4 :
-				numberColumn = 4;
-				break;
-			case 5 :
-				numberColumn = 5;
-				break;
-			case 6 :
-				numberColumn = 6;
-				break;
-		}*/
-		
+	public void mouseClicked(MouseEvent e) {
+		for (int i = 0; i < this.cube_size*this.cube_size; i++){
+			if(this.ledGrid[i].getLed().contains(e.getPoint()))
+				changeState(this.ledGrid[i]);				
+		}
+		this.repaint();
 	}
 
 	@Override
