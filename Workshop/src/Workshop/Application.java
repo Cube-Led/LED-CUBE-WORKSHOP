@@ -1,4 +1,5 @@
 package Workshop;
+
 import gnu.io.*;
 
 import java.io.DataInputStream;
@@ -25,7 +26,7 @@ import communication.COMManager;
  * @author clement
  * 
  */
-public class Application implements UserPolling{
+public class Application implements UserPolling {
 
 	/**
 	 * Size in bytes of an instruction for the cube ((codeOP : 1 byte, arguments
@@ -60,7 +61,7 @@ public class Application implements UserPolling{
 	private final Display display;
 
 	private final ChoiceAsker choice;
-	
+
 	/**
 	 * Read only list of instructions supported by the cube they are loaded from
 	 * the file "instructionsSupportedByTheCube.inst"
@@ -76,11 +77,11 @@ public class Application implements UserPolling{
 	public Application(Display d, ChoiceAsker ch) {
 		this.display = d;
 		this.choice = ch;
-		
+
 		this.instructionToWrite = new Instruction[MAX_NUMBER_OF_INSTRUCTION_TO_SAVE];
 		this.cubesInstructions = new ArrayList<Instruction>();
 		this.countInstructions = 0;
-		
+
 		this.display.setUserPolling(this);
 		try {
 			loadInstructionFromFile();
@@ -153,18 +154,17 @@ public class Application implements UserPolling{
 			this.display.print(END_OF_RECORDING_INSTRUCTION
 					+ "-Envoyer les instructions \n");
 
-			display.displayAskingOfAnArgument("Choix (taper "+END_OF_RECORDING_INSTRUCTION+" pour finir)");
-			
-				int codeOpCurrent = choice.askInteger();
-				
-			if (codeOpCurrent != END_OF_RECORDING_INSTRUCTION) 
-			{
+			display.displayAskingOfAnArgument("Choix (taper "
+					+ END_OF_RECORDING_INSTRUCTION + " pour finir)");
+
+			int codeOpCurrent = choice.askInteger();
+
+			if (codeOpCurrent != END_OF_RECORDING_INSTRUCTION) {
 				Iterator<Instruction> iterator = this.cubesInstructions
 						.iterator();
 				Instruction newInstruct;
 				boolean finded = false;
-				while (iterator.hasNext()) 
-				{
+				while (iterator.hasNext()) {
 					current = iterator.next();
 					if (current.getCodeOp() == codeOpCurrent) {
 						finded = true;
@@ -179,7 +179,7 @@ public class Application implements UserPolling{
 								args[j] = (short) (tempArg & 0xFF);
 								j++;
 								args[j] = (short) (tempArg >> 8);
-							} else{
+							} else {
 								args[j] = 0;
 								j++;
 								args[j] = (short) tempArg;
@@ -189,12 +189,13 @@ public class Application implements UserPolling{
 								current.getDescription(), current.getNbArgs());
 						newInstruct.setArgs(args);
 						instructionToWrite[this.countInstructions] = newInstruct;
-						display.displayBuffer(instructionToWrite, countInstructions);
+						display.displayBuffer(instructionToWrite,
+								countInstructions);
 					}
 				}
-				if(!finded)countInstructions--;
-			} 
-			else
+				if (!finded)
+					countInstructions--;
+			} else
 				break;
 			if (this.countInstructions == Application.MAX_NUMBER_OF_INSTRUCTION_TO_SAVE)
 				display.println("You have reached the end of the instruction buffer");
@@ -210,14 +211,12 @@ public class Application implements UserPolling{
 			DataOutputStream r = new DataOutputStream(
 					new FileOutputStream(file));
 			for (int i = 0; i < instructionToWrite.length
-					&& instructionToWrite[i] != null; i++) 
-			{
+					&& instructionToWrite[i] != null; i++) {
 				byte c1 = (byte) (instructionToWrite[i].getCodeOp() >> 8);
 				byte c2 = (byte) (instructionToWrite[i].getCodeOp() & 0x00FF);
 				r.write(c1);
 				r.write(c2);
-				for(int j=0;j<instructionToWrite[i].getArgs().length;j++)
-				{
+				for (int j = 0; j < instructionToWrite[i].getArgs().length; j++) {
 					byte b1 = (byte) (instructionToWrite[i].getArgs()[j] >> 8);
 					byte b2 = (byte) (instructionToWrite[i].getArgs()[j] & 0x00FF);
 					r.write(b1);
@@ -235,44 +234,43 @@ public class Application implements UserPolling{
 	}
 
 	@Override
-	public void sendFile() {			
-	 
-		
-			COMManager l=new COMManager();
-					l.setRate(9600);
-					
-			try {
-				l.connect("COM6");
+	public void sendFile() {
+
+		COMManager l = new COMManager(9600);
+		try {
+			if (l.connect("COM6"))
+			{
 				int len;
 				File file = new File("instructions.bin");
 				FileInputStream f = new FileInputStream(file);
 				byte[] buffer = new byte[(int) file.length()];
 				f.read(buffer);
 				l.writeData(buffer);
-				
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				l.disconnect();
 			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+	}
 
+	public void saveOneInstruction(short codeOp, String desc, int nbArg,
+			String[] descriptionArgs, short[] args) {
 
-public void saveOneInstruction(short codeOp, String desc, int nbArg, String[] descriptionArgs, short[] args) {
-		
-		Instruction inst = new Instruction(codeOp,desc,nbArg);
+		Instruction inst = new Instruction(codeOp, desc, nbArg);
 		inst.setArgs(args);
 		inst.setDescriptionArguments(descriptionArgs);
 		instructionToWrite[this.countInstructions] = inst;
 		System.out.println(inst);
 		this.display.displayBuffer(instructionToWrite, countInstructions);
 		this.countInstructions++;
-		
+
 	}
 
-@Override
-public void requestDisplayOfPrimitiveInstructions() {
+	@Override
+	public void requestDisplayOfPrimitiveInstructions() {
 
-	this.display.displayChoiceOfInstruction(this.cubesInstructions
-			.toArray(new Instruction[this.cubesInstructions.size()]));
-}
+		this.display.displayChoiceOfInstruction(this.cubesInstructions
+				.toArray(new Instruction[this.cubesInstructions.size()]));
+	}
 }

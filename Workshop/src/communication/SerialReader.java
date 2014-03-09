@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class SerialReader extends Thread{
-	InputStream in;
-	String res;
+	
+	public InputStream in;
 	public boolean acknowledgement;
 	public SerialReader(InputStream in) {
 		this.acknowledgement = false;
@@ -26,7 +26,7 @@ public class SerialReader extends Thread{
 				int r =in.read();
 				if(r != -1)
 				{
-					System.out.println("ARRET!!!!!!!!");
+					//System.out.println("ARRET!!!!!!!!");
 					this.acknowledgement = true;
 				}
 				//System.out.println(r);
@@ -37,6 +37,18 @@ public class SerialReader extends Thread{
 		}
 		
 	}
+	
+	public void close()
+	{
+		try {
+			this.in.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.stop();
+	}
+	
 	
 	public void waitForAcknowledgment()
 	{

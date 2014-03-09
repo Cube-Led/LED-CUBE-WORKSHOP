@@ -7,8 +7,8 @@ public class SerialWriter extends Thread {
 	private final OutputStream out;
 	private byte[] dataToWrite;
 
-	boolean willWrite;
-	byte willSend;
+	public boolean willWrite;
+	public byte willSend;
 	public SerialWriter(OutputStream out) {
 		this.willWrite = false;
 		this.out = out;
@@ -51,6 +51,17 @@ public class SerialWriter extends Thread {
 		
 	}
 
+	public void close()
+	{
+		try {
+			this.out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.stop();
+	}
+	
 	public void writeData() {
 		int i=0;
 		while(i < dataToWrite.length)
