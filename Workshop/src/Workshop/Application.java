@@ -12,6 +12,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -168,7 +170,7 @@ public class Application implements UserPolling {
 					current = iterator.next();
 					if (current.getCodeOp() == codeOpCurrent) {
 						finded = true;
-						short[] args = new short[MAX_LENGTH_BUFFER - 1];
+						List<Short> args = new ArrayList<Short>();
 						for (int j = 0; j < current.getNbArgs(); j++) {
 							String desc = current.getDescriptionArguments()[j];
 							if (desc == null)
@@ -176,13 +178,13 @@ public class Application implements UserPolling {
 							display.displayAskingOfAnArgument(desc + " : ");
 							int tempArg = choice.askInteger();
 							if (tempArg > 0xFF) {
-								args[j] = (short) (tempArg & 0xFF);
+								args.add((short) (tempArg & 0xFF));
 								j++;
-								args[j] = (short) (tempArg >> 8);
+								args.set(j, (short) (tempArg >> 8));
 							} else {
-								args[j] = 0;
+								args.add((short) 0);
 								j++;
-								args[j] = (short) tempArg;
+								args.set(j,(short) tempArg);
 							}
 						}
 						newInstruct = new Instruction((byte) codeOpCurrent,
@@ -202,6 +204,19 @@ public class Application implements UserPolling {
 		}
 	}
 
+	private void writeLong(long l, DataOutputStream out) throws IOException
+	{
+		ByteBuffer b = ByteBuffer.allocate(Long.SIZE/8);
+		b.clear();
+		b.putLong(l/(long)Math.pow(2,Long.numberOfTrailingZeros(l)));
+		int index =0;
+		while(b.get(index) == 0)
+			index++;
+		
+		for(;index <8;index++)
+				out.writeByte(b.get(index));
+	}
+	
 	/**
 	 * Write the current tab of instruction into the file "instructions.bin"
 	 */
@@ -216,9 +231,9 @@ public class Application implements UserPolling {
 				byte c2 = (byte) (instructionToWrite[i].getCodeOp() & 0x00FF);
 				r.write(c1);
 				r.write(c2);
-				for (int j = 0; j < instructionToWrite[i].getArgs().length; j++) {
-					byte b1 = (byte) (instructionToWrite[i].getArgs()[j] >> 8);
-					byte b2 = (byte) (instructionToWrite[i].getArgs()[j] & 0x00FF);
+				for (int j = 0; j < instructionToWrite[i].getArgs().size(); j++) {
+					byte b1 = (byte) (instructionToWrite[i].getArgs().get(j) >> 8);
+					byte b2 = (byte) (instructionToWrite[i].getArgs().get(j) & 0x00FF);
 					r.write(b1);
 					r.write(b2);
 				}
@@ -255,7 +270,7 @@ public class Application implements UserPolling {
 	}
 
 	public void saveOneInstruction(short codeOp, String desc, int nbArg,
-			String[] descriptionArgs, short[] args) {
+			String[] descriptionArgs, List<Short> args) {
 
 		Instruction inst = new Instruction(codeOp, desc, nbArg);
 		inst.setArgs(args);

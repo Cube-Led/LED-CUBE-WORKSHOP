@@ -4,6 +4,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -131,14 +135,29 @@ public class ViewCreateProgram extends View implements ActionListener{
 	private void recomposeInstruction()
 	{
 		Instruction current = (Instruction) this.cb_ReadOnlyInstructions.getSelectedItem();
-		short[] b = new short[Application.MAX_LENGTH_BUFFER - 1];
+		List<Short> b = new ArrayList<Short>();
 		
 		int j=1;
 		for(int i =0; i < current.getNbArgs(); i++)
 		{
-			int tempArg = (Integer.valueOf(((JTextField)(pan_enterArguments.getComponent(j))).getText()));
-			System.out.println(tempArg);
-			b[i] = (short) tempArg;
+			Long tempArg = (Long.valueOf(((JTextField)(pan_enterArguments.getComponent(j))).getText()));
+			
+			ByteBuffer bufByte = ByteBuffer.allocate(Long.SIZE/8);
+			bufByte.putLong(tempArg);
+
+			
+			bufByte.rewind();
+			ShortBuffer bufShort = bufByte.asShortBuffer();
+			System.out.println("short capa " + bufShort.capacity());
+			System.out.println("byte capa " + bufByte.capacity());
+			
+			for(int k = 0; k < bufShort.capacity(); k++)
+			{
+				System.out.println(bufShort.get(k));
+				b.add(bufShort.get(k));
+			}
+			
+			System.out.println(b.get(0));
 			j=j+2;
 		}
 		this.motherFrame.getPolling().saveOneInstruction(current.getCodeOp(), current.getDescription(), current.getNbArgs(),

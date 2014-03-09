@@ -1,4 +1,7 @@
 package Workshop;
+
+import java.util.List;
+
 public class Instruction {
 
 	/**
@@ -21,7 +24,7 @@ public class Instruction {
 	/**
 	 * Tab of parameters for the instruction, coded on bytes
 	 */
-	private short args[];
+	private List<Short> args;
 
 	private String[] descriptionArguments;
 
@@ -60,7 +63,7 @@ public class Instruction {
 	public String toString() {
 		String str = "";
 		
-		if(args == null || args.length == 0)
+		if(args == null || args.size() == 0)
 		{
 			str = "" + (int) codeOp + " : " + this.description;;
 		}
@@ -69,7 +72,7 @@ public class Instruction {
 			str = "" + (int) codeOp + " : " + this.description + " ";
 					for(int i=0; i< nbArgs; i++)
 					{
-						str = str + " " + descriptionArguments[i] +" : " + (args[i] & 0xFF);
+						str = str + " " + descriptionArguments[i] +" : " + (args.get(i) & 0xFF);
 					}
 		}
 		
@@ -82,7 +85,7 @@ public class Instruction {
 	 * 
 	 * @return a byte tab who represent params
 	 */
-	public short[] getArgs() {
+	public List<Short> getArgs() {
 		return args;
 	}
 
@@ -92,7 +95,7 @@ public class Instruction {
 	 * @param args
 	 *            a tab of parameters
 	 */
-	public void setArgs(short[] args) {
+	public void setArgs(List<Short> args) {
 		this.args = args;
 	}
 
