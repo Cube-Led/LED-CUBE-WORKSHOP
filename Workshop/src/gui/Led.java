@@ -2,8 +2,6 @@ package gui;
 
 import java.awt.Rectangle;
 
-
-
 public class Led {
 	
 	public static final int ON = 1;

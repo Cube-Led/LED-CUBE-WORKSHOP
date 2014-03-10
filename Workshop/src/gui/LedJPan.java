@@ -12,6 +12,8 @@ import javax.swing.JPanel;
 public class LedJPan extends JPanel implements MouseListener, MouseMotionListener{
 	private static final long serialVersionUID = 1L;
 	
+	private boolean initialised = false;
+	
 	private Led[] ledGrid;
 	private int cube_size;
 	private int led_size;
@@ -29,24 +31,28 @@ public class LedJPan extends JPanel implements MouseListener, MouseMotionListene
 		this.ledGrid = ledGrid;
 	}
 	
-	public void init(){
+	private void init(){
 		this.half_picture_size = (cube_size * led_size) /2;
-		this.initial_position_width = ((int)(this.getWidth() / 2)) + this.half_picture_size;
-		this.initial_position_height = ((int)(this.getHeight() / 2)) + this.half_picture_size;
+		this.initial_position_width = ((int)(this.getWidth() / 2)) - this.half_picture_size;
+		this.initial_position_height = ((int)(this.getHeight() / 2)) - this.half_picture_size;
 		int count = 0;
 		for (int j = this.cube_size -1; j >= 0; j--){
 			for (int i = 0; i < this.cube_size; i++){
-				ledGrid[count] = new Led(i, Led.OFF, new Rectangle((i*this.led_size) + this.initial_position_width, (j*this.led_size) + this.initial_position_height, 
+				ledGrid[count] = new Led(i, Led.OFF, new Rectangle((i*this.led_size) + this.initial_position_width, 
+																   (j*this.led_size) + this.initial_position_height, 
 																	this.led_size, this.led_size));
 				count++;
 			}
 		}
 	}
-
+	
 	public void paintComponent(Graphics g){
-		g.setColor(Color.red);
+		g.setColor(Color.white);
     	g.fillRect(0, 0, this.getWidth(), this.getHeight());
-    	System.out.println(this.getWidth());
+    	if(!initialised){
+			init();
+			initialised = true;
+		}
     	for( int i = 0; i < this.cube_size*this.cube_size; i++){
     			switch (this.ledGrid[i].getState()){
     			case Led.ON :

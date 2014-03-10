@@ -234,7 +234,7 @@ public class Application implements UserPolling{
 					l.setRate(9600);
 					
 			try {
-				l.connect("COM6");
+				l.connect("COM6"); /* Configuration Sébastien : l.connect("COM3");*/
 				l.comReader.start();
 				int len;
 				FileInputStream f = new FileInputStream("instructions.bin");
