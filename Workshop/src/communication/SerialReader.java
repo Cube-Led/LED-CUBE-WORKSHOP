@@ -4,39 +4,66 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class SerialReader extends Thread{
-	InputStream in;
-	String res;
+	
+	public InputStream in;
+	public boolean acknowledgement;
 	public SerialReader(InputStream in) {
+		this.acknowledgement = false;
 		this.in = in;
+		try {
+			System.out.println(in.available());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void run() {
+		
 		while(true)
 		{
-			
 			try {
-				byte[] b = new byte[10];
-				in.read(b);
-				String str = new String(b);
-				System.out.print(str);
+				int r =in.read();
+				if(r != -1)
+				{
+					//System.out.println("ARRET!!!!!!!!");
+					this.acknowledgement = true;
+				}
+				//System.out.println(r);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
-		/*int len;
-		byte[] buffer = new byte[100];
+		}
+		
+	}
+	
+	public void close()
+	{
 		try {
-			System.out.println(in.read());
-			while ((len = this.in.read(buffer)) > -1) {
-				res = res + new String(buffer,0,len);
-			}
-			System.out.println(res);
+			this.in.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
 		}
+		this.stop();
+	}
+	
+	
+	public void waitForAcknowledgment()
+	{
+		int b;
+		try {
+			b = in.read();
+			while(b == -1)
+			{
+				b = in.read();
+			}
+			this.acknowledgement = true;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }

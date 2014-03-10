@@ -1,78 +1,131 @@
 package communication;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-
-
 import gnu.io.CommPort;
+import gnu.io.NoSuchPortException;
+import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.CommPortIdentifier;
-
+import gnu.io.UnsupportedCommOperationException;
 
 public class COMManager {
-	private int rate=9600;
-	public SerialReader comReader;
+	private final int rate;
+	private SerialReader comReader;
 	private SerialWriter comWriter;
-	
-	
-	public COMManager() {
-	}
-	
-	public void connect(String portName) throws Exception {
-		CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
-		if (portIdentifier.isCurrentlyOwned()) {
-			System.out.println("Error: Port is currently in use");
-		} else {
-			CommPort commPort = portIdentifier.open(this.getClass().getName(),
-					2000);
-			
-			if (commPort instanceof SerialPort) {
-				SerialPort serialPort = (SerialPort) commPort;
-				//serialPort.setSerialPortParams(57600, SerialPort.DATABITS_8,SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-				//serialPort.setSerialPortParams(9600, SerialPort.DATABITS_8,SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-				serialPort.setSerialPortParams(getRate(), SerialPort.DATABITS_8,SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-				
- 
-				InputStream in = serialPort.getInputStream();
-				OutputStream out = serialPort.getOutputStream();
-				
-				this.comReader = new SerialReader(in);
-				this.comWriter = new SerialWriter(out);
- 
-			} else {
-				System.out
-						.println("Error: Only serial ports are handled by this example.");
-			}
-		}
-	}
- 
-	public void writeData(byte[] data)
-	{
-		this.comWriter.setDataToBeWrite(data);
-		this.comWriter.start();
-	}
-	
-	public String readData() 
-	{
-		this.comReader.run();
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return this.comReader.res;
-	}
-	
-	public int getRate() {
-		return rate;
+	public static final byte SIG_BEGIN = 0x02;
+	public static final byte SIG_END = 0x0;
+
+	public COMManager(int baudRate) {
+		this.rate = baudRate;
 	}
 
-	public void setRate(int rate) {
-		this.rate = rate;
+	public boolean connect(String portName) throws PortInUseException,
+			UnsupportedCommOperationException, IOException {
+		CommPortIdentifier portIdentifier = null;
+		int identifier = 0;
+		try { //On essaye de trouver le port souhaité
+			portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
+			if (portIdentifier.isCurrentlyOwned())  //On regarde s'il est libre
+			{
+				System.err.println("Error: Port "+ portName + " is currently in use, try later ...");
+				return false;
+			}
+		} catch (NoSuchPortException e1) {
+		}
+
+		if (portIdentifier == null) { //On a pas réussit a trouver le port
+			
+			System.out.println(portName+" not found, \n \tTrying port COM0 to COM20");
+			while (identifier <= 20) { //On essaye tous les ports de COM0 a COM20
+				try {
+					portIdentifier = CommPortIdentifier.getPortIdentifier("COM"
+							+ identifier);
+
+				} catch (NoSuchPortException e) {
+				}
+				identifier++;
+			}
+			if (portIdentifier != null)//On a trouvé un port
+			{
+				if (portIdentifier.isCurrentlyOwned())  //On regarde s'il est libre
+				{
+					System.err.println("Error: Port COM" + identifier + " is currently in use, try later ...");
+					return false;
+				}
+			} 
+			else //Pas de port trouvé;
+			{
+				System.err.println("No port found");
+				return false;
+			}
+		}
+		if (portIdentifier != null) { // On a trouvé un port existant et non utilisé
+			CommPort commPort = portIdentifier.open(this.getClass().getName(),
+					2000);
+
+			if (commPort instanceof SerialPort) { //On regarde si c'est un lien série
+				SerialPort serialPort = (SerialPort) commPort;
+				serialPort.setSerialPortParams(this.rate, SerialPort.DATABITS_8,
+						SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+
+				InputStream in = serialPort.getInputStream();
+				OutputStream out = serialPort.getOutputStream();
+
+				this.comReader = new SerialReader(in);
+				this.comWriter = new SerialWriter(out);
+				System.out.println("Connection successful to COM"+identifier);
+				return true;
+			} else {
+				System.err
+						.println("Error: Only serial ports can be handle");
+				return false;
+			}
+		}
+		return false;
+
+	}
+
+	public void disconnect()
+	{
+		this.comReader.close();
+		this.comWriter.close();
+	}
+	
+	public void writeData(byte[] data) {
+		this.comWriter.start();
+		this.comReader.start();
+		System.out.println("debut de transmision");
+
+		while (!this.comReader.acknowledgement) {
+			this.comWriter.willSend = SIG_BEGIN;
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println("réponse de l'arduino, envoie en cours ...");
+
+		this.comReader.acknowledgement = false;
+		this.comWriter.setDataToBeWrite(data);
+		this.comWriter.willWrite = true;
+
+		while (!this.comReader.acknowledgement) {
+			this.comWriter.willSend = 0;
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Fin de transmision");
+	}
+
+	public int getRate() {
+		return rate;
 	}
 }

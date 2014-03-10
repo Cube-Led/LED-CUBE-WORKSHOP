@@ -1,6 +1,6 @@
 /****** FORMAT : [codeOp]:[number of arguments]:[Description (optional)]:[Description of Argument 1;Description of Argument 2...]******/
 /**/
-255:0:Eteindre le cube
+30:0:Eteindre le cube
 1:1:Ajouter un delai:Delay en millisecondes
 2:2:Allumer des LEDs sur un niveau:Couche;Masque de la Led (0-65535)
 3:2:Allumer une LED par son numéro et son niveau:couche;Numero de la led

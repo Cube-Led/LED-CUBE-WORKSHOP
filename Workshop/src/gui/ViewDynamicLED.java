@@ -21,7 +21,8 @@ public class ViewDynamicLED extends View implements ActionListener {
 	
 	private LedJPan pictureLED;
 	
-	private JList<Instruction> list_instructionsList;
+	private JList list_instructionsList;
+
 	
 	private JLabel lbl_currentLayer;
 	private final String currentLayerText = "Vous êtes au niveau : ";
@@ -78,7 +79,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 		/* ------------------- Coté Droit ------------------- */
 		
 		JScrollPane scrollPane = new JScrollPane();
-		list_instructionsList= new JList<Instruction>();
+		list_instructionsList= new JList();
 		scrollPane.setViewportView(list_instructionsList);
 		right.add(scrollPane);
 		
