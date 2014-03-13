@@ -4,6 +4,12 @@ import java.util.List;
 
 public class Instruction {
 
+	
+	/**
+	 * size of the current instruction, this is the number of uint16 or short
+	 */
+	private short instructSize;
+	
 	/**
 	 * Code op of the instruction, coded on one byte, allow 255 different
 	 * instructions
@@ -38,6 +44,7 @@ public class Instruction {
 	 *            Instruction's number of params
 	 */
 	public Instruction(short codeOp, int nbArgs) {
+		this.instructSize = 1; // The size of the CodeOp
 		this.codeOp = codeOp;
 		this.description = "Unknown instruction";
 		this.nbArgs = nbArgs;
@@ -53,6 +60,7 @@ public class Instruction {
 	 * @param nbArgs
 	 */
 	public Instruction(short codeOp, String description, int nbArgs) {
+		this.instructSize = 1; // The size of the CodeOp
 		this.codeOp = codeOp;
 		this.description = description;
 		this.nbArgs = nbArgs;
@@ -62,7 +70,6 @@ public class Instruction {
 
 	public String toString() {
 		String str = "";
-		
 		if(args == null || args.size() == 0)
 		{
 			str = "" + (int) codeOp + " : " + this.description;;
@@ -75,9 +82,7 @@ public class Instruction {
 						str = str + " " + descriptionArguments[i] +" : " + (args.get(i) & 0xFF);
 					}
 		}
-		
 		return str;
-
 	}
 
 	/**
@@ -97,6 +102,7 @@ public class Instruction {
 	 */
 	public void setArgs(List<Short> args) {
 		this.args = args;
+		this.instructSize += args.size();
 	}
 
 	/**
@@ -132,6 +138,10 @@ public class Instruction {
 
 	public void setDescriptionArguments(String[] descriptionArguments) {
 		this.descriptionArguments = descriptionArguments;
+	}
+	
+	public short getSize() {
+		return instructSize;
 	}
 
 }

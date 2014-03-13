@@ -1,24 +1,16 @@
 package Workshop;
 
-import gnu.io.*;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Scanner;
-import java.util.TooManyListenersException;
 
 import communication.COMManager;
 
@@ -69,7 +61,9 @@ public class Application implements UserPolling {
 	 * the file "instructionsSupportedByTheCube.inst"
 	 */
 	private final List<Instruction> cubesInstructions;
-
+	
+	
+	
 	/**
 	 * Application constructor, set the display and the instructions list
 	 * 
@@ -130,9 +124,7 @@ public class Application implements UserPolling {
 									.setDescriptionArguments(strArgDesc);
 						}
 					} else {
-						this.cubesInstructions.add(new Instruction(
-								(byte) Integer.parseInt(str[0]), Integer
-										.parseInt(str[1])));
+						this.cubesInstructions.add(new Instruction((byte) Integer.parseInt(str[0]), Integer.parseInt(str[1])));
 					}
 				}
 				count++;
@@ -265,28 +257,26 @@ public class Application implements UserPolling {
 				l.disconnect();
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void saveOneInstruction(short codeOp, String desc, int nbArg,
-			String[] descriptionArgs, List<Short> args) {
-
-		Instruction inst = new Instruction(codeOp, desc, nbArg);
-		inst.setArgs(args);
-		inst.setDescriptionArguments(descriptionArgs);
-		instructionToWrite[this.countInstructions] = inst;
-		System.out.println(inst);
+	public void saveOneInstruction(short codeOp, String desc, int nbArg, String[] descriptionArgs, List<Short> args) {
+		Instruction current = new Instruction(codeOp, desc, nbArg);
+		current.setArgs(args);
+		current.setDescriptionArguments(descriptionArgs);
+		instructionToWrite[this.countInstructions] = current;
+		System.out.println(current);
 		this.display.displayBuffer(instructionToWrite, countInstructions);
 		this.countInstructions++;
-
 	}
 
 	@Override
 	public void requestDisplayOfPrimitiveInstructions() {
-
 		this.display.displayChoiceOfInstruction(this.cubesInstructions
 				.toArray(new Instruction[this.cubesInstructions.size()]));
 	}
+	
+	
+	
 }

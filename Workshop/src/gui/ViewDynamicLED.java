@@ -3,6 +3,9 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -12,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import Workshop.Instruction;
+import Workshop.Tools;
 
 public class ViewDynamicLED extends View implements ActionListener {
 
@@ -22,7 +26,6 @@ public class ViewDynamicLED extends View implements ActionListener {
 	private LedJPan pictureLED;
 	
 	private JList list_instructionsList;
-
 	
 	private JLabel lbl_currentLayer;
 	private final String currentLayerText = "Vous êtes au niveau : ";
@@ -45,6 +48,10 @@ public class ViewDynamicLED extends View implements ActionListener {
 	private final int CENTER_LEFTPAN = (this.LEFTPAN_WIDTH /2) - ((int)(this.BUTTON_WIDTH / 2));
 	
 	
+	private final short LIGHT_LAYER_CODE_OP = 2;
+	private final short LIGHT_ALL_LED_CODE_OP = 4;
+	
+	
 	/* ------------------ Les LEDs ------------------ */
 	
 	private Led[] ledGrid;
@@ -65,7 +72,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 	
 	public void initDisplay() {
 		
-		this.cube_size = 8;
+		this.cube_size = 4;
 		this.ledGrid = new Led[this.cube_size*this.cube_size];
 		this.numberLayer = 1;
 		
@@ -79,8 +86,8 @@ public class ViewDynamicLED extends View implements ActionListener {
 		/* ------------------- Coté Droit ------------------- */
 		
 		JScrollPane scrollPane = new JScrollPane();
-		list_instructionsList= new JList();
-		scrollPane.setViewportView(list_instructionsList);
+		this.list_instructionsList= new JList();
+		scrollPane.setViewportView(this.list_instructionsList);
 		right.add(scrollPane);
 		
 		
@@ -145,25 +152,34 @@ public class ViewDynamicLED extends View implements ActionListener {
 		this.add(right);		
 	}
 	
-	private void createInstruction()
+	
+	/* ------------------- Algorithme pour la liste d'instruction ------------------- */
+	
+	private Instruction createInstruction()
 	{
-		double number = 0;
+		long number = 0;
+		Instruction current;
+		List<Short> args;
 		for (int i = 0; i < this.cube_size * this.cube_size; i++){
 			if (this.ledGrid[i].getState() == Led.ON)
 				number += Math.pow(2, i);
 		}
-		/*Instruction current = (Instruction) this.cb_ReadOnlyInstructions.getSelectedItem();
-		short[] b = new short[Application.MAX_LENGTH_BUFFER - 1];
 		
-		int j=1;
-		for(int i =0; i < current.getNbArgs(); i++)
-		{
-			int tempArg = (Integer.valueOf(((JTextField)(pan_enterArguments.getComponent(j))).getText()));
-			b[i] = (short) tempArg;
-			j=j+2;
+		if (number == (Math.pow(2, this.cube_size*this.cube_size) -1)){
+			current = new Instruction(this.LIGHT_ALL_LED_CODE_OP,1);
+			args = new ArrayList<Short>();
+			args.add((short)this.numberLayer);
+			current.setArgs(args);
 		}
-		this.motherFrame.getPolling().saveOneInstruction(current.getCodeOp(), current.getDescription(), current.getNbArgs(),
-														current.getDescriptionArguments(), b);*/
+		else{
+			current = new Instruction(this.LIGHT_LAYER_CODE_OP,1);
+			args = new ArrayList<Short>();
+			args.add((short)this.numberLayer);
+			args.addAll(Tools.transformLongToShort(number));
+			current.setArgs(args);
+		}
+		this.motherFrame.getPolling().saveOneInstruction(current.getCodeOp(), current.getDescription(), current.getNbArgs(), current.getDescriptionArguments(), current.getArgs());
+		return current;
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -200,4 +216,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 			}
 		}
 	}
+	
+	
+	
 }
