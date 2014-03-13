@@ -33,7 +33,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 	private JButton bt_upLevel;
 	private JButton bt_downLevel;
 	private JButton bt_saveOneInstruction;
-	private JButton bt_loadInstructions;
+	private JButton bt_loadInstructionsOnCube;
 	private JButton bt_retourMenu;
 	
 	private final String upLevelIdentifier = "bt_upLevel";
@@ -78,8 +78,8 @@ public class ViewDynamicLED extends View implements ActionListener {
 		this.numberLayer = 1;
 		
 		this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-		JPanel left = new JPanel();
 		Box right = new Box(BoxLayout.PAGE_AXIS);
+		JPanel left = new JPanel();
 		
 		this.setLayout(null);
 		left.setLayout(null);
@@ -100,7 +100,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 		bt_upLevel.addActionListener(this);
 		bt_upLevel.setName(this.upLevelIdentifier);
 		bt_upLevel.setBounds(this.CENTER_LEFTPAN , 0, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
-		left.add(bt_upLevel, BorderLayout.NORTH);
+		left.add(bt_upLevel);
 		
 		lbl_currentLayer = new JLabel("Vous êtes au niveau : ");
 		lbl_currentLayer.setText(this.currentLayerText + this.numberLayer);
@@ -112,14 +112,14 @@ public class ViewDynamicLED extends View implements ActionListener {
 		bt_downLevel.setName(this.downLevelIdentifier);
 		bt_downLevel.setBounds(this.CENTER_LEFTPAN , 95, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		bt_downLevel.setEnabled(false);
-		left.add(bt_downLevel, BorderLayout.NORTH);
+		left.add(bt_downLevel);
 		
 		
 		/* ---------------- Milieu ---------------- */
 		
 		pictureLED = new LedJPan(this.cube_size, (int)(this.motherFrame.getWidth()*ViewDynamicLED.RATIO_LED), this.ledGrid);
 		pictureLED.setBounds(0, 135, this.LEFTPAN_WIDTH, 420);
-		left.add(pictureLED,BorderLayout.CENTER);
+		left.add(pictureLED);
 		
 		
 		/* ---------------- Bas ---------------- */
@@ -128,19 +128,19 @@ public class ViewDynamicLED extends View implements ActionListener {
 		bt_saveOneInstruction.addActionListener(this);
 		bt_saveOneInstruction.setName(this.saveOneInstructionIdentifier);
 		bt_saveOneInstruction.setBounds(this.CENTER_LEFTPAN , 560, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
-		left.add(bt_saveOneInstruction, BorderLayout.SOUTH);
+		left.add(bt_saveOneInstruction);
 
-		bt_loadInstructions = new JButton("Charger l'animation sur le cube");
-		bt_loadInstructions.addActionListener(this);
-		bt_loadInstructions.setName(this.loadInstructionsIdentifier);
-		bt_loadInstructions.setBounds(this.CENTER_LEFTPAN , 595, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
-		left.add(bt_loadInstructions, BorderLayout.SOUTH);
+		bt_loadInstructionsOnCube = new JButton("Charger l'animation sur le cube");
+		bt_loadInstructionsOnCube.addActionListener(this);
+		bt_loadInstructionsOnCube.setName(this.loadInstructionsIdentifier);
+		bt_loadInstructionsOnCube.setBounds(this.CENTER_LEFTPAN , 595, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		left.add(bt_loadInstructionsOnCube);
 		
 		bt_retourMenu = new JButton("Retour au menu principal");
 		bt_retourMenu.addActionListener(this);
 		bt_retourMenu.setName(this.retourMenuIdentifier);
 		bt_retourMenu.setBounds(this.CENTER_LEFTPAN , 630, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
-		left.add(bt_retourMenu, BorderLayout.SOUTH);
+		left.add(bt_retourMenu);
 				
 		
 		/* ------------------- Disposition des Box Gauche et Droite ------------------- */
@@ -225,7 +225,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 			{
 				createInstruction();
 			}
-			else if(((JButton)e.getSource()).getName().equals("save"))
+			else if(((JButton)e.getSource()).getName().equals(this.loadInstructionsIdentifier))
 			{
 				this.motherFrame.getPolling().writeSavedInstructionsInSavefile();
 			}
