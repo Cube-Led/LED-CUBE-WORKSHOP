@@ -114,6 +114,10 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 		{
 			((ViewCreateProgram)this.getContentPane()).displayBuffer(inst, countInstructions);
 		}
+		if(this.getContentPane() instanceof ViewDynamicLED)
+		{
+			((ViewDynamicLED)this.getContentPane()).displayBuffer(inst, countInstructions);
+		}
 
 		}
 	

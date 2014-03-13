@@ -50,6 +50,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 	
 	private final short LIGHT_LAYER_CODE_OP = 2;
 	private final short LIGHT_ALL_LED_CODE_OP = 4;
+	private String[] descript_Args;
 	
 	
 	/* ------------------ Les LEDs ------------------ */
@@ -72,7 +73,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 	
 	public void initDisplay() {
 		
-		this.cube_size = 4;
+		this.cube_size = 8;
 		this.ledGrid = new Led[this.cube_size*this.cube_size];
 		this.numberLayer = 1;
 		
@@ -166,20 +167,38 @@ public class ViewDynamicLED extends View implements ActionListener {
 		}
 		
 		if (number == (Math.pow(2, this.cube_size*this.cube_size) -1)){
-			current = new Instruction(this.LIGHT_ALL_LED_CODE_OP,1);
+			current = new Instruction(this.LIGHT_ALL_LED_CODE_OP,"lightAllLedOnLayer",1);
 			args = new ArrayList<Short>();
 			args.add((short)this.numberLayer);
 			current.setArgs(args);
+			this.descript_Args = new String[1];
+			this.descript_Args[0] = "Layer";
+			current.setDescriptionArguments(this.descript_Args);
 		}
 		else{
-			current = new Instruction(this.LIGHT_LAYER_CODE_OP,1);
+			current = new Instruction(this.LIGHT_LAYER_CODE_OP,"lightLayer",2);
 			args = new ArrayList<Short>();
 			args.add((short)this.numberLayer);
 			args.addAll(Tools.transformLongToShort(number));
 			current.setArgs(args);
+			this.descript_Args = new String[2];
+			this.descript_Args[0] = "Layer";
+			this.descript_Args[1] = "Number";
+			current.setDescriptionArguments(this.descript_Args);
 		}
 		this.motherFrame.getPolling().saveOneInstruction(current.getCodeOp(), current.getDescription(), current.getNbArgs(), current.getDescriptionArguments(), current.getArgs());
 		return current;
+	}
+	
+	public void displayBuffer(Instruction[] inst, int countInstructions) {
+		this.list_instructionsList.setListData(inst);
+		this.validate();
+	}
+	
+	public void resetStateLed(Led[] ledGrid){
+		for (int i =0; i < this.cube_size*this.cube_size; i++){
+			this.ledGrid[i].setState(Led.OFF);
+		}
 	}
 	
 	public void actionPerformed(ActionEvent e) {
