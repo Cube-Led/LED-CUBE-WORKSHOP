@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -27,108 +28,121 @@ public class ViewCreateProgram extends View implements ActionListener{
 
 	private JList list_instructionsList;
 	private JComboBox cb_ReadOnlyInstructions;
-	private JButton bt_loadInstructions;
-	private JButton bt_saveOneInstruction;
-	private JButton bt_retourMenu;
-	private JButton bt_saveAll;
 	private Box pan_enterArguments;
 	
-	private final String saveOneInstructionIdentifier = "bt_saveInst";
-	private final String loadInstructionsIdentifier = "bt_loadAll";
-	private final String retourMenuIdentifier = "bt_return";
+	private JButton bt_loadInstructions;
+	private JButton bt_saveOneInstruction;
+	private JButton bt_loadInstructionsOnCube;
+	private JButton bt_retourMenu;
+	
+	private final String loadInstructionsIdentifier = "bt_loadInstructions";
+	private final String loadInstructionOnCubeIdentifier = "bt_loadInstructionsOnCube";
+	private final String saveOneInstructionIdentifier = "bt_saveOneInstruction";
+	private final String retourMenuIdentifier = "bt_retourMenu";
+	
+	private final int LEFTPAN_WIDTH; 
+	private final int BUTTON_WIDTH = 225;
+	private final int BUTTON_HEIGHT = 35;
+	private final int CENTER_LEFTPAN;
 	
 	public ViewCreateProgram(GUIDisplay motherFrame)
 	{
 		super(motherFrame);
 		this.motherFrame = motherFrame;
-		this.motherFrame.setSize(800, 600);
+		this.motherFrame.setSize(1000, 600);
+		this.LEFTPAN_WIDTH = this.motherFrame.getWidth() /2; 
+		this.CENTER_LEFTPAN = (this.LEFTPAN_WIDTH /2) - ((int)(this.BUTTON_WIDTH / 2));
 		init();
-
-		
 		this.updateUI();
 	}
 	
 	public void init()
 	{
 		this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-		Box left = new Box(BoxLayout.PAGE_AXIS);
 		Box right = new Box(BoxLayout.PAGE_AXIS);
+		JPanel left = new JPanel();
+		
+		this.setLayout(null);
+		left.setLayout(null);
+		
+		/* ------------------- Coté Droit ------------------- */
 		
 		JScrollPane scrollPane = new JScrollPane();
-		
 		list_instructionsList= new JList();
-		/*list_instructionsList.setMaximumSize(new Dimension(motherFrame.getSize().width/2 -50, motherFrame.getSize().height-50));
-		scrollPane.setMaximumSize(new Dimension(motherFrame.getSize().width/2 -50, motherFrame.getSize().height-50));*/
 		scrollPane.setViewportView(list_instructionsList);
 		right.add(scrollPane);
 		
-
+		
+		/* ------------------- Coté Gauche ------------------- */
+		
+		/* ---------------- Haut ---------------- */
 		cb_ReadOnlyInstructions=new JComboBox();
 		cb_ReadOnlyInstructions.setMaximumSize(new Dimension(motherFrame.getSize().width/2 -10 ,26));
-		cb_ReadOnlyInstructions.setAlignmentX(CENTER_ALIGNMENT);
 		cb_ReadOnlyInstructions.addActionListener(this);
+		cb_ReadOnlyInstructions.setBounds(10 , 10, this.LEFTPAN_WIDTH -20, this.BUTTON_HEIGHT);
 		left.add(cb_ReadOnlyInstructions);
 		
 		
-		bt_loadInstructions = new JButton("Charger les animations");
+		bt_loadInstructions = new JButton("Charger les instructions");
 		bt_loadInstructions.addActionListener(this);
 		bt_loadInstructions.setName(this.loadInstructionsIdentifier);
-		
-		bt_saveAll = new JButton("save");
-		bt_saveAll.addActionListener(this);
-		bt_saveAll.setName("save");
-		left.add(bt_saveAll);
-		
-
-		bt_loadInstructions.setAlignmentX(CENTER_ALIGNMENT);
+		bt_loadInstructions.setBounds(this.CENTER_LEFTPAN , 50, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		left.add(bt_loadInstructions);
+		
+		/* ---------------- Milieu ---------------- */
+		
+		this.pan_enterArguments = new Box(BoxLayout.PAGE_AXIS);
+		this.pan_enterArguments.setBounds(10, 200, this.LEFTPAN_WIDTH -20, 240);
+		left.add(this.pan_enterArguments);
+		
+		/* ---------------- Bas ---------------- */
 		
 		bt_saveOneInstruction = new JButton("Enregistrer cette instruction");
 		bt_saveOneInstruction.addActionListener(this);
-		bt_saveOneInstruction.setEnabled(false);
 		bt_saveOneInstruction.setName(this.saveOneInstructionIdentifier);
-		bt_saveOneInstruction.setAlignmentX(CENTER_ALIGNMENT);
+		bt_saveOneInstruction.setBounds(this.CENTER_LEFTPAN , 450, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		left.add(bt_saveOneInstruction);
+
+		bt_loadInstructionsOnCube = new JButton("Charger l'animation sur le cube");
+		bt_loadInstructionsOnCube.addActionListener(this);
+		bt_loadInstructionsOnCube.setName(this.loadInstructionsIdentifier);
+		bt_loadInstructionsOnCube.setBounds(this.CENTER_LEFTPAN , 490, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		left.add(bt_loadInstructionsOnCube);
 		
-		bt_retourMenu = new JButton("Retour menu");
+		bt_retourMenu = new JButton("Retour au menu principal");
 		bt_retourMenu.addActionListener(this);
 		bt_retourMenu.setName(this.retourMenuIdentifier);
-		right.add(bt_retourMenu);
-		
+		bt_retourMenu.setBounds(this.CENTER_LEFTPAN , 530, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		left.add(bt_retourMenu);		
 
 		left.setBorder(BorderFactory.createLineBorder(Color.black));
-		left.setMaximumSize(new Dimension(motherFrame.getSize().width/2, motherFrame.getSize().height));
 		right.setBorder(BorderFactory.createLineBorder(Color.black));
-		right.setMaximumSize(new Dimension(motherFrame.getSize().width/2 , motherFrame.getSize().height));
 		
-		this.pan_enterArguments = new Box(BoxLayout.PAGE_AXIS);
-		left.add(this.pan_enterArguments);
+		
+		/* ------------------- Disposition des Box et JPanel Gauche et Droite ------------------- */
+		
+		left.setBounds(0, 0, this.LEFTPAN_WIDTH, this.motherFrame.getHeight());
+		right.setBounds(this.motherFrame.getWidth() /2 +1, 0, 
+						this.motherFrame.getWidth() /2, this.motherFrame.getHeight());
 		
 		this.add(left);
-		this.add(right);
+		this.add(right);	
 
 		motherFrame.getPolling().requestDisplayOfPrimitiveInstructions();
 	}
 	
 	public void displayBuffer(Instruction[] inst, int countInstructions) {
-
 		this.list_instructionsList.setListData(inst);
 		this.validate();
-
-		}
+	}
 	
 	public void displayChoiceOfInstruction(Instruction[] inst) {
-		
-		String str[] = new String[inst.length];
-		
 		for(int i=0; i<inst.length; i++)
 			this.cb_ReadOnlyInstructions.addItem(inst[i]);
-			/*str[i] = inst[i].toString();*/
 		this.validate();
 	}
 
 	public void askArgument(String str) {
-		
 		this.updateUI();
 	}
 	
@@ -141,22 +155,17 @@ public class ViewCreateProgram extends View implements ActionListener{
 		for(int i =0; i < current.getNbArgs(); i++)
 		{
 			Long tempArg = (Long.valueOf(((JTextField)(pan_enterArguments.getComponent(j))).getText()));
-			
 			ByteBuffer bufByte = ByteBuffer.allocate(Long.SIZE/8);
-			bufByte.putLong(tempArg);
-
-			
+			bufByte.putLong(tempArg);		
 			bufByte.rewind();
 			ShortBuffer bufShort = bufByte.asShortBuffer();
 			System.out.println("short capa " + bufShort.capacity());
 			System.out.println("byte capa " + bufByte.capacity());
-			
 			for(int k = 0; k < bufShort.capacity(); k++)
 			{
 				System.out.println(bufShort.get(k));
 				b.add(bufShort.get(k));
 			}
-			
 			System.out.println(b.get(0));
 			j=j+2;
 		}
@@ -176,10 +185,9 @@ public class ViewCreateProgram extends View implements ActionListener{
 			}
 			else if(((JButton)e.getSource()).getName().equals(this.saveOneInstructionIdentifier))
 			{
-				
 				recomposeInstruction();
 			}
-			else if(((JButton)e.getSource()).getName().equals("save"))
+			else if(((JButton)e.getSource()).getName().equals(this.loadInstructionOnCubeIdentifier))
 			{
 				this.motherFrame.getPolling().writeSavedInstructionsInSavefile();
 			}
@@ -201,23 +209,15 @@ public class ViewCreateProgram extends View implements ActionListener{
 		for(int i = 0; i< current.getNbArgs(); i++)
 		{
 			JLabel temp = new JLabel(current.getDescriptionArguments()[i]);
-			
-			
 			JTextField temp2 = new JTextField();
-			
 			temp.setAlignmentX(CENTER_ALIGNMENT);
-			
 			temp2.setMaximumSize(new Dimension(motherFrame.getSize().width/2, 26));
 			temp2.setName(current.getDescriptionArguments()[i]);
 			temp2.setAlignmentX(CENTER_ALIGNMENT);
-			
 			this.pan_enterArguments.add(temp);
 			this.pan_enterArguments.add(temp2);
 		}
-		
-		System.out.println("hhhh");
 		this.updateUI();
 	}
-	
 	
 }

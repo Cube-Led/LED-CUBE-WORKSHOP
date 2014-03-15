@@ -79,7 +79,7 @@ public class Instruction {
 			str = "" + (int) codeOp + " : " + this.description + " ";
 					for(int i=0; i< nbArgs; i++)
 					{
-						str = str + " " + descriptionArguments[i] +" : " + (args.get(i) & 0xFF);
+						str = str + " " + descriptionArguments[i] +" : " + (args.get(i));
 					}
 		}
 		return str;

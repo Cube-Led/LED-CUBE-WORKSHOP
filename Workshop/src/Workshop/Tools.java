@@ -18,5 +18,13 @@ public class Tools {
 		buf.add((short)((number & Tools.MASK_HIGH_WEIGHT)>>48));
 		return buf;
 	}
+	
+	public static long transformShortToLong(List<Short> number){
+		long arg = 0;
+		for(int i = 0; i< number.size(); i++){
+			arg += (long)(number.get(i))<<(16*i);
+		}
+		return arg;
+	}
 
 }
