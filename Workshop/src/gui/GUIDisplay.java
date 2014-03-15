@@ -2,6 +2,9 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Menu;
+import java.awt.MenuBar;
+import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -23,13 +26,15 @@ import Workshop.UserPolling;
 public class GUIDisplay extends JFrame implements Display, ActionListener{
 
 	private UserPolling polling;
-	private JButton bt_save;
-	private JButton bt_record;
-	private JList list_ReadOnlyInstructions;
-	private JList list_instructionsList;
+	
 	private GuiChoiceAsker choiceComponent;
 	
 	public static final Dimension DEFAULT_DIMENSION = new Dimension(375,175);
+	
+	private MenuBar menuBar;
+	private Menu menuFichier;
+	private Menu menuConfig;
+	
 	
 	public GUIDisplay(GuiChoiceAsker choice)
 	{
@@ -40,30 +45,32 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 		this.setVisible(true);
 		this.setSize(350, 175);
 		this.setResizable(false);
-		
-		/*JPanel pan = new JPanel();
-		pan.setLayout(new FlowLayout());
-		this.setContentPane(pan);
-		this.setResizable(true);
-		this.configureComponents();*/
-		
+
+		configureComponents();
 		this.setContentPane(new ViewMainMenu(this));
+		this.getContentPane().update(this.getGraphics());
+		
+		
+		
 	}
 	private void configureComponents()
 	{
-		this.bt_save = new JButton("Save");
-		this.bt_save.addActionListener(this);
+		this.menuBar = new MenuBar();
+		this.menuFichier = new Menu("Fichier");
+		this.menuConfig = new Menu("Configuration");
 		
-		this.bt_record = new JButton("Record Instructions");
-		this.bt_record.addActionListener(this);
+		MenuItem quitter = new MenuItem("Quitter");
+		quitter.addActionListener(this);
+		this.menuFichier.add(quitter);
 		
-		list_ReadOnlyInstructions=new JList();
-		list_instructionsList= new JList();
+		MenuItem configCube = new MenuItem("Définir le cube");
+		configCube.addActionListener(this);
+		this.menuConfig.add(configCube);
 		
-		this.getContentPane().add(bt_save);
-		this.getContentPane().add(bt_record);
-		this.getContentPane().add(list_ReadOnlyInstructions);
-		this.getContentPane().add(list_instructionsList);
+		this.menuBar.add(menuFichier);
+		this.menuBar.add(menuConfig);
+		
+		this.setMenuBar(menuBar);
 		this.getContentPane().validate();
 	}
 	public void setUserPolling(UserPolling poll)
@@ -94,18 +101,15 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if(arg0.getSource() instanceof JButton && ((JButton)arg0.getSource()).equals(this.bt_save))
+		if(arg0.getSource() instanceof MenuItem)
 		{
-			displayMessageInMsgBox("Save");
-		this.polling.writeSavedInstructionsInSavefile();
+			if(((MenuItem)arg0.getSource()).getLabel().equals("Quitter"))
+				System.exit(0);
+			
+			if(((MenuItem)arg0.getSource()).getLabel().equals("Définir le cube"))
+				new ConfigFrame(polling);
 		}
-		else if(arg0.getSource() instanceof JButton && ((JButton)arg0.getSource()).equals(this.bt_record))
-			{
-				this.bt_record.setText("Recording ...");
-				this.polling.recordInstructions();
-				this.bt_record.setText("Record instructions");
-				this.getContentPane().validate();
-			}
+			
 	}
 	@Override
 	public void displayBuffer(Instruction[] inst, int countInstructions) {

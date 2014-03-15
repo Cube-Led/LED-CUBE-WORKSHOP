@@ -62,7 +62,7 @@ public class Application implements UserPolling {
 	 */
 	private final List<Instruction> cubesInstructions;
 	
-	
+	private Cube theCube;
 	
 	/**
 	 * Application constructor, set the display and the instructions list
@@ -71,6 +71,9 @@ public class Application implements UserPolling {
 	 *            The display used
 	 */
 	public Application(Display d, ChoiceAsker ch) {
+		
+		this.theCube = new Cube();
+		
 		this.display = d;
 		this.choice = ch;
 
@@ -276,7 +279,15 @@ public class Application implements UserPolling {
 		this.display.displayChoiceOfInstruction(this.cubesInstructions
 				.toArray(new Instruction[this.cubesInstructions.size()]));
 	}
-	
+
+	@Override
+	public Cube getTheCube() {
+		return this.theCube;
+	}
+	@Override
+	public void setTheCube(Cube c) {
+		this.theCube = c;
+	}
 	
 	
 }
