@@ -57,7 +57,7 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 	{
 		this.menuBar = new MenuBar();
 		this.menuFichier = new Menu("Fichier");
-		this.menuConfig = new Menu("Configuration");
+		this.menuConfig = new Menu("Options");
 		
 		MenuItem quitter = new MenuItem("Quitter");
 		quitter.addActionListener(this);
