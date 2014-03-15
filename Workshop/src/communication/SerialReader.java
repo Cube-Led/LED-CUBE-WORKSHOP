@@ -23,11 +23,18 @@ public class SerialReader extends Thread{
 		while(true)
 		{
 			try {
-				int r =in.read();
+				byte r = (byte)in.read();
 				if(r != -1)
 				{
 					//System.out.println("ARRET!!!!!!!!");
 					this.acknowledgement = true;
+					try {
+						Thread.sleep(5);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					System.out.println("Recu : " +r);
 				}
 				//System.out.println(r);
 			} catch (IOException e) {
@@ -58,9 +65,13 @@ public class SerialReader extends Thread{
 			while(b == -1)
 			{
 				b = in.read();
+				Thread.sleep(5);
 			}
 			this.acknowledgement = true;
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

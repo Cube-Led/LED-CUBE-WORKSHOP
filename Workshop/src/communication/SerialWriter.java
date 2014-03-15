@@ -17,6 +17,7 @@ public class SerialWriter extends Thread {
 
 	public void setDataToBeWrite(byte[] data)
 	{
+		this.willWrite = false;
 		this.dataToWrite = data;
 	}
 	
@@ -33,7 +34,7 @@ public class SerialWriter extends Thread {
 	
 	public void run() {
 
-		willSend = 0x0;
+		willSend = (byte) 0xFF;
 		while(true)
 		{
 			if(this.willWrite)
@@ -41,11 +42,10 @@ public class SerialWriter extends Thread {
 				writeData();
 				this.willWrite = false;
 			}
-			if(this.willSend != 0xFF)
+			if(this.willSend != (byte)0xFF)
 			{
 				send(willSend);
-
-				willSend = 0x0;
+				willSend = (byte) 0xFF;
 			}
 		}
 		
@@ -70,7 +70,11 @@ public class SerialWriter extends Thread {
 			try {
 				this.out.write(dataToWrite[i]);
 				this.out.flush();
+				Thread.sleep(75);
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

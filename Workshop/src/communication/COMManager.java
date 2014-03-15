@@ -25,20 +25,23 @@ public class COMManager {
 			UnsupportedCommOperationException, IOException {
 		CommPortIdentifier portIdentifier = null;
 		int identifier = 0;
-		try { //On essaye de trouver le port souhaité
+		try { // On essaye de trouver le port souhaité
 			portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
-			if (portIdentifier.isCurrentlyOwned())  //On regarde s'il est libre
+			if (portIdentifier.isCurrentlyOwned()) // On regarde s'il est libre
 			{
-				System.err.println("Error: Port "+ portName + " is currently in use, try later ...");
+				System.err.println("Error: Port " + portName
+						+ " is currently in use, try later ...");
 				return false;
 			}
 		} catch (NoSuchPortException e1) {
 		}
 
-		if (portIdentifier == null) { //On a pas réussit a trouver le port
-			
-			System.out.println(portName+" not found, \n \tTrying port COM0 to COM20");
-			while (identifier <= 20) { //On essaye tous les ports de COM0 a COM20
+		if (portIdentifier == null) { // On a pas réussit a trouver le port
+
+			System.out.println(portName
+					+ " not found, \n \tTrying port COM0 to COM20");
+			while (identifier <= 20) { // On essaye tous les ports de COM0 a
+										// COM20
 				try {
 					portIdentifier = CommPortIdentifier.getPortIdentifier("COM"
 							+ identifier);
@@ -47,39 +50,43 @@ public class COMManager {
 				}
 				identifier++;
 			}
-			if (portIdentifier != null)//On a trouvé un port
+			if (portIdentifier != null)// On a trouvé un port
 			{
-				if (portIdentifier.isCurrentlyOwned())  //On regarde s'il est libre
+				if (portIdentifier.isCurrentlyOwned()) // On regarde s'il est
+														// libre
 				{
-					System.err.println("Error: Port COM" + identifier + " is currently in use, try later ...");
+					System.err.println("Error: Port COM" + identifier
+							+ " is currently in use, try later ...");
 					return false;
 				}
-			} 
-			else //Pas de port trouvé;
+			} else // Pas de port trouvé;
 			{
 				System.err.println("No port found");
 				return false;
 			}
 		}
-		if (portIdentifier != null) { // On a trouvé un port existant et non utilisé
+		if (portIdentifier != null) { // On a trouvé un port existant et non
+										// utilisé
 			CommPort commPort = portIdentifier.open(this.getClass().getName(),
 					2000);
 
-			if (commPort instanceof SerialPort) { //On regarde si c'est un lien série
+			if (commPort instanceof SerialPort) { // On regarde si c'est un lien
+													// série
 				SerialPort serialPort = (SerialPort) commPort;
-				serialPort.setSerialPortParams(this.rate, SerialPort.DATABITS_8,
-						SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+				serialPort.setSerialPortParams(this.rate,
+						SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
+						SerialPort.PARITY_NONE);
 
 				InputStream in = serialPort.getInputStream();
+				while(in.read() != -1);
 				OutputStream out = serialPort.getOutputStream();
 
 				this.comReader = new SerialReader(in);
 				this.comWriter = new SerialWriter(out);
-				System.out.println("Connection successful to COM"+identifier);
+				System.out.println("Connection successful to COM" + identifier);
 				return true;
 			} else {
-				System.err
-						.println("Error: Only serial ports can be handle");
+				System.err.println("Error: Only serial ports can be handle");
 				return false;
 			}
 		}
@@ -87,42 +94,48 @@ public class COMManager {
 
 	}
 
-	public void disconnect()
-	{
+	public void disconnect() {
 		this.comReader.close();
 		this.comWriter.close();
 	}
-	
+
 	public void writeData(byte[] data) {
 		this.comWriter.start();
 		this.comReader.start();
 		System.out.println("debut de transmision");
 
-		while (!this.comReader.acknowledgement) {
-			this.comWriter.willSend = SIG_BEGIN;
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		System.out.println("réponse de l'arduino, envoie en cours ...");
+		try {
+			Thread.sleep(10000);
+			
+				this.comWriter.willSend = SIG_BEGIN;
+				
+			
+				while (!this.comReader.acknowledgement) {
+					Thread.sleep(10);
+					}
+			System.out.println("réponse de l'arduino, envoie en cours ...");
+			
+			this.comReader.acknowledgement = false;
+			this.comWriter.willSend = (byte) data.length;
+			Thread.sleep(1000);
+			this.comWriter.setDataToBeWrite(data);
+			
+			this.comWriter.willWrite = true;
+			while (comWriter.willWrite)
+			{Thread.sleep(5);}
+			/*
+			while (!this.comReader.acknowledgement) {
+				this.comWriter.willSend = 0;*
 
-		this.comReader.acknowledgement = false;
-		this.comWriter.setDataToBeWrite(data);
-		this.comWriter.willWrite = true;
+				Thread.sleep(15);
+			}*/
+			System.out.println("Fin de transmission");
+			Thread.sleep(10000000);
 
-		while (!this.comReader.acknowledgement) {
-			this.comWriter.willSend = 0;
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		System.out.println("Fin de transmision");
 	}
 
 	public int getRate() {
