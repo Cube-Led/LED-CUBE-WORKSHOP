@@ -1,5 +1,7 @@
 package gui;
 
+import gui.Cube3D.LwjglTest;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Menu;
@@ -46,18 +48,22 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 		this.setSize(350, 175);
 		this.setResizable(false);
 
-		configureComponents();
+		configureMenu();
 		this.setContentPane(new ViewMainMenu(this));
 		this.getContentPane().update(this.getGraphics());
 		
 		
 		
 	}
-	private void configureComponents()
+	private void configureMenu()
 	{
 		this.menuBar = new MenuBar();
 		this.menuFichier = new Menu("Fichier");
 		this.menuConfig = new Menu("Options");
+		
+		MenuItem vue3D = new MenuItem("Vue3D");
+		vue3D.addActionListener(this);
+		this.menuFichier.add(vue3D);
 		
 		MenuItem quitter = new MenuItem("Quitter");
 		quitter.addActionListener(this);
@@ -108,6 +114,11 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 			
 			if(((MenuItem)arg0.getSource()).getLabel().equals("Définir le cube"))
 				new ConfigFrame(polling);
+			
+			if(((MenuItem)arg0.getSource()).getLabel().equals("Vue3D"))
+			{
+				new LwjglTest(this.polling);
+			}
 		}
 			
 	}

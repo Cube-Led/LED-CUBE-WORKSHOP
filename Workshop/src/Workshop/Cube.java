@@ -28,5 +28,8 @@ public class Cube {
 		this.isMonochrome = isMonochrome;
 	}
 	
-
+	public int getSizeCube()
+	{
+		return this.sizeCube;
+	}
 }

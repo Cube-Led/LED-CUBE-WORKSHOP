@@ -1,8 +1,9 @@
 package gui.Cube3D;
+
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -12,24 +13,24 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import org.lwjgl.LWJGLException;
-import org.lwjgl.LWJGLUtil;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.glu.Sphere;
-import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
 
-public class LwjglTest extends JFrame {
+import Workshop.UserPolling;
 
-	private static final int LAYER_COUNT = 4;
-	private static final int LED_COUNT = LAYER_COUNT * LAYER_COUNT
-			* LAYER_COUNT;
-	private static float SPHERE_RADIUS = 120/LAYER_COUNT;
+public class LwjglTest extends JFrame implements WindowListener{
+
+	
+	private static final long serialVersionUID = -8636527348955613652L;
+	
+	private final int nbLayer;
+	private final int nbLed;
+	private float sphereRadius;
 
 	private final float ROTATION_AXIS_ENABLED = 1f;
 	private final float ROTATION_AXIS_DISABLED = 0f;
@@ -47,24 +48,31 @@ public class LwjglTest extends JFrame {
 
 	private float rotationAngle;
 
-	private float ratioForMarginBetweenLeds = 240/LAYER_COUNT +30;
+	private float ratioForMarginBetweenLeds;
 
 	private int nodeListIndex;
 	
-	private long startTime;
-	private long endTime;
-	private int framesElapsed = 0;
-
-	public LwjglTest() {
+	private final UserPolling polling;
+	
+	private Canvas canvas;
+	
+	public LwjglTest(UserPolling u) {
+		
+		this.polling = u;
+		this.nbLayer = u.getTheCube().getSizeCube();
+		this.nbLed = this.nbLayer*this.nbLayer*this.nbLayer;
+		this.ratioForMarginBetweenLeds = 240/nbLayer +30;
+		this.sphereRadius = 120/nbLayer;
+		
 		System.out.println(Short.SIZE);
 		this.setTitle("Lwjgl Test");
-		//this.setSize(1366, 768);
+		
 		this.setSize(1000, 650);
 		this.setLocationRelativeTo(null);
 		JPanel p1 = new JPanel();
 		JPanel p2 = new JPanel();
 		
-		Canvas canvas = new Canvas();
+		canvas = new Canvas();
 		canvas.setSize(800, 600);
 		p2.add(new JButton("JE SUIS UN BOUTON !!!!"));
 		p2.setPreferredSize(new Dimension(100,600));
@@ -73,7 +81,6 @@ public class LwjglTest extends JFrame {
 		p1.add(canvas);
 		this.add(p1);
 
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		this.setVisible(true);
 
@@ -87,7 +94,9 @@ public class LwjglTest extends JFrame {
 		init();
 		computeCoordinates();
 		drawScene();
-		startTime = System.nanoTime();
+
+		this.addWindowListener(this);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		beginRenderLoop();
 	}
 
@@ -172,11 +181,12 @@ public class LwjglTest extends JFrame {
 		translation(staticLed, 0, 0, -(1.2f*END_VIEW));
 		rotation(staticLed, (float)Math.PI/6, 1, 0, 0);
 		rotation(staticLed, (float)Math.PI/-12, 0, 1, 0);
-		for(int i=0;i<staticLed.length;i++)
-			System.out.println(staticLed[i]);
+		/*for(int i=0;i<staticLed.length;i++)
+			System.out.println(staticLed[i]);*/
 		
 		
-		// translation(movingVectors, 0, 0, -BEGIN_VIEW);
+		translation(this.staticLed, staticLed[0].pos.x + canvas.getWidth()/2, 0, 0);
+		translation(this.staticLed, 0, staticLed[0].pos.y + canvas.getHeight()/2 , 0);
 		while (!Display.isCloseRequested()) {
 
 		
@@ -185,20 +195,14 @@ public class LwjglTest extends JFrame {
 			if (Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
 
 				
-				/*
-				 * endTime = System.nanoTime(); double duration = (endTime -
-				 * startTime) / Math.pow(10, 9); double frameRate =
-				 * framesElapsed / duration; this.setTitle("Average fps over " +
-				 * duration + " seconds: " + frameRate);
-				 */
 				int i = 0;
-				Led temp[] = new Led[LAYER_COUNT];
+				Led temp[] = new Led[nbLayer];
 				int count=0;
-				for (i = 0; i < LED_COUNT; i++) 
+				for (i = 0; i < nbLed; i++) 
 				{
 					float x1 = staticLed[i].pos.x;
 					float y1 = staticLed[i].pos.y;
-					if (isBetween(Mouse.getX(), x1 - SPHERE_RADIUS, x1 + SPHERE_RADIUS) && isBetween(Mouse.getY(), y1 -SPHERE_RADIUS, y1 + SPHERE_RADIUS)) 
+					if (isBetween(Mouse.getX(), x1 - sphereRadius, x1 + sphereRadius) && isBetween(Mouse.getY(), y1 -sphereRadius, y1 + sphereRadius)) 
 					{
 						temp[count] = staticLed[i];
 						count++;
@@ -274,7 +278,7 @@ public class LwjglTest extends JFrame {
 		Sphere sphere = new Sphere();
 
 		GL11.glNewList(nodeListIndex, GL11.GL_COMPILE);
-		sphere.draw(SPHERE_RADIUS, 100, 6);
+		sphere.draw(sphereRadius, 100, 6);
 		GL11.glEndList();
 	}
 
@@ -304,15 +308,15 @@ public class LwjglTest extends JFrame {
 
 	private void computeCoordinates() {
 
-		staticLed = new Led[LED_COUNT];
+		staticLed = new Led[nbLed];
 		initVectors();
 	}
 
 	private void initVectors() {
 		int count = 0;
-		for (int y = 0; y < LAYER_COUNT; y++) {
-			for (int x = LAYER_COUNT - 1; x >= 0; x--) {
-				for (int z = LAYER_COUNT - 1; z >= 0; z--) {
+		for (int y = 0; y < nbLayer; y++) {
+			for (int x = nbLayer - 1; x >= 0; x--) {
+				for (int z = nbLayer - 1; z >= 0; z--) {
 					staticLed[count] = new Led(
 							(float) (x * ratioForMarginBetweenLeds),
 							(float) (y * ratioForMarginBetweenLeds),
@@ -343,7 +347,7 @@ public class LwjglTest extends JFrame {
 		translation(staticLed, -(staticLed[0].pos.x - temp.x),
 				-(staticLed[0].pos.y - temp.y), -(staticLed[0].pos.z - temp.z));
 		float alpha =0;
-		for (int i = 0; i < LED_COUNT; i++) {
+		for (int i = 0; i < nbLed; i++) {
 			
 			if(staticLed[i].getIsOn())
 				alpha=1f;
@@ -400,5 +404,34 @@ public class LwjglTest extends JFrame {
 		drawNodes();
 		Display.update();
 	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		
+		System.out.println("Activated");
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {}
+
+	@Override
+	public void windowClosing(WindowEvent e)
+	{
+			
+				System.out.println("Closing ...");
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {}
+
+	@Override
+	public void windowIconified(WindowEvent e) {}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		System.out.println("Opened");}
 
 }
