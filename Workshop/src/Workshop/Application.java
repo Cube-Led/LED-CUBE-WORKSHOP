@@ -267,14 +267,14 @@ public class Application implements UserPolling {
 
 		COMManager l = new COMManager(9600);
 		try {
-			if (l.connect("COM6"))
+			if (l.connect("COM3"))
 			{
-				int len;
 				FileInputStream f = new FileInputStream(file);
 				byte[] buffer = new byte[(int) file.length()];
 				f.read(buffer);
 				l.writeData(buffer);
 				l.disconnect();
+				f.close();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

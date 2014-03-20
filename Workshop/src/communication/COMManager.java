@@ -78,7 +78,8 @@ public class COMManager {
 						SerialPort.PARITY_NONE);
 
 				InputStream in = serialPort.getInputStream();
-				while(in.read() != -1);
+				while (in.read() != -1)
+					;
 				OutputStream out = serialPort.getOutputStream();
 
 				this.comReader = new SerialReader(in);
@@ -100,15 +101,20 @@ public class COMManager {
 	}
 
 	public void writeData(byte[] data) {
+		try {
+			comWriter.out.write(9600);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		int timeCount = 0;
 		this.comWriter.start();
 		this.comReader.start();
-		System.out.println("debut de transmision");
-
+		System.out.println("Debut de transmision");
 		try {
-			Thread.sleep(100);
-			
+			Thread.sleep(2000);
 			this.comWriter.willSend = SIG_BEGIN;
-			int timeCount = 0;
 			while (!this.comReader.acknowledgement && timeCount < 500) {
 				Thread.sleep(10);
 				timeCount++;
@@ -117,21 +123,15 @@ public class COMManager {
 				System.out.println("ECHEC du transfert");
 				return;
 			}
-			System.out.println("réponse de l'arduino, envoie en cours ...");
+			System.out.println("Reponse de l'arduino, envoie en cours ...");
 			this.comReader.acknowledgement = false;
 			this.comWriter.willSend = (byte) data.length;
 			Thread.sleep(1000);
 			this.comWriter.setDataToBeWrite(data);
-
 			this.comWriter.willWrite = true;
-			while (comWriter.willWrite)
-			{Thread.sleep(5);}
-			/*
-			while (!this.comReader.acknowledgement) {
-				this.comWriter.willSend = 0;*
-
-				Thread.sleep(15);
-			}*/
+			while (comWriter.willWrite) {
+				Thread.sleep(5);
+			}
 			System.out.println("Fin de transmission");
 			Thread.sleep(1000);
 

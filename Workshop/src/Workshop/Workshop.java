@@ -1,4 +1,6 @@
 package Workshop;
+import java.io.File;
+
 import gui.GUIDisplay;
 import gui.GuiChoiceAsker;
 
@@ -25,6 +27,8 @@ public class Workshop {
 		//ScannerChoiceAsker choice = new ScannerChoiceAsker();
 
 		Application app = new Application(display, choice);
+		File file = new File("instructions.bin");
+		//app.sendFile(file);
 		if(!(display instanceof GUIDisplay))
 		{
 			app.recordInstructions();

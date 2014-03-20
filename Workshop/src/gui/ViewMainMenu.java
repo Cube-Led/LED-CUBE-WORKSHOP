@@ -1,5 +1,7 @@
 package gui;
 
+import gui.Cube3D.View3D;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -155,6 +157,10 @@ public class ViewMainMenu extends View implements ActionListener {
 		}			
 		else if (e.getSource() instanceof JButton && ((JButton)e.getSource()).equals(this.bt_creaDraw)){
 			this.motherFrame.setContentPane(new ViewDynamicLED(motherFrame));
+		}
+		else if(e.getSource() instanceof JButton && ((JButton)e.getSource()).equals(this.bt_crea3D)){
+			 Thread view3D = new Thread(new View3D(this.motherFrame.getPolling()));
+			 view3D.start();
 		}
 		else if (e.getSource() instanceof JButton && ((JButton)e.getSource()).equals(this.bt_loadProg)){
 			JFileChooser saveFile = new JFileChooser();

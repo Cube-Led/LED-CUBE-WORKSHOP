@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class SerialWriter extends Thread {
-	private final OutputStream out;
+	public final OutputStream out;
 	private byte[] dataToWrite;
 
 	public boolean willWrite;
@@ -80,7 +80,6 @@ public class SerialWriter extends Thread {
 			}
 			i++;
 		}
-		
 	}
 	
 	

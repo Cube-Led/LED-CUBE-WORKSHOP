@@ -61,6 +61,10 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 		this.menuFichier = new Menu("Fichier");
 		this.menuConfig = new Menu("Options");
 		
+		MenuItem vueLED = new MenuItem("VueLED");
+		vueLED.addActionListener(this);
+		this.menuFichier.add(vueLED);
+		
 		MenuItem vue3D = new MenuItem("Vue3D");
 		vue3D.addActionListener(this);
 		this.menuFichier.add(vue3D);
@@ -119,6 +123,10 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 			{
 				 Thread thread = new Thread(new View3D(this.polling));
 				 thread.start();
+			}
+			else if(((MenuItem)arg0.getSource()).getLabel().equals("VueLED"))
+			{
+				new ViewDynamicLED(this);
 			}
 		}
 			
