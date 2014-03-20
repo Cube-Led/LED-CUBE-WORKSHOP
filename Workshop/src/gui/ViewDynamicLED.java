@@ -74,7 +74,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 	
 	public void initDisplay() {
 		
-		this.cube_size = 8;
+		this.cube_size = this.motherFrame.getPolling().getTheCube().getSizeCube();
 		this.ledGrid = new Led[this.cube_size*this.cube_size];
 		this.numberLayer = 1;
 		
@@ -131,7 +131,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 		bt_saveOneInstruction.setBounds(this.CENTER_LEFTPAN , 535, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		left.add(bt_saveOneInstruction);
 
-		bt_loadInstructionsOnCube = new JButton("Charger l'animation sur le cube");
+		bt_loadInstructionsOnCube = new JButton("Enregistrer l'animation sur un fichier");
 		bt_loadInstructionsOnCube.addActionListener(this);
 		bt_loadInstructionsOnCube.setName(this.loadInstructionsIdentifier);
 		bt_loadInstructionsOnCube.setBounds(this.CENTER_LEFTPAN , 575, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
@@ -242,7 +242,5 @@ public class ViewDynamicLED extends View implements ActionListener {
 			}
 		}
 	}
-	
-	
 	
 }

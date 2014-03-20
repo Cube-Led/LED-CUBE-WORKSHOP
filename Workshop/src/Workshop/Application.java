@@ -142,17 +142,11 @@ public class Application implements UserPolling {
 	public void recordInstructions() {
 		Instruction current;
 		for (this.countInstructions = 0; (this.countInstructions < MAX_NUMBER_OF_INSTRUCTION_TO_SAVE); this.countInstructions++) {
-
 			Instruction[] x = this.cubesInstructions.toArray(new Instruction[this.cubesInstructions.size()]);
-
 			this.display.displayChoiceOfInstruction(x);
-
 			this.display.print(END_OF_RECORDING_INSTRUCTION + "-Envoyer les instructions \n");
-
 			display.displayAskingOfAnArgument("Choix (taper " + END_OF_RECORDING_INSTRUCTION + " pour finir)");
-
 			int codeOpCurrent = choice.askInteger();
-
 			if (codeOpCurrent != END_OF_RECORDING_INSTRUCTION) {
 				Iterator<Instruction> iterator = this.cubesInstructions.iterator();
 				Instruction newInstruct;
@@ -202,7 +196,6 @@ public class Application implements UserPolling {
 		int index =0;
 		while(b.get(index) == 0)
 			index++;
-		
 		for(;index <8;index++)
 				out.writeByte(b.get(index));
 	}
@@ -243,6 +236,10 @@ public class Application implements UserPolling {
 		try {
 			DataOutputStream r = new DataOutputStream(new FileOutputStream(file));
 			for (int i = 0; i < instructionToWrite.length && instructionToWrite[i] != null; i++) {
+				byte s1 = (byte) (instructionToWrite[i].getSize() >> 8);
+				byte s2 = (byte) (instructionToWrite[i].getSize() & 0x00FF);
+				r.write(s1);
+				r.write(s2);
 				byte c1 = (byte) (instructionToWrite[i].getCodeOp() >> 8);
 				byte c2 = (byte) (instructionToWrite[i].getCodeOp() & 0x00FF);
 				r.write(c1);
@@ -251,7 +248,7 @@ public class Application implements UserPolling {
 					byte b1 = (byte) (instructionToWrite[i].getArgs().get(j) >> 8);
 					byte b2 = (byte) (instructionToWrite[i].getArgs().get(j) & 0x00FF);
 					r.write(b1);
-					r.write(b2);
+					r.write(b2);					
 				}
 			}
 			r.close();
@@ -266,14 +263,13 @@ public class Application implements UserPolling {
 
 	@Override
 
-	public void sendFile() {
+	public void sendFile(File file) {
 
 		COMManager l = new COMManager(9600);
 		try {
 			if (l.connect("COM6"))
 			{
 				int len;
-				File file = new File("instructions.bin");
 				FileInputStream f = new FileInputStream(file);
 				byte[] buffer = new byte[(int) file.length()];
 				f.read(buffer);
@@ -290,15 +286,13 @@ public class Application implements UserPolling {
 		current.setArgs(args);
 		current.setDescriptionArguments(descriptionArgs);
 		instructionToWrite[this.countInstructions] = current;
-		System.out.println(current);
 		this.display.displayBuffer(instructionToWrite, countInstructions);
 		this.countInstructions++;
 	}
 
 	@Override
 	public void requestDisplayOfPrimitiveInstructions() {
-		this.display.displayChoiceOfInstruction(this.cubesInstructions
-				.toArray(new Instruction[this.cubesInstructions.size()]));
+		this.display.displayChoiceOfInstruction(this.cubesInstructions.toArray(new Instruction[this.cubesInstructions.size()]));
 	}
 
 	@Override
@@ -308,9 +302,5 @@ public class Application implements UserPolling {
 	@Override
 	public void setTheCube(Cube c) {
 		this.theCube = c;
-	}
-
-
-	
-	
+	}	
 }

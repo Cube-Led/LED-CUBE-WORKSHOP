@@ -23,7 +23,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import Workshop.UserPolling;
 
-public class LwjglTest extends JFrame implements WindowListener, Runnable{
+public class View3D extends JFrame implements WindowListener, Runnable{
 
 	
 	private static final long serialVersionUID = -8636527348955613652L;
@@ -56,7 +56,7 @@ public class LwjglTest extends JFrame implements WindowListener, Runnable{
 	
 	private Canvas canvas;
 	
-	public LwjglTest(UserPolling u) {
+	public View3D(UserPolling u) {
 		
 		this.polling = u;
 		this.nbLayer = u.getTheCube().getSizeCube();

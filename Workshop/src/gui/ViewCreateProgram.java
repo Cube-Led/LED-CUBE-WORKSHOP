@@ -105,7 +105,7 @@ public class ViewCreateProgram extends View implements ActionListener{
 		bt_saveOneInstruction.setBounds(this.CENTER_LEFTPAN , 435, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		left.add(bt_saveOneInstruction);
 
-		bt_loadInstructionsOnCube = new JButton("Charger l'animation sur le cube");
+		bt_loadInstructionsOnCube = new JButton("Enregistrer l'animation sur un fichier");
 		bt_loadInstructionsOnCube.addActionListener(this);
 		bt_loadInstructionsOnCube.setName(this.loadInstructionOnCubeIdentifier);
 		bt_loadInstructionsOnCube.setBounds(this.CENTER_LEFTPAN , 475, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);

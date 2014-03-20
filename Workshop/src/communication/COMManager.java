@@ -105,21 +105,24 @@ public class COMManager {
 		System.out.println("debut de transmision");
 
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(100);
 			
-				this.comWriter.willSend = SIG_BEGIN;
-				
-			
-				while (!this.comReader.acknowledgement) {
-					Thread.sleep(10);
-					}
+			this.comWriter.willSend = SIG_BEGIN;
+			int timeCount = 0;
+			while (!this.comReader.acknowledgement && timeCount < 500) {
+				Thread.sleep(10);
+				timeCount++;
+			}
+			if (!this.comReader.acknowledgement) {
+				System.out.println("ECHEC du transfert");
+				return;
+			}
 			System.out.println("réponse de l'arduino, envoie en cours ...");
-			
 			this.comReader.acknowledgement = false;
 			this.comWriter.willSend = (byte) data.length;
 			Thread.sleep(1000);
 			this.comWriter.setDataToBeWrite(data);
-			
+
 			this.comWriter.willWrite = true;
 			while (comWriter.willWrite)
 			{Thread.sleep(5);}
@@ -130,7 +133,7 @@ public class COMManager {
 				Thread.sleep(15);
 			}*/
 			System.out.println("Fin de transmission");
-			Thread.sleep(10000000);
+			Thread.sleep(1000);
 
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block

@@ -6,10 +6,12 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -154,7 +156,12 @@ public class ViewMainMenu extends View implements ActionListener {
 		else if (e.getSource() instanceof JButton && ((JButton)e.getSource()).equals(this.bt_creaDraw)){
 			this.motherFrame.setContentPane(new ViewDynamicLED(motherFrame));
 		}
-		//else if (e.getSource() instanceof JButton && ((JButton)e.getSource()).equals(this.bt_creaPicture))
+		else if (e.getSource() instanceof JButton && ((JButton)e.getSource()).equals(this.bt_loadProg)){
+			JFileChooser saveFile = new JFileChooser();
+			saveFile.showOpenDialog(this);
+			File saveInFile = saveFile.getSelectedFile();
+			this.motherFrame.getPolling().sendFile(saveInFile);
+		}
 	}
 	
 	public void paintComponent(Graphics g){

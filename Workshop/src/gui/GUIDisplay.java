@@ -1,6 +1,6 @@
 package gui;
 
-import gui.Cube3D.LwjglTest;
+import gui.Cube3D.View3D;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -117,7 +117,7 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 			
 			if(((MenuItem)arg0.getSource()).getLabel().equals("Vue3D"))
 			{
-				 Thread thread = new Thread(new LwjglTest(this.polling));
+				 Thread thread = new Thread(new View3D(this.polling));
 				 thread.start();
 			}
 		}
