@@ -71,16 +71,12 @@ public class Instruction {
 	public String toString() {
 		String str = "";
 		if(args == null || args.size() == 0)
-		{
-			str = "" + (int) codeOp + " : " + this.description;;
-		}
+			str = "" + (int) codeOp + " : " + this.description;
 		else
 		{
 			str = "" + (int) codeOp + " : " + this.description + " ";
-					for(int i=0; i< nbArgs; i++)
-					{
-						str = str + " " + descriptionArguments[i] +" : " + (args.get(i));
-					}
+			for(int i=0; i< nbArgs; i++)
+				str = str + " " + descriptionArguments[i] +" : " + (args.get(i));
 		}
 		return str;
 	}

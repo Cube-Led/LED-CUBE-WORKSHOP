@@ -16,9 +16,6 @@ import Workshop.UserPolling;
 
 public class ConfigFrame extends JFrame implements WindowListener{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 752538686633551204L;
 
 	private final UserPolling polling;
@@ -34,7 +31,6 @@ public class ConfigFrame extends JFrame implements WindowListener{
 		super();
 		this.polling = u;
 		this.setTitle("Configuration");
-		
 		this.setSize(300, 200);
 		this.setVisible(true);
 		this.addWindowListener(this);

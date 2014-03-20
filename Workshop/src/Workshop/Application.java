@@ -31,7 +31,7 @@ public class Application implements UserPolling {
 	/**
 	 * Max size of the list of instruction
 	 */
-	public static final int MAX_NUMBER_OF_INSTRUCTION_TO_SAVE = 150;
+	public static final int MAX_NUMBER_OF_INSTRUCTION_TO_SAVE = 200;
 
 	/**
 	 * Number for ending the editing of instructions
@@ -143,22 +143,18 @@ public class Application implements UserPolling {
 		Instruction current;
 		for (this.countInstructions = 0; (this.countInstructions < MAX_NUMBER_OF_INSTRUCTION_TO_SAVE); this.countInstructions++) {
 
-			Instruction[] x = this.cubesInstructions
-					.toArray(new Instruction[this.cubesInstructions.size()]);
+			Instruction[] x = this.cubesInstructions.toArray(new Instruction[this.cubesInstructions.size()]);
 
 			this.display.displayChoiceOfInstruction(x);
 
-			this.display.print(END_OF_RECORDING_INSTRUCTION
-					+ "-Envoyer les instructions \n");
+			this.display.print(END_OF_RECORDING_INSTRUCTION + "-Envoyer les instructions \n");
 
-			display.displayAskingOfAnArgument("Choix (taper "
-					+ END_OF_RECORDING_INSTRUCTION + " pour finir)");
+			display.displayAskingOfAnArgument("Choix (taper " + END_OF_RECORDING_INSTRUCTION + " pour finir)");
 
 			int codeOpCurrent = choice.askInteger();
 
 			if (codeOpCurrent != END_OF_RECORDING_INSTRUCTION) {
-				Iterator<Instruction> iterator = this.cubesInstructions
-						.iterator();
+				Iterator<Instruction> iterator = this.cubesInstructions.iterator();
 				Instruction newInstruct;
 				boolean finded = false;
 				while (iterator.hasNext()) {
@@ -182,17 +178,16 @@ public class Application implements UserPolling {
 								args.set(j,(short) tempArg);
 							}
 						}
-						newInstruct = new Instruction((byte) codeOpCurrent,
-								current.getDescription(), current.getNbArgs());
+						newInstruct = new Instruction((byte) codeOpCurrent, current.getDescription(), current.getNbArgs());
 						newInstruct.setArgs(args);
 						instructionToWrite[this.countInstructions] = newInstruct;
-						display.displayBuffer(instructionToWrite,
-								countInstructions);
+						display.displayBuffer(instructionToWrite, countInstructions);
 					}
 				}
 				if (!finded)
 					countInstructions--;
-			} else
+			} 
+			else
 				break;
 			if (this.countInstructions == Application.MAX_NUMBER_OF_INSTRUCTION_TO_SAVE)
 				display.println("You have reached the end of the instruction buffer");
@@ -215,13 +210,39 @@ public class Application implements UserPolling {
 	/**
 	 * Write the current tab of instruction into the file "instructions.bin"
 	 */
-	public void writeSavedInstructionsInSavefile() {
+	/*public void writeSavedInstructionsInSavefile() {
 		File file = new File("instructions.bin");
 		try {
 			DataOutputStream r = new DataOutputStream(
 					new FileOutputStream(file));
 			for (int i = 0; i < instructionToWrite.length
 					&& instructionToWrite[i] != null; i++) {
+				byte c1 = (byte) (instructionToWrite[i].getCodeOp() >> 8);
+				byte c2 = (byte) (instructionToWrite[i].getCodeOp() & 0x00FF);
+				r.write(c1);
+				r.write(c2);
+				for (int j = 0; j < instructionToWrite[i].getArgs().size(); j++) {
+					byte b1 = (byte) (instructionToWrite[i].getArgs().get(j) >> 8);
+					byte b2 = (byte) (instructionToWrite[i].getArgs().get(j) & 0x00FF);
+					r.write(b1);
+					r.write(b2);
+				}
+			}
+			r.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}*/
+	
+	public void writeSavedInstructionsInSavefile(File file) {
+		//File file = new File(nameFile);
+		try {
+			DataOutputStream r = new DataOutputStream(new FileOutputStream(file));
+			for (int i = 0; i < instructionToWrite.length && instructionToWrite[i] != null; i++) {
 				byte c1 = (byte) (instructionToWrite[i].getCodeOp() >> 8);
 				byte c2 = (byte) (instructionToWrite[i].getCodeOp() & 0x00FF);
 				r.write(c1);
@@ -288,6 +309,8 @@ public class Application implements UserPolling {
 	public void setTheCube(Cube c) {
 		this.theCube = c;
 	}
+
+
 	
 	
 }

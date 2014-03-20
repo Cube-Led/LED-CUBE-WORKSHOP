@@ -29,7 +29,7 @@ public class Workshop {
 		if(!(display instanceof GUIDisplay))
 		{
 			app.recordInstructions();
-			app.writeSavedInstructionsInSavefile();
+			//app.writeSavedInstructionsInSavefile();
 		}
 	}
 }

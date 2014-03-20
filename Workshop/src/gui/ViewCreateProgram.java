@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -92,7 +94,7 @@ public class ViewCreateProgram extends View implements ActionListener{
 		/* ---------------- Milieu ---------------- */
 		
 		this.pan_enterArguments = new Box(BoxLayout.PAGE_AXIS);
-		this.pan_enterArguments.setBounds(10, 200, this.LEFTPAN_WIDTH -20, 240);
+		this.pan_enterArguments.setBounds(10, 200, this.LEFTPAN_WIDTH -20, 230);
 		left.add(this.pan_enterArguments);
 		
 		/* ---------------- Bas ---------------- */
@@ -100,19 +102,19 @@ public class ViewCreateProgram extends View implements ActionListener{
 		bt_saveOneInstruction = new JButton("Enregistrer cette instruction");
 		bt_saveOneInstruction.addActionListener(this);
 		bt_saveOneInstruction.setName(this.saveOneInstructionIdentifier);
-		bt_saveOneInstruction.setBounds(this.CENTER_LEFTPAN , 450, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		bt_saveOneInstruction.setBounds(this.CENTER_LEFTPAN , 435, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		left.add(bt_saveOneInstruction);
 
 		bt_loadInstructionsOnCube = new JButton("Charger l'animation sur le cube");
 		bt_loadInstructionsOnCube.addActionListener(this);
-		bt_loadInstructionsOnCube.setName(this.loadInstructionsIdentifier);
-		bt_loadInstructionsOnCube.setBounds(this.CENTER_LEFTPAN , 490, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		bt_loadInstructionsOnCube.setName(this.loadInstructionOnCubeIdentifier);
+		bt_loadInstructionsOnCube.setBounds(this.CENTER_LEFTPAN , 475, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		left.add(bt_loadInstructionsOnCube);
 		
 		bt_retourMenu = new JButton("Retour au menu principal");
 		bt_retourMenu.addActionListener(this);
 		bt_retourMenu.setName(this.retourMenuIdentifier);
-		bt_retourMenu.setBounds(this.CENTER_LEFTPAN , 530, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		bt_retourMenu.setBounds(this.CENTER_LEFTPAN , 515, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		left.add(bt_retourMenu);		
 
 		left.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -189,7 +191,10 @@ public class ViewCreateProgram extends View implements ActionListener{
 			}
 			else if(((JButton)e.getSource()).getName().equals(this.loadInstructionOnCubeIdentifier))
 			{
-				this.motherFrame.getPolling().writeSavedInstructionsInSavefile();
+				JFileChooser saveFile = new JFileChooser();
+				saveFile.showOpenDialog(this);
+				File saveInFile = saveFile.getSelectedFile();
+				this.motherFrame.getPolling().writeSavedInstructionsInSavefile(saveInFile);
 			}
 			else if(((JButton)e.getSource()).getName().equals(this.retourMenuIdentifier))
 			{

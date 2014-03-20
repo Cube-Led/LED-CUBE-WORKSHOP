@@ -1,14 +1,15 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -118,7 +119,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 		/* ---------------- Milieu ---------------- */
 		
 		pictureLED = new LedJPan(this.cube_size, (int)(this.motherFrame.getWidth()*ViewDynamicLED.RATIO_LED), this.ledGrid);
-		pictureLED.setBounds(0, 135, this.LEFTPAN_WIDTH, 420);
+		pictureLED.setBounds(0, 135, this.LEFTPAN_WIDTH, 395);
 		left.add(pictureLED);
 		
 		
@@ -127,19 +128,19 @@ public class ViewDynamicLED extends View implements ActionListener {
 		bt_saveOneInstruction = new JButton("Enregistrer cette instruction");
 		bt_saveOneInstruction.addActionListener(this);
 		bt_saveOneInstruction.setName(this.saveOneInstructionIdentifier);
-		bt_saveOneInstruction.setBounds(this.CENTER_LEFTPAN , 560, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		bt_saveOneInstruction.setBounds(this.CENTER_LEFTPAN , 535, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		left.add(bt_saveOneInstruction);
 
 		bt_loadInstructionsOnCube = new JButton("Charger l'animation sur le cube");
 		bt_loadInstructionsOnCube.addActionListener(this);
 		bt_loadInstructionsOnCube.setName(this.loadInstructionsIdentifier);
-		bt_loadInstructionsOnCube.setBounds(this.CENTER_LEFTPAN , 595, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		bt_loadInstructionsOnCube.setBounds(this.CENTER_LEFTPAN , 575, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		left.add(bt_loadInstructionsOnCube);
 		
 		bt_retourMenu = new JButton("Retour au menu principal");
 		bt_retourMenu.addActionListener(this);
 		bt_retourMenu.setName(this.retourMenuIdentifier);
-		bt_retourMenu.setBounds(this.CENTER_LEFTPAN , 630, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		bt_retourMenu.setBounds(this.CENTER_LEFTPAN , 615, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		left.add(bt_retourMenu);
 				
 		
@@ -199,6 +200,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 		for (int i =0; i < this.cube_size*this.cube_size; i++){
 			this.ledGrid[i].setState(Led.OFF);
 		}
+		this.repaint();
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -212,6 +214,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 					this.bt_upLevel.setEnabled(false);
 				this.bt_downLevel.setEnabled(true);
 				this.lbl_currentLayer.setText(this.currentLayerText + this.numberLayer);
+				this.resetStateLed(this.ledGrid);
 			}
 			else if(((JButton)e.getSource()).getName().equals(this.downLevelIdentifier))
 			{
@@ -220,6 +223,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 					this.bt_downLevel.setEnabled(false);
 				this.bt_upLevel.setEnabled(true);
 				this.lbl_currentLayer.setText(this.currentLayerText + this.numberLayer);
+				this.resetStateLed(this.ledGrid);
 			}
 			else if(((JButton)e.getSource()).getName().equals(this.saveOneInstructionIdentifier))
 			{
@@ -227,7 +231,10 @@ public class ViewDynamicLED extends View implements ActionListener {
 			}
 			else if(((JButton)e.getSource()).getName().equals(this.loadInstructionsIdentifier))
 			{
-				this.motherFrame.getPolling().writeSavedInstructionsInSavefile();
+				JFileChooser saveFile = new JFileChooser();
+				saveFile.showOpenDialog(this);
+				File saveInFile = saveFile.getSelectedFile();
+				this.motherFrame.getPolling().writeSavedInstructionsInSavefile(saveInFile);
 			}
 			else if(((JButton)e.getSource()).getName().equals(this.retourMenuIdentifier))
 			{
