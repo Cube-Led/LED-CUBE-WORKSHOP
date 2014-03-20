@@ -117,7 +117,8 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 			
 			if(((MenuItem)arg0.getSource()).getLabel().equals("Vue3D"))
 			{
-				new LwjglTest(this.polling);
+				 Thread thread = new Thread(new LwjglTest(this.polling));
+				 thread.start();
 			}
 		}
 			

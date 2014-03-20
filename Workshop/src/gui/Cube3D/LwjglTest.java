@@ -23,7 +23,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import Workshop.UserPolling;
 
-public class LwjglTest extends JFrame implements WindowListener{
+public class LwjglTest extends JFrame implements WindowListener, Runnable{
 
 	
 	private static final long serialVersionUID = -8636527348955613652L;
@@ -83,21 +83,10 @@ public class LwjglTest extends JFrame implements WindowListener{
 
 
 		this.setVisible(true);
-
-		try {
-			Display.create();
-			Display.setParent(canvas);
-		} catch (LWJGLException e) {
-			// TODO Produce proper response to error
-			e.printStackTrace();
-		}
-		init();
-		computeCoordinates();
-		drawScene();
-
+		
 		this.addWindowListener(this);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		beginRenderLoop();
+		
 	}
 
 	private float getMinDepth(Led[] v) {
@@ -179,14 +168,22 @@ public class LwjglTest extends JFrame implements WindowListener{
 	private void beginRenderLoop() {
 
 		translation(staticLed, 0, 0, -(1.2f*END_VIEW));
+		float widthCube = nbLayer * sphereRadius + (nbLayer-1 * ratioForMarginBetweenLeds);
+		
+		float translateX = Math.abs(staticLed[0].pos.x)+widthCube/2;
+		float translateY = Math.abs(staticLed[0].pos.y)+widthCube/2;
+		
 		rotation(staticLed, (float)Math.PI/6, 1, 0, 0);
 		rotation(staticLed, (float)Math.PI/-12, 0, 1, 0);
 		/*for(int i=0;i<staticLed.length;i++)
 			System.out.println(staticLed[i]);*/
 		
 		
-		translation(this.staticLed, staticLed[0].pos.x + canvas.getWidth()/2, 0, 0);
-		translation(this.staticLed, 0, staticLed[0].pos.y + canvas.getHeight()/2 , 0);
+		System.out.println("Avant translation" + staticLed[0].pos.y );
+		translation(this.staticLed,-translateX, 0, 0);
+		translation(this.staticLed, 0, -translateY , 0);
+
+		System.out.println("Apres translation" + staticLed[0].pos.y );
 		while (!Display.isCloseRequested()) {
 
 		
@@ -219,9 +216,11 @@ public class LwjglTest extends JFrame implements WindowListener{
 			}
 			if (Keyboard.isKeyDown(Keyboard.KEY_DELETE))
 				initVectors();
+			//System.out.println(Mouse.getDWheel());
+			rotationAngle += Mouse.getDWheel()/1200F;
 			if (Mouse.getDWheel() > 0 || Keyboard.isKeyDown(Keyboard.KEY_ADD)) {
 				//SPHERE_RADIUS+=10;
-				translation(staticLed, 0, 0, ratioForMarginBetweenLeds);
+				rotationAngle -= 0.1;
 			}
 
 			if (Keyboard.isKeyDown(Keyboard.KEY_SUBTRACT)) {
@@ -284,7 +283,7 @@ public class LwjglTest extends JFrame implements WindowListener{
 
 	public void init() {
 		initLighting();
-
+		GL11.glColor3f(0, 0,255);
 		int width = Display.getParent().getWidth();
 		int height = Display.getParent().getHeight();
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
@@ -325,6 +324,22 @@ public class LwjglTest extends JFrame implements WindowListener{
 				}
 			}
 		}
+		translation(staticLed, 0, 0, -(1.2f*END_VIEW));
+		float widthCube = nbLayer * sphereRadius + (nbLayer-1 * ratioForMarginBetweenLeds);
+		
+		float translateX = Math.abs(staticLed[0].pos.x)+widthCube/2;
+		float translateY = Math.abs(staticLed[0].pos.y)+widthCube/2;
+		
+		rotation(staticLed, (float)Math.PI/6, 1, 0, 0);
+		rotation(staticLed, (float)Math.PI/-12, 0, 1, 0);
+		/*for(int i=0;i<staticLed.length;i++)
+			System.out.println(staticLed[i]);*/
+		
+		
+		System.out.println("Avant translation" + staticLed[0].pos.y );
+		translation(this.staticLed,-translateX, 0, 0);
+		translation(this.staticLed, 0, -translateY , 0);
+		
 	}
 
 	private void drawNodes() {
@@ -406,10 +421,7 @@ public class LwjglTest extends JFrame implements WindowListener{
 	}
 
 	@Override
-	public void windowActivated(WindowEvent e) {
-		
-		System.out.println("Activated");
-	}
+	public void windowActivated(WindowEvent e) {}
 
 	@Override
 	public void windowClosed(WindowEvent e) {}
@@ -417,8 +429,7 @@ public class LwjglTest extends JFrame implements WindowListener{
 	@Override
 	public void windowClosing(WindowEvent e)
 	{
-			
-				System.out.println("Closing ...");
+		//TODO save instruction
 	}
 
 	@Override
@@ -431,7 +442,23 @@ public class LwjglTest extends JFrame implements WindowListener{
 	public void windowIconified(WindowEvent e) {}
 
 	@Override
-	public void windowOpened(WindowEvent e) {
-		System.out.println("Opened");}
+	public void windowOpened(WindowEvent e) {}
+
+	@Override
+	public void run() {
+		try {
+			Display.create();
+			Display.setParent(canvas);
+		} catch (LWJGLException e) {
+			// TODO Produce proper response to error
+			e.printStackTrace();
+		}
+		
+		init();
+		computeCoordinates();
+		drawScene();
+
+		beginRenderLoop();
+	}
 
 }
