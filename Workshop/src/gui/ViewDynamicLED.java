@@ -70,6 +70,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 		this.motherFrame.setSize(800, 700);
 		initDisplay();
 		this.updateUI();
+		this.setVisible(true);
 	}
 	
 	public void initDisplay() {

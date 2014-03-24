@@ -56,6 +56,7 @@ public class ViewCreateProgram extends View implements ActionListener{
 		this.CENTER_LEFTPAN = (this.LEFTPAN_WIDTH /2) - ((int)(this.BUTTON_WIDTH / 2));
 		init();
 		this.updateUI();
+		this.setVisible(true);
 	}
 	
 	public void init()
