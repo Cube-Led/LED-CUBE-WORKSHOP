@@ -44,15 +44,12 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 		this.setBackground(Color.white);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setTitle("Worshop");
-		this.setVisible(true);
 		this.setSize(350, 175);
 		this.setResizable(false);
-
 		configureMenu();
 		this.setContentPane(new ViewMainMenu(this));
 		this.getContentPane().update(this.getGraphics());
-		
-		
+		this.setVisible(true);
 		
 	}
 	private void configureMenu()
@@ -83,6 +80,7 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 		this.setMenuBar(menuBar);
 		this.getContentPane().validate();
 	}
+	
 	public void setUserPolling(UserPolling poll)
 	{
 		this.polling = poll;

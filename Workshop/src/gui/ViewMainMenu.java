@@ -46,6 +46,7 @@ public class ViewMainMenu extends View implements ActionListener {
 		this.motherFrame.setSize(800, 599);
 		init();
 		this.updateUI();
+		this.setVisible(true);
 	}
 
 	public void init() {
@@ -140,7 +141,6 @@ public class ViewMainMenu extends View implements ActionListener {
 				this.motherFrame.getWidth() /2, (this.motherFrame.getHeight() *2) /3);
 		right.setBounds((this.motherFrame.getWidth() *1) /2 +1, this.motherFrame.getHeight() /3 +1, 
 				this.motherFrame.getWidth() /2, (this.motherFrame.getHeight() *2) /3);
-		
 		this.add(hight);
 		this.add(left);
 		this.add(right);
