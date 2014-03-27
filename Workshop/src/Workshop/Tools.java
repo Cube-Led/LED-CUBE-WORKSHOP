@@ -16,6 +16,13 @@ public class Tools {
 		buf.add((short)((number & Tools.MASK_SECOND_WEIGHT)>>16));
 		buf.add((short)((number & Tools.MASK_THIRD_WEIGHT)>>32));
 		buf.add((short)((number & Tools.MASK_HIGH_WEIGHT)>>48));
+		
+		int i=buf.size()-1;
+		while(buf.get(i) == 0x0000)
+		{
+			buf.remove(i);
+			i--;
+		}
 		return buf;
 	}
 	

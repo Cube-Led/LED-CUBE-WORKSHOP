@@ -1,12 +1,17 @@
 package gui.Cube3D;
 
+
 import java.awt.Canvas;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,12 +26,17 @@ import org.lwjgl.util.glu.Sphere;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector3f;
 
+import Workshop.Instruction;
+import Workshop.Tools;
 import Workshop.UserPolling;
 
-public class View3D extends JFrame implements WindowListener, Runnable{
+public class View3D extends JFrame implements WindowListener, ActionListener, Runnable{
 
 	
 	private static final long serialVersionUID = -8636527348955613652L;
+
+
+	private static final short LIGHT_LAYER_CODE_OP = 0x02;
 	
 	private final int nbLayer;
 	private final int nbLed;
@@ -74,7 +84,10 @@ public class View3D extends JFrame implements WindowListener, Runnable{
 		
 		canvas = new Canvas();
 		canvas.setSize(800, 600);
-		p2.add(new JButton("JE SUIS UN BOUTON !!!!"));
+		JButton theButton = new JButton("JE SUIS UN BOUTON !!!!");
+		theButton.addActionListener(this);
+		p2.add(theButton);
+		
 		p2.setPreferredSize(new Dimension(100,600));
 		
 		p1.add(p2);
@@ -179,14 +192,12 @@ public class View3D extends JFrame implements WindowListener, Runnable{
 			System.out.println(staticLed[i]);*/
 		
 		
-		System.out.println("Avant translation" + staticLed[0].pos.y );
 		translation(this.staticLed,-translateX, 0, 0);
 		translation(this.staticLed, 0, -translateY , 0);
-
-		System.out.println("Apres translation" + staticLed[0].pos.y );
+		
 		while (!Display.isCloseRequested()) {
 
-		
+
 			drawScene();
 			
 			if (Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
@@ -420,6 +431,31 @@ public class View3D extends JFrame implements WindowListener, Runnable{
 		Display.update();
 	}
 
+	private void createInstruction()
+	{
+		long number = 0;
+		for(int i=0; i <  Math.pow(this.polling.getTheCube().getSizeCube(),3); i+=Math.pow(this.polling.getTheCube().getSizeCube(),2)){
+			number=0;
+			List<Short> args;
+			Instruction current;
+			int count =0;
+			for (int j = i; j < i + Math.pow(this.polling.getTheCube().getSizeCube(),2); j++){
+				if (this.staticLed[j].getIsOn())
+					number += Math.pow(2, count);
+				count++;
+			}
+			System.out.println(number);
+				current = new Instruction(LIGHT_LAYER_CODE_OP,"lightLayer",2);
+				current.setDescriptionArguments(new String[]{"Couche", "Mask"});
+				args = new ArrayList<Short>();
+				args.add(((short)(i/Math.pow(this.polling.getTheCube().getSizeCube(),2)+1)));
+				args.addAll(Tools.transformLongToShort(number));
+				current.setArgs(args);
+				System.out.println(current);
+			this.polling.saveOneInstruction(current.getCodeOp(), current.getDescription(), current.getNbArgs(), current.getDescriptionArguments(), current.getArgs());
+		}
+	}
+	
 	@Override
 	public void windowActivated(WindowEvent e) {}
 
@@ -459,6 +495,14 @@ public class View3D extends JFrame implements WindowListener, Runnable{
 		drawScene();
 
 		beginRenderLoop();
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		
+		if(arg0.getSource() instanceof JButton)
+			createInstruction();
+		
 	}
 
 }
