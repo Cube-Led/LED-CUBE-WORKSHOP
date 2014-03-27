@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -23,7 +22,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import Workshop.Application;
 import Workshop.Instruction;
 
 public class ViewCreateProgram extends View implements ActionListener{
@@ -55,6 +53,7 @@ public class ViewCreateProgram extends View implements ActionListener{
 		this.LEFTPAN_WIDTH = this.motherFrame.getWidth() /2; 
 		this.CENTER_LEFTPAN = (this.LEFTPAN_WIDTH /2) - ((int)(this.BUTTON_WIDTH / 2));
 		init();
+		this.motherFrame.setContentPane(this);
 		this.updateUI();
 		this.setVisible(true);
 	}

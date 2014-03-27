@@ -10,9 +10,7 @@ import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 
 import Workshop.Display;
@@ -27,6 +25,8 @@ import Workshop.UserPolling;
  */
 public class GUIDisplay extends JFrame implements Display, ActionListener{
 
+	private static final long serialVersionUID = 1L;
+
 	private UserPolling polling;
 	
 	private GuiChoiceAsker choiceComponent;
@@ -36,6 +36,7 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 	private MenuBar menuBar;
 	private Menu menuFichier;
 	private Menu menuConfig;
+	private Menu menuVue;
 	
 	
 	public GUIDisplay(GuiChoiceAsker choice)
@@ -57,14 +58,7 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 		this.menuBar = new MenuBar();
 		this.menuFichier = new Menu("Fichier");
 		this.menuConfig = new Menu("Options");
-		
-		MenuItem vueLED = new MenuItem("VueLED");
-		vueLED.addActionListener(this);
-		this.menuFichier.add(vueLED);
-		
-		MenuItem vue3D = new MenuItem("Vue3D");
-		vue3D.addActionListener(this);
-		this.menuFichier.add(vue3D);
+		this.menuVue = new Menu("Vues");
 		
 		MenuItem quitter = new MenuItem("Quitter");
 		quitter.addActionListener(this);
@@ -74,15 +68,27 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 		configCube.addActionListener(this);
 		this.menuConfig.add(configCube);
 		
-		this.menuBar.add(menuFichier);
-		this.menuBar.add(menuConfig);
+		MenuItem viewCreateProg = new MenuItem("VueArguments");
+		viewCreateProg.addActionListener(this);
+		this.menuVue.add(viewCreateProg);
+		
+		MenuItem viewDynLED = new MenuItem("VueLED");
+		viewDynLED.addActionListener(this);
+		this.menuVue.add(viewDynLED);
+		
+		MenuItem viewVue3D = new MenuItem("Vue3D");
+		viewVue3D.addActionListener(this);
+		this.menuVue.add(viewVue3D);
+		
+		this.menuBar.add(this.menuFichier);
+		this.menuBar.add(this.menuConfig);
+		this.menuBar.add(this.menuVue);
 		
 		this.setMenuBar(menuBar);
 		this.getContentPane().validate();
 	}
 	
-	public void setUserPolling(UserPolling poll)
-	{
+	public void setUserPolling(UserPolling poll) {
 		this.polling = poll;
 	}
 	
@@ -99,8 +105,7 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 		JOptionPane.showMessageDialog(this.getContentPane(), str);
 	}
 
-	private void displayMessageInMsgBox(String str)
-	{
+	private void displayMessageInMsgBox(String str) {
 		JOptionPane.showMessageDialog(this.getContentPane(), str);
 	}
 	
@@ -109,22 +114,18 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if(arg0.getSource() instanceof MenuItem)
-		{
+		if(arg0.getSource() instanceof MenuItem) {
 			if(((MenuItem)arg0.getSource()).getLabel().equals("Quitter"))
 				System.exit(0);
-			
-			if(((MenuItem)arg0.getSource()).getLabel().equals("Définir le cube"))
+			else if(((MenuItem)arg0.getSource()).getLabel().equals("Définir le cube"))
 				new ConfigFrame(polling);
-			
-			if(((MenuItem)arg0.getSource()).getLabel().equals("Vue3D"))
-			{
-				 Thread thread = new Thread(new View3D(this.polling));
-				 thread.start();
-			}
+			else if (((MenuItem)arg0.getSource()).getLabel().equals("VueArguments"))
+				new ViewCreateProgram(this);
 			else if(((MenuItem)arg0.getSource()).getLabel().equals("VueLED"))
-			{
 				new ViewDynamicLED(this);
+			else if(((MenuItem)arg0.getSource()).getLabel().equals("Vue3D")) {
+				Thread thread = new Thread(new View3D(this.polling));
+				thread.start();
 			}
 		}
 			
