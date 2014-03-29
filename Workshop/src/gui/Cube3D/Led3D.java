@@ -1,28 +1,31 @@
 package gui.Cube3D;
 
 
-import org.lwjgl.util.Color;
-import org.lwjgl.util.ReadableColor;
+
+import java.awt.Color;
 import org.lwjgl.util.vector.Vector3f;
 
 
-public class Led{
+public class Led3D{
 
 	private boolean isOn;
 	public Vector3f pos;
-	private ReadableColor color;
+	private Color color;
+	public static final Color DEFAULT_COLOR = new Color(1, 10, 12);
+	public static final Color OFF_COLOR = new Color(255, 255, 255);
 	
-	public ReadableColor getColor() {
+	public Color getColor() {
 		return color;
 	}
 
-	public void setColor(ReadableColor color) {
+	public void setColor(Color color) {
+		
 		this.color = color;
 	}
 
-	public Led(float x, float y,float z)
+	public Led3D(float x, float y,float z)
 	{
-		color = Color.WHITE;
+		color = OFF_COLOR;
 		pos = new Vector3f(x,y,z);
 		this.isOn = false;
 	}
@@ -50,12 +53,17 @@ public class Led{
 	 * @param switchLed Turn on if True, Turn off if false
 	 *
 	 */
-	public void switchLed(boolean switchLed)
+	public void switchLed(boolean switchLed, java.awt.Color currentSelectedColor)
 	{
 		if(switchLed)
-			setColor(Color.YELLOW);
+		{
+			if(currentSelectedColor != null)
+				setColor(currentSelectedColor);
+			else
+				setColor( OFF_COLOR);
+		}
 		else
-			setColor(Color.WHITE);
+			setColor( OFF_COLOR);
 		this.isOn = switchLed;
 	}
 

@@ -1,7 +1,7 @@
 package gui.Cube3D;
 
-
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -30,16 +31,15 @@ import Workshop.Instruction;
 import Workshop.Tools;
 import Workshop.UserPolling;
 
-public class View3D extends JFrame implements WindowListener, ActionListener, Runnable{
+public class View3D extends JFrame implements WindowListener, ActionListener,
+		Runnable {
 
-	
 	private static final long serialVersionUID = -8636527348955613652L;
 
-
 	private static final short LIGHT_LAYER_CODE_OP = 0x02;
-	
-	private final int nbLayer;
-	private final int nbLed;
+
+	private int nbLayer;
+	private int nbLed;
 	private float sphereRadius;
 
 	private final float ROTATION_AXIS_ENABLED = 1f;
@@ -52,7 +52,12 @@ public class View3D extends JFrame implements WindowListener, ActionListener, Ru
 	private float rotationY = ROTATION_AXIS_DISABLED;
 	private float rotationZ = ROTATION_AXIS_DISABLED;
 
-	private Led staticLed[];
+	private final int INIT_MODE_NEW_LED_SET_ROTATION_SWITCHOFF = 0;
+	private final int INIT_MODE_ROTATION_ONLY = 1;
+	private final int INIT_MODE_SWITCHOFF_ONLY = 2;
+	private final int INIT_MODE_FACE_VIEW = 3;
+
+	private Led3D staticLed[];
 
 	float colR = 1f;
 
@@ -61,51 +66,74 @@ public class View3D extends JFrame implements WindowListener, ActionListener, Ru
 	private float ratioForMarginBetweenLeds;
 
 	private int nodeListIndex;
-	
+
 	private final UserPolling polling;
-	
+
 	private Canvas canvas;
+
+	private Vector3f posMiddleCube;
 	
+	private Color currentSelectedColor;
+
 	public View3D(UserPolling u) {
-		
+
 		this.polling = u;
 		this.nbLayer = u.getTheCube().getSizeCube();
-		this.nbLed = this.nbLayer*this.nbLayer*this.nbLayer;
-		this.ratioForMarginBetweenLeds = 240/nbLayer +30;
-		this.sphereRadius = 120/nbLayer;
-		
+		this.nbLed = this.nbLayer * this.nbLayer * this.nbLayer;
+		this.ratioForMarginBetweenLeds = 240 / nbLayer + 30;
+		this.sphereRadius = 120 / nbLayer;
+
 		System.out.println(Short.SIZE);
-		this.setTitle("Lwjgl Test");
-		
+		this.setTitle("Concepteur 3D");
+
 		this.setSize(1000, 650);
 		this.setLocationRelativeTo(null);
 		JPanel p1 = new JPanel();
 		JPanel p2 = new JPanel();
-		
+
 		canvas = new Canvas();
 		canvas.setSize(800, 600);
-		JButton theButton = new JButton("JE SUIS UN BOUTON !!!!");
-		theButton.addActionListener(this);
-		p2.add(theButton);
+		JButton test = new JButton("Test inst");
+		test.addActionListener(this);
+		p2.add(test);
+
+		JButton reinit = new JButton("Reinitialiser et centrer");
+		reinit.addActionListener(this);
+		p2.add(reinit);
+
+		JButton switchoff = new JButton("Tout éteindre");
+		switchoff.addActionListener(this);
+		p2.add(switchoff);
+
+		JButton newcube = new JButton("Vue de face");
+		newcube.addActionListener(this);
+		p2.add(newcube);
+
+		JButton recentrer = new JButton("Vue isometrique");
+		recentrer.addActionListener(this);
+		p2.add(recentrer);
 		
-		p2.setPreferredSize(new Dimension(100,600));
-		
+		JButton changecolor = new JButton("Changer de couleur");
+		changecolor.addActionListener(this);
+		p2.add(changecolor);
+
+		p2.setPreferredSize(new Dimension(100, 600));
+
 		p1.add(p2);
 		p1.add(canvas);
 		this.add(p1);
 
-
 		this.setVisible(true);
-		
+
 		this.addWindowListener(this);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
 	}
 
-	private float getMinDepth(Led[] v) {
+	private float getMinDepth(Led3D[] v) {
 		float depth = Integer.MIN_VALUE;
 
-		for (int i = 0; i < v.length && v[i] != null ; i++)
+		for (int i = 0; i < v.length && v[i] != null; i++)
 			if (v[i].pos.z > depth)
 				depth = v[i].pos.z;
 
@@ -116,13 +144,18 @@ public class View3D extends JFrame implements WindowListener, ActionListener, Ru
 		return (x >= a && x <= b || x >= b && x <= a);
 	}
 
-	private void translation(Led[] v, float a, float b, float c) {
+	private void translation(Led3D[] v, float a, float b, float c) {
 		for (int i = 0; i < v.length; i++) {
 			v[i].pos.translate(a, b, c);
 		}
 	}
 
-	private void rotation(Led[] v, float angle, float a, float b, float c) {
+	private void rotation(Vector3f reference, Led3D[] v, float angle, float a,
+			float b, float c) {
+		Vector3f temp = new Vector3f();
+		if (reference != null) {
+			temp.set(reference);
+		}
 		int axis = 0;
 		if (a == 1)
 			axis = 0;
@@ -134,6 +167,12 @@ public class View3D extends JFrame implements WindowListener, ActionListener, Ru
 		Matrix3f r = giveRotaionMatrix(angle, axis);
 		for (int i = 0; i < v.length; i++) {
 			Matrix3f.transform(r, v[i].pos, v[i].pos);
+		}
+
+		if (reference != null) {
+			translation(staticLed, -(staticLed[0].pos.x - temp.x),
+					-(staticLed[0].pos.y - temp.y),
+					-(staticLed[0].pos.z - temp.z));
 		}
 	}
 
@@ -178,60 +217,64 @@ public class View3D extends JFrame implements WindowListener, ActionListener, Ru
 		return res;
 	}
 
-	private void beginRenderLoop() {
+	private void beginRenderLoop() throws InterruptedException {
 
-		translation(staticLed, 0, 0, -(1.2f*END_VIEW));
-		float widthCube = nbLayer * sphereRadius + (nbLayer-1 * ratioForMarginBetweenLeds);
-		
-		float translateX = Math.abs(staticLed[0].pos.x)+widthCube/2;
-		float translateY = Math.abs(staticLed[0].pos.y)+widthCube/2;
-		
-		rotation(staticLed, (float)Math.PI/6, 1, 0, 0);
-		rotation(staticLed, (float)Math.PI/-12, 0, 1, 0);
-		/*for(int i=0;i<staticLed.length;i++)
-			System.out.println(staticLed[i]);*/
-		
-		
-		translation(this.staticLed,-translateX, 0, 0);
-		translation(this.staticLed, 0, -translateY , 0);
-		
+		initVectors(this.INIT_MODE_NEW_LED_SET_ROTATION_SWITCHOFF);
+
 		while (!Display.isCloseRequested()) {
 
-
 			drawScene();
-			
+
 			if (Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
 
-				
 				int i = 0;
-				Led temp[] = new Led[nbLayer];
-				int count=0;
-				for (i = 0; i < nbLed; i++) 
-				{
+				Led3D temp[] = new Led3D[nbLayer];
+				int count = 0;
+				for (i = 0; i < nbLed; i++) {
 					float x1 = staticLed[i].pos.x;
 					float y1 = staticLed[i].pos.y;
-					if (isBetween(Mouse.getX(), x1 - sphereRadius, x1 + sphereRadius) && isBetween(Mouse.getY(), y1 -sphereRadius, y1 + sphereRadius)) 
-					{
+					if (isBetween(Mouse.getX(), x1 - sphereRadius, x1
+							+ sphereRadius)
+							&& isBetween(Mouse.getY(), y1 - sphereRadius, y1
+									+ sphereRadius)) {
 						temp[count] = staticLed[i];
 						count++;
 					}
 				}
 				float min = getMinDepth(temp);
-				for(int k=0;  k < temp.length && temp[k]!=null;k++){
-					if(temp[k].pos.z == min)
-					{
-						temp[k].switchLed(Mouse.isButtonDown(0));
+				for (int k = 0; k < temp.length && temp[k] != null; k++) {
+					if (temp[k].pos.z == min) {
+						temp[k].switchLed(Mouse.isButtonDown(0), currentSelectedColor);
 					}
 				}
-					
+
 			}
 			if (Keyboard.isKeyDown(Keyboard.KEY_DELETE))
-				initVectors();
-			//System.out.println(Mouse.getDWheel());
-			rotationAngle += Mouse.getDWheel()/1200F;
+				initVectors(this.INIT_MODE_NEW_LED_SET_ROTATION_SWITCHOFF);
+			// System.out.println(Mouse.getDWheel());
+			rotationAngle += Mouse.getDWheel() / 1200F;
 			if (Mouse.getDWheel() > 0 || Keyboard.isKeyDown(Keyboard.KEY_ADD)) {
-				//SPHERE_RADIUS+=10;
+				// SPHERE_RADIUS+=10;
 				rotationAngle -= 0.1;
+			}
+
+			if (Keyboard.isKeyDown(Keyboard.KEY_Z)) {
+				rotation(staticLed[0].pos, staticLed,
+						(float) Math.toRadians(90.0), 0, 1, 0);
+				Thread.sleep(50);
+			}
+			if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+				rotation(staticLed[0].pos, staticLed,
+						-(float) Math.toRadians(90.0), 0, 1, 0);
+			}
+			if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {
+				rotation(staticLed[0].pos, staticLed,
+						(float) Math.toRadians(90.0), 1, 0, 0);
+				Thread.sleep(50);
+			}
+			if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+				rotation(staticLed[0].pos, staticLed,
+						-(float) Math.toRadians(90.0), 1, 0, 0);
 			}
 
 			if (Keyboard.isKeyDown(Keyboard.KEY_SUBTRACT)) {
@@ -259,25 +302,20 @@ public class View3D extends JFrame implements WindowListener, ActionListener, Ru
 				rotationX = ROTATION_AXIS_DISABLED;
 			}
 			if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
-				translation(staticLed, -ratioForMarginBetweenLeds/10, 0, 0);
+				translation(staticLed, -ratioForMarginBetweenLeds / 10, 0, 0);
 			}
 			if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
-				translation(staticLed, ratioForMarginBetweenLeds/10, 0, 0);
+				translation(staticLed, ratioForMarginBetweenLeds / 10, 0, 0);
 			}
 			if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
-				translation(staticLed, 0, ratioForMarginBetweenLeds/10, 0);
+				translation(staticLed, 0, ratioForMarginBetweenLeds / 10, 0);
 			}
 			if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-				translation(staticLed, 0, -ratioForMarginBetweenLeds/10, 0);
+				translation(staticLed, 0, -ratioForMarginBetweenLeds / 10, 0);
 			}
 
 			Display.sync(60);
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			Thread.sleep(50);
 		}
 
 	}
@@ -294,7 +332,7 @@ public class View3D extends JFrame implements WindowListener, ActionListener, Ru
 
 	public void init() {
 		initLighting();
-		GL11.glColor3f(0, 0,255);
+		GL11.glColor3f(0, 0, 255);
 		int width = Display.getParent().getWidth();
 		int height = Display.getParent().getHeight();
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
@@ -307,81 +345,147 @@ public class View3D extends JFrame implements WindowListener, ActionListener, Ru
 
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		//GLU.gluPerspective(45f, (float) width / height, BEGIN_VIEW, END_VIEW);
+		// GLU.gluPerspective(45f, (float) width / height, BEGIN_VIEW,
+		// END_VIEW);
 		GL11.glOrtho(0, width, 0, height, BEGIN_VIEW, END_VIEW);
-		
+
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
-		GL11.glEnable(GL11.GL_BLEND); GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		createNodeDisplayList();
 	}
 
 	private void computeCoordinates() {
 
-		staticLed = new Led[nbLed];
-		initVectors();
+		staticLed = new Led3D[nbLed];
+		initVectors(this.INIT_MODE_NEW_LED_SET_ROTATION_SWITCHOFF);
 	}
 
-	private void initVectors() {
+	private void initVectors(int mode) {
+
+		this.nbLayer = polling.getTheCube().getSizeCube();
+		this.nbLed = this.nbLayer * this.nbLayer * this.nbLayer;
+		this.ratioForMarginBetweenLeds = 240 / nbLayer + 30;
+		this.sphereRadius = 120 / nbLayer;
+
 		int count = 0;
-		for (int y = 0; y < nbLayer; y++) {
-			for (int x = nbLayer - 1; x >= 0; x--) {
-				for (int z = nbLayer - 1; z >= 0; z--) {
-					staticLed[count] = new Led(
-							(float) (x * ratioForMarginBetweenLeds),
-							(float) (y * ratioForMarginBetweenLeds),
-							(float) (z * ratioForMarginBetweenLeds));
-					count++;
+		float widthCube;
+		float translateX;
+		float translateY;
+		switch (mode) {
+		case (INIT_MODE_NEW_LED_SET_ROTATION_SWITCHOFF):
+			for (int y = 0; y < nbLayer; y++) {
+				for (int x = nbLayer - 1; x >= 0; x--) {
+					for (int z = nbLayer - 1; z >= 0; z--) {
+						staticLed[count] = new Led3D(
+								(float) (x * ratioForMarginBetweenLeds),
+								(float) (y * ratioForMarginBetweenLeds),
+								(float) (z * ratioForMarginBetweenLeds));
+						count++;
+					}
 				}
 			}
+			translation(staticLed, 0, 0, -(1.2f * END_VIEW));
+			widthCube = nbLayer * sphereRadius
+					+ (nbLayer - 1 * ratioForMarginBetweenLeds);
+
+			translateX = Math.abs(staticLed[0].pos.x) + widthCube / 2;
+			translateY = Math.abs(staticLed[0].pos.y) + widthCube / 2;
+
+			rotation(null, staticLed, (float) Math.PI / 6, 1, 0, 0);
+			rotation(null, staticLed, (float) Math.PI / -12, 0, 1, 0);
+
+			System.out.println("Avant translation" + staticLed[0].pos.y);
+			translation(this.staticLed, -translateX, 0, 0);
+			translation(this.staticLed, 0, -translateY, 0);
+			break;
+
+		case (INIT_MODE_FACE_VIEW):
+			count = 0;
+			for (int y = 0; y < nbLayer; y++) {
+				for (int x = nbLayer - 1; x >= 0; x--) {
+					for (int z = nbLayer - 1; z >= 0; z--) {
+						Led3D temp = staticLed[count];
+						staticLed[count] = new Led3D(
+								(float) (x * ratioForMarginBetweenLeds),
+								(float) (y * ratioForMarginBetweenLeds),
+								(float) (z * ratioForMarginBetweenLeds));
+
+						System.out.println("blog");
+						if (temp != null) {
+							staticLed[count].switchLed(temp.getIsOn(), temp.getColor());
+						}
+						count++;
+					}
+				}
+			}
+			translation(staticLed, 0, 0, -(1.2f * END_VIEW));
+			break;
+		case (INIT_MODE_SWITCHOFF_ONLY):
+			for (int i = 0; i < this.staticLed.length; i++) {
+				staticLed[i].switchLed(false, null);
+			}
+			break;
+		case (INIT_MODE_ROTATION_ONLY):
+			count = 0;
+
+			for (int y = 0; y < nbLayer; y++) {
+				for (int x = nbLayer - 1; x >= 0; x--) {
+					for (int z = nbLayer - 1; z >= 0; z--) {
+						Led3D temp = staticLed[count];
+						staticLed[count] = new Led3D(
+								(float) (x * ratioForMarginBetweenLeds),
+								(float) (y * ratioForMarginBetweenLeds),
+								(float) (z * ratioForMarginBetweenLeds));
+						if (temp != null) {
+							staticLed[count].switchLed(temp.getIsOn(), temp.getColor());
+						}
+						count++;
+					}
+				}
+			}
+			translation(staticLed, 0, 0, -(1.2f * END_VIEW));
+			// translation(staticLed, 0, 0, -(1.2f*END_VIEW));
+			widthCube = nbLayer * sphereRadius
+					+ (nbLayer - 1 * ratioForMarginBetweenLeds);
+
+			translateX = Math.abs(staticLed[0].pos.x) + widthCube / 2;
+			translateY = Math.abs(staticLed[0].pos.y) + widthCube / 2;
+
+			rotation(null, staticLed, (float) Math.PI / 6, 1, 0, 0);
+			rotation(null, staticLed, (float) Math.PI / -12, 0, 1, 0);
+
+			translation(this.staticLed, -translateX, 0, 0);
+			translation(this.staticLed, 0, -translateY, 0);
+			break;
 		}
-		translation(staticLed, 0, 0, -(1.2f*END_VIEW));
-		float widthCube = nbLayer * sphereRadius + (nbLayer-1 * ratioForMarginBetweenLeds);
-		
-		float translateX = Math.abs(staticLed[0].pos.x)+widthCube/2;
-		float translateY = Math.abs(staticLed[0].pos.y)+widthCube/2;
-		
-		rotation(staticLed, (float)Math.PI/6, 1, 0, 0);
-		rotation(staticLed, (float)Math.PI/-12, 0, 1, 0);
-		/*for(int i=0;i<staticLed.length;i++)
-			System.out.println(staticLed[i]);*/
-		
-		
-		System.out.println("Avant translation" + staticLed[0].pos.y );
-		translation(this.staticLed,-translateX, 0, 0);
-		translation(this.staticLed, 0, -translateY , 0);
-		
+
 	}
 
 	private void drawNodes() {
 		createNodeDisplayList();
-		
+
 		// GL11.glLoadIdentity();
 		GL11.glTranslatef(0.0f, 0f, -6f);
 
-		
-		Vector3f temp = new Vector3f();
-		temp.set(staticLed[0].pos);
+		rotation(staticLed[0].pos, staticLed, rotationAngle, rotationX,
+				rotationY, rotationZ);
 
-		
-		rotation(staticLed, rotationAngle, rotationX, rotationY, rotationZ);
-		
 		rotationAngle = 0;
 
-		// On re-cale le cube a l'origine du repere tout en gardant la rotation
-
-		translation(staticLed, -(staticLed[0].pos.x - temp.x),
-				-(staticLed[0].pos.y - temp.y), -(staticLed[0].pos.z - temp.z));
-		float alpha =0;
+		float alpha = 0;
 		for (int i = 0; i < nbLed; i++) {
-			
-			if(staticLed[i].getIsOn())
-				alpha=1f;
+
+			if (staticLed[i].getIsOn())
+				alpha = 1f;
 			else
-				alpha=0.1f;
-			
-			GL11.glColor4f(staticLed[i].getColor().getRed()/255f, staticLed[i].getColor().getGreen()/255f, staticLed[i].getColor().getBlue()/255f,alpha);
-			
+				alpha = 0.1f;
+
+			GL11.glColor4f(staticLed[i].getColor().getRed() / 255f,
+					staticLed[i].getColor().getGreen() / 255f, staticLed[i]
+							.getColor().getBlue() / 255f, alpha);
+
 			GL11.glTranslatef(staticLed[i].pos.x, staticLed[i].pos.y,
 					staticLed[i].pos.z);
 			GL11.glCallList(nodeListIndex);
@@ -431,54 +535,64 @@ public class View3D extends JFrame implements WindowListener, ActionListener, Ru
 		Display.update();
 	}
 
-	private void createInstruction()
-	{
+	private void createInstruction() {
 		long number = 0;
-		for(int i=0; i <  Math.pow(this.polling.getTheCube().getSizeCube(),3); i+=Math.pow(this.polling.getTheCube().getSizeCube(),2)){
-			number=0;
+		for (int i = 0; i < Math
+				.pow(this.polling.getTheCube().getSizeCube(), 3); i += Math
+				.pow(this.polling.getTheCube().getSizeCube(), 2)) {
+			number = 0;
 			List<Short> args;
 			Instruction current;
-			int count =0;
-			for (int j = i; j < i + Math.pow(this.polling.getTheCube().getSizeCube(),2); j++){
+			int count = 0;
+			for (int j = i; j < i
+					+ Math.pow(this.polling.getTheCube().getSizeCube(), 2); j++) {
 				if (this.staticLed[j].getIsOn())
 					number += Math.pow(2, count);
 				count++;
 			}
 			System.out.println(number);
-				current = new Instruction(LIGHT_LAYER_CODE_OP,"lightLayer",2);
-				current.setDescriptionArguments(new String[]{"Couche", "Mask"});
-				args = new ArrayList<Short>();
-				args.add(((short)(i/Math.pow(this.polling.getTheCube().getSizeCube(),2)+1)));
-				args.addAll(Tools.transformLongToShort(number));
-				current.setArgs(args);
-				System.out.println(current);
-			this.polling.saveOneInstruction(current.getCodeOp(), current.getDescription(), current.getNbArgs(), current.getDescriptionArguments(), current.getArgs());
+			current = new Instruction(LIGHT_LAYER_CODE_OP, "lightLayer", 2);
+			current.setDescriptionArguments(new String[] { "Couche", "Mask" });
+			args = new ArrayList<Short>();
+			args.add(((short) (i
+					/ Math.pow(this.polling.getTheCube().getSizeCube(), 2) + 1)));
+			args.addAll(Tools.transformLongToShort(number));
+			current.setArgs(args);
+			System.out.println(current);
+			this.polling.saveOneInstruction(current.getCodeOp(),
+					current.getDescription(), current.getNbArgs(),
+					current.getDescriptionArguments(), current.getArgs());
 		}
 	}
-	
-	@Override
-	public void windowActivated(WindowEvent e) {}
 
 	@Override
-	public void windowClosed(WindowEvent e) {}
-
-	@Override
-	public void windowClosing(WindowEvent e)
-	{
-		//TODO save instruction
+	public void windowActivated(WindowEvent e) {
 	}
 
 	@Override
-	public void windowDeactivated(WindowEvent e) {}
+	public void windowClosed(WindowEvent e) {
+	}
 
 	@Override
-	public void windowDeiconified(WindowEvent e) {}
+	public void windowClosing(WindowEvent e) {
+		// TODO save instruction
+	}
 
 	@Override
-	public void windowIconified(WindowEvent e) {}
+	public void windowDeactivated(WindowEvent e) {
+	}
 
 	@Override
-	public void windowOpened(WindowEvent e) {}
+	public void windowDeiconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+	}
 
 	@Override
 	public void run() {
@@ -489,20 +603,38 @@ public class View3D extends JFrame implements WindowListener, ActionListener, Ru
 			// TODO Produce proper response to error
 			e.printStackTrace();
 		}
-		
+
 		init();
 		computeCoordinates();
 		drawScene();
 
-		beginRenderLoop();
+		try {
+			beginRenderLoop();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		
-		if(arg0.getSource() instanceof JButton)
-			createInstruction();
-		
+
+		if (arg0.getSource() instanceof JButton)
+			if (((JButton) arg0.getSource()).getText().equals("Test inst"))
+				createInstruction();
+		if (((JButton) arg0.getSource()).getText().equals("Tout éteindre"))
+			initVectors(this.INIT_MODE_SWITCHOFF_ONLY);
+		if (((JButton) arg0.getSource()).getText().equals("Vue isometrique"))
+			initVectors(this.INIT_MODE_ROTATION_ONLY);
+		if (((JButton) arg0.getSource()).getText().equals("Vue de face"))
+			initVectors(this.INIT_MODE_FACE_VIEW);
+		if (((JButton) arg0.getSource()).getText().equals(
+				"Reinitialiser et centrer"))
+			initVectors(this.INIT_MODE_NEW_LED_SET_ROTATION_SWITCHOFF);
+		if (((JButton) arg0.getSource()).getText().equals(
+				"Changer de couleur"))
+			this.currentSelectedColor = JColorChooser.showDialog(this, "Couleur des leds", Led3D.DEFAULT_COLOR);
+		System.out.println(((JButton) arg0.getSource()).getText());
 	}
 
 }
