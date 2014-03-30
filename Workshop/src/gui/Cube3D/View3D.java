@@ -2,7 +2,6 @@ package gui.Cube3D;
 
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -74,6 +73,9 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 	private Vector3f posMiddleCube;
 	
 	private Color currentSelectedColor;
+	
+	private final int BUTTON_WIDTH = 200;
+	private final int BUTTON_HEIGHT = 35;
 
 	public View3D(ApplicationPolling u) {
 
@@ -86,47 +88,71 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 		System.out.println(Short.SIZE);
 		this.setTitle("Concepteur 3D");
 
-		this.setSize(1000, 650);
+		this.setSize(825, 735);
+		this.setLayout(null);
 		this.setLocationRelativeTo(null);
-		JPanel p1 = new JPanel();
-		JPanel p2 = new JPanel();
-
+		
+		
+		/* ------------------- Haut ------------------- */
+		
+		JPanel upPanel = new JPanel();
+		upPanel.setLayout(null);
+		
 		canvas = new Canvas();
-		canvas.setSize(800, 600);
-		JButton test = new JButton("Test inst");
-		test.addActionListener(this);
-		p2.add(test);
+		canvas.setBounds(5, 5, 800, 600);
+		upPanel.add(canvas);
+		
+		/* ------------------- Bas ------------------- */
+
+		JPanel belowPanel = new JPanel();
+		belowPanel.setLayout(null);
+		
+		JButton newcube = new JButton("Vue de face");
+		newcube.addActionListener(this);
+		newcube.setBounds(10, 5, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		belowPanel.add(newcube);
 
 		JButton reinit = new JButton("Reinitialiser et centrer");
 		reinit.addActionListener(this);
-		p2.add(reinit);
-
-		JButton switchoff = new JButton("Tout éteindre");
-		switchoff.addActionListener(this);
-		p2.add(switchoff);
-
-		JButton newcube = new JButton("Vue de face");
-		newcube.addActionListener(this);
-		p2.add(newcube);
-
+		reinit.setBounds(15 + this.BUTTON_WIDTH, 5, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		belowPanel.add(reinit);
+		
 		JButton recentrer = new JButton("Vue isometrique");
 		recentrer.addActionListener(this);
-		p2.add(recentrer);
+		recentrer.setBounds(20 + this.BUTTON_WIDTH * 2, 5, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		belowPanel.add(recentrer);
 		
+		JButton switchoff = new JButton("Tout éteindre");
+		switchoff.addActionListener(this);
+		switchoff.setBounds(10 , 10 + this.BUTTON_HEIGHT, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		belowPanel.add(switchoff);
+
 		JButton changecolor = new JButton("Changer de couleur");
 		changecolor.addActionListener(this);
-		p2.add(changecolor);
-
-		p2.setPreferredSize(new Dimension(100, 600));
-
-		p1.add(p2);
-		p1.add(canvas);
-		this.add(p1);
+		changecolor.setBounds(15 + this.BUTTON_WIDTH, 10 + this.BUTTON_HEIGHT, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		belowPanel.add(changecolor);
+		
+		JButton test = new JButton("Test instruction");
+		test.addActionListener(this);
+		test.setBounds(20 + this.BUTTON_WIDTH * 2, 10 + this.BUTTON_HEIGHT, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		belowPanel.add(test);
+		
+		JButton saveInFileAndSend = new JButton("<HTML><BODY>Sauvegarder l'animation,<BR>L'envoyer sur le cube</BODY></HTML>");
+		saveInFileAndSend.addActionListener(this);
+		saveInFileAndSend.setBounds(30 + this.BUTTON_WIDTH * 3, 8, 175, this.BUTTON_HEIGHT *2);
+		belowPanel.add(saveInFileAndSend);
+		
+		
+		/* ------------------- Disposition ------------------- */
+		
+		upPanel.setBounds(0, 0, 830, 610);
+		belowPanel.setBounds(0, 610, 805, 85);
+		
+		this.add(upPanel);
+		this.add(belowPanel);
 
 		this.setVisible(true);
-
 		this.addWindowListener(this);
-
 	}
 
 	private float getMinDepth(Led3D[] v) {
@@ -633,8 +659,7 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 		if (((JButton) arg0.getSource()).getText().equals(
 				"Reinitialiser et centrer"))
 			initVectors(this.INIT_MODE_NEW_LED_SET_ROTATION_SWITCHOFF);
-		if (((JButton) arg0.getSource()).getText().equals(
-				"Changer de couleur"))
+		if (((JButton) arg0.getSource()).getText().equals("Changer de couleur"))
 			this.currentSelectedColor = JColorChooser.showDialog(this, "Couleur des leds", Led3D.DEFAULT_COLOR);
 		System.out.println(((JButton) arg0.getSource()).getText());
 	}
