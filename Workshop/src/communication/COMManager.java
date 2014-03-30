@@ -16,7 +16,8 @@ public class COMManager {
 	private SerialWriter comWriter;
 	public static final byte SIG_BEGIN = 0x02;
 	public static final byte SIG_END = 0x0;
-
+	private SerialPort serialPort;
+	
 	public COMManager(int baudRate) {
 		this.rate = baudRate;
 	}
@@ -25,6 +26,7 @@ public class COMManager {
 			UnsupportedCommOperationException, IOException {
 		CommPortIdentifier portIdentifier = null;
 		int identifier = 0;
+		boolean givenPortOK = false;
 		try { // On essaye de trouver le port souhaité
 			portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
 			if (portIdentifier.isCurrentlyOwned()) // On regarde s'il est libre
@@ -33,6 +35,8 @@ public class COMManager {
 						+ " is currently in use, try later ...");
 				return false;
 			}
+			else
+				givenPortOK =true;
 		} catch (NoSuchPortException e1) {
 		}
 
@@ -40,15 +44,17 @@ public class COMManager {
 
 			System.out.println(portName
 					+ " not found, \n \tTrying port COM0 to COM20");
-			while (identifier <= 20) { // On essaye tous les ports de COM0 a
+			boolean found = false;
+			while (!found && identifier <= 20) { // On essaye tous les ports de COM0 a
 										// COM20
 				try {
 					portIdentifier = CommPortIdentifier.getPortIdentifier("COM"
 							+ identifier);
+					found = true;
 
 				} catch (NoSuchPortException e) {
+					identifier++;
 				}
-				identifier++;
 			}
 			if (portIdentifier != null)// On a trouvé un port
 			{
@@ -61,7 +67,7 @@ public class COMManager {
 				}
 			} else // Pas de port trouvé;
 			{
-				System.err.println("No port found");
+				System.err.println("No port found in range COM0 and COM20, check if your Arduino is correctly connected ...");
 				return false;
 			}
 		}
@@ -72,11 +78,10 @@ public class COMManager {
 
 			if (commPort instanceof SerialPort) { // On regarde si c'est un lien
 													// série
-				SerialPort serialPort = (SerialPort) commPort;
+				serialPort = (SerialPort) commPort;
 				serialPort.setSerialPortParams(this.rate,
 						SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
 						SerialPort.PARITY_NONE);
-
 				InputStream in = serialPort.getInputStream();
 				while (in.read() != -1)
 					;
@@ -84,10 +89,13 @@ public class COMManager {
 
 				this.comReader = new SerialReader(in);
 				this.comWriter = new SerialWriter(out);
-				System.out.println("Connection successful to COM" + identifier);
+				if(givenPortOK)
+					System.out.println("Connection successful to " + portName);
+				else
+					System.out.println("Connection successful to COM" + identifier);
 				return true;
 			} else {
-				System.err.println("Error: Only serial ports can be handle");
+				System.err.println("Error: Only serial ports can be handle, see Arduino reference if no serial port is created by you arduino");
 				return false;
 			}
 		}
@@ -98,6 +106,7 @@ public class COMManager {
 	public void disconnect() {
 		this.comReader.close();
 		this.comWriter.close();
+		this.serialPort.close();
 	}
 
 	public void writeData(byte[] data) {
@@ -123,9 +132,9 @@ public class COMManager {
 				System.out.println("ECHEC du transfert");
 				return;
 			}
-			System.out.println("Reponse de l'arduino, envoie en cours ...");
+			System.out.println("Reponse de l'arduino, envoie en cours de " + data.length + " octets \n  (" +  ((float)data.length*8)/(serialPort.getBaudRate() /10.0F) + " secondes nécéssaires)");
 			this.comReader.acknowledgement = false;
-			this.comWriter.willSend = (byte) data.length;
+			this.comWriter.willSend = data.length;
 			Thread.sleep(1000);
 			this.comWriter.setDataToBeWrite(data);
 			this.comWriter.willWrite = true;
