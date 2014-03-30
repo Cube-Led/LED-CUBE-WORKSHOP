@@ -35,7 +35,7 @@ public class ConsoleDisplay implements Display {
 	}
 
 	@Override
-	public void setUserPolling(UserPolling poll) {
+	public void setUserPolling(ApplicationPolling poll) {
 		// TODO Auto-generated method stub
 		
 	}

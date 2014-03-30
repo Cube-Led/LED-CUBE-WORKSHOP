@@ -20,7 +20,7 @@ import communication.COMManager;
  * @author clement
  * 
  */
-public class Application implements UserPolling {
+public class Application implements ApplicationPolling {
 
 	/**
 	 * Size in bytes of an instruction for the cube ((codeOP : 1 byte, arguments

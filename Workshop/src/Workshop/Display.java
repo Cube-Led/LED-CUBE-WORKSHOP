@@ -32,7 +32,7 @@ public interface Display {
 	 */
 	public void print(String str);
 	
-	public void setUserPolling(UserPolling poll);
+	public void setUserPolling(ApplicationPolling poll);
 	
 	public void displayBuffer(Instruction[] inst,int countInstructions);
 	

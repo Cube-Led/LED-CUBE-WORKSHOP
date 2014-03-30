@@ -9,13 +9,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import Workshop.Cube;
-import Workshop.UserPolling;
+import Workshop.ApplicationPolling;
 
 public class ConfigFrame extends JFrame implements WindowListener{
 	
 	private static final long serialVersionUID = 752538686633551204L;
 
-	private final UserPolling polling;
+	private final ApplicationPolling polling;
 	
 	private JLabel lb_size;
 	private JLabel lb_isMono;
@@ -24,7 +24,7 @@ public class ConfigFrame extends JFrame implements WindowListener{
 	private JCheckBox ck_isMono;
 	/*private JCheckBox ck_isRGB;*/
 	
-	ConfigFrame(UserPolling u)
+	ConfigFrame(ApplicationPolling u)
 	{
 		super();
 		this.polling = u;

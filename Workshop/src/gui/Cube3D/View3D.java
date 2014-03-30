@@ -29,7 +29,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import Workshop.Instruction;
 import Workshop.Tools;
-import Workshop.UserPolling;
+import Workshop.ApplicationPolling;
 
 public class View3D extends JFrame implements WindowListener, ActionListener,
 		Runnable {
@@ -67,7 +67,7 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 
 	private int nodeListIndex;
 
-	private final UserPolling polling;
+	private final ApplicationPolling polling;
 
 	private Canvas canvas;
 
@@ -75,7 +75,7 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 	
 	private Color currentSelectedColor;
 
-	public View3D(UserPolling u) {
+	public View3D(ApplicationPolling u) {
 
 		this.polling = u;
 		this.nbLayer = u.getTheCube().getSizeCube();
@@ -126,7 +126,6 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 		this.setVisible(true);
 
 		this.addWindowListener(this);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 	}
 
@@ -569,13 +568,15 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 	public void windowActivated(WindowEvent e) {
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void windowClosed(WindowEvent e) {
+		Thread.currentThread().stop();
 	}
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		// TODO save instruction
+		this.dispose();
 	}
 
 	@Override
@@ -596,8 +597,9 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 
 	@Override
 	public void run() {
-		try {
+		try {			
 			Display.create();
+			Display.makeCurrent();
 			Display.setParent(canvas);
 		} catch (LWJGLException e) {
 			// TODO Produce proper response to error

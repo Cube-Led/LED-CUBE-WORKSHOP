@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
 
 import Workshop.Display;
 import Workshop.Instruction;
-import Workshop.UserPolling;
+import Workshop.ApplicationPolling;
 
 
 /**
@@ -27,7 +27,7 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 
 	private static final long serialVersionUID = 1L;
 
-	private UserPolling polling;
+	private ApplicationPolling polling;
 	
 	private GuiChoiceAsker choiceComponent;
 	
@@ -88,7 +88,7 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 		this.getContentPane().validate();
 	}
 	
-	public void setUserPolling(UserPolling poll) {
+	public void setUserPolling(ApplicationPolling poll) {
 		this.polling = poll;
 	}
 	
@@ -145,7 +145,7 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 		}
 	
 
-	public UserPolling getPolling() {
+	public ApplicationPolling getPolling() {
 		return polling;
 	}
 

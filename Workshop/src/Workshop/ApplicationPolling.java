@@ -3,7 +3,7 @@ package Workshop;
 import java.io.File;
 import java.util.List;
 
-public interface UserPolling {
+public interface ApplicationPolling {
 	//public void writeSavedInstructionsInSavefile();
 	public void writeSavedInstructionsInSavefile(File file);
 	public void recordInstructions();
