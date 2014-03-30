@@ -5,8 +5,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.nio.ByteBuffer;
-import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,9 +21,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import Workshop.Instruction;
+import Workshop.Tools;
 
 public class ViewCreateProgram extends View implements ActionListener{
 
+	private static final long serialVersionUID = 1L;
 	private JList list_instructionsList;
 	private JComboBox cb_ReadOnlyInstructions;
 	private Box pan_enterArguments;
@@ -151,28 +151,19 @@ public class ViewCreateProgram extends View implements ActionListener{
 	private void recomposeInstruction()
 	{
 		Instruction current = (Instruction) this.cb_ReadOnlyInstructions.getSelectedItem();
-		List<Short> b = new ArrayList<Short>();
+		List<Short> args = new ArrayList<Short>();
 		
 		int j=1;
 		for(int i =0; i < current.getNbArgs(); i++)
 		{
 			Long tempArg = (Long.valueOf(((JTextField)(pan_enterArguments.getComponent(j))).getText()));
-			ByteBuffer bufByte = ByteBuffer.allocate(Long.SIZE/8);
-			bufByte.putLong(tempArg);		
-			bufByte.rewind();
-			ShortBuffer bufShort = bufByte.asShortBuffer();
-			System.out.println("short capa " + bufShort.capacity());
-			System.out.println("byte capa " + bufByte.capacity());
-			for(int k = 0; k < bufShort.capacity(); k++)
-			{
-				System.out.println(bufShort.get(k));
-				b.add(bufShort.get(k));
-			}
-			System.out.println(b.get(0));
+			
+			args.addAll(Tools.transformLongToShort(tempArg));
+
 			j=j+2;
 		}
 		this.motherFrame.getPolling().saveOneInstruction(current.getCodeOp(), current.getDescription(), current.getNbArgs(),
-														current.getDescriptionArguments(), b);
+														current.getDescriptionArguments(), args);
 	}
 
 	@Override

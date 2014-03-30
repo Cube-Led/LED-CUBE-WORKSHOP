@@ -5,6 +5,8 @@ import javax.swing.JLabel;
 
 public class VerticalEmptySpace extends JLabel {
 	
+	private static final long serialVersionUID = 1L;
+	
 	public VerticalEmptySpace(int height)
 	{
 		this.setBorder(BorderFactory.createEmptyBorder(0, height/2, 0, height/2));

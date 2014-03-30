@@ -1,8 +1,5 @@
 package gui;
 
-import java.awt.Menu;
-import java.awt.MenuBar;
-import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -15,13 +12,14 @@ import javax.swing.JPanel;
  */
 public class View extends JPanel implements ActionListener{
 
+	private static final long serialVersionUID = 1L;
+	
 	protected GUIDisplay motherFrame;
 	
 	
 	public View(GUIDisplay motherFrame)
 	{
 		this.motherFrame = motherFrame;
-		
 	}
 	
 	public void init(){}
