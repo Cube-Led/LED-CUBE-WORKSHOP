@@ -3,28 +3,60 @@ package communication;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * Class used, in the communication by serial link between the workshop and the Arduino, in order to send data
+ * @author Clement
+ *
+ */
 public class SerialWriter extends Thread {
+	
+	/**
+	 * The stream who output data
+	 */
 	public final OutputStream out;
+	
+	
+	/**
+	 * The byte array set when wall the setDataToBeWrite method
+	 * This array correspond to the data who will be send through the serial link
+	 */
 	private byte[] dataToWrite;
 
-	public boolean willWrite;
-	public int willSend;
+	/**
+	 * Boolean who tell if the data is requested to be send
+	 */
+	public boolean needSending;
+	
+	/**
+	 * The integer who will be sent when the needSending field is True
+	 */
+	public int integerToSend;
+	
+	
 	public SerialWriter(OutputStream out) {
-		this.willWrite = false;
+		this.needSending = false;
 		this.out = out;
 		dataToWrite = null;
 	}
 
+	/**
+	 * Set the data who will be sent through the serial link
+	 * @param data The data who will be sent
+	 */
 	public void setDataToBeWrite(byte[] data)
 	{
-		this.willWrite = false;
+		this.needSending = false;
 		this.dataToWrite = data;
 	}
 	
-	public void send(int willSend2)
+	/**
+	 * Send an integer trough the serial link
+	 * @param toSend the integer sent through the serial link
+	 */
+	public void send(int toSend)
 	{
 		try {
-			this.out.write(willSend2);
+			this.out.write(toSend);
 			this.out.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -32,25 +64,32 @@ public class SerialWriter extends Thread {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	public void run() {
 
-		willSend = (byte) 0xFF;
+		integerToSend = (byte) 0xFF;
 		while(true)
 		{
-			if(this.willWrite)
+			if(this.needSending)
 			{
 				writeData();
-				this.willWrite = false;
+				this.needSending = false;
 			}
-			if(this.willSend != (byte)0xFF)
+			if(this.integerToSend != (byte)0xFF)
 			{
-				send(willSend);
-				willSend = (byte) 0xFF;
+				send(integerToSend);
+				integerToSend = (byte) 0xFF;
 			}
 		}
 		
 	}
 
+	/**
+	 * Close the OutPutStream and stop the current Thread
+	 */
+	@SuppressWarnings("deprecation")
 	public void close()
 	{
 		try {
@@ -62,6 +101,9 @@ public class SerialWriter extends Thread {
 		this.stop();
 	}
 	
+	/**
+	 * Write the data from the byte array field dataToWrite through the serial link
+	 */
 	public void writeData() {
 		int i=0;
 		while(i < dataToWrite.length)

@@ -123,7 +123,7 @@ public class COMManager {
 		System.out.println("Debut de transmision");
 		try {
 			Thread.sleep(2000);
-			this.comWriter.willSend = SIG_BEGIN;
+			this.comWriter.integerToSend = SIG_BEGIN;
 			while (!this.comReader.acknowledgement && timeCount < 500) {
 				Thread.sleep(10);
 				timeCount++;
@@ -134,11 +134,11 @@ public class COMManager {
 			}
 			System.out.println("Reponse de l'arduino, envoie en cours de " + data.length + " octets \n  (" +  ((float)data.length*8)/(serialPort.getBaudRate() /10.0F) + " secondes nécéssaires)");
 			this.comReader.acknowledgement = false;
-			this.comWriter.willSend = data.length;
+			this.comWriter.integerToSend = data.length;
 			Thread.sleep(1000);
 			this.comWriter.setDataToBeWrite(data);
-			this.comWriter.willWrite = true;
-			while (comWriter.willWrite) {
+			this.comWriter.needSending = true;
+			while (comWriter.needSending) {
 				Thread.sleep(5);
 			}
 			System.out.println("Fin de transmission");

@@ -144,10 +144,6 @@ public class ViewCreateProgram extends View implements ActionListener{
 		this.validate();
 	}
 
-	public void askArgument(String str) {
-		this.updateUI();
-	}
-	
 	private void recomposeInstruction()
 	{
 		Instruction current = (Instruction) this.cb_ReadOnlyInstructions.getSelectedItem();

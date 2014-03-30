@@ -42,6 +42,7 @@ public class Application implements ApplicationPolling {
 	 * Instruction who will be write in file "instructions.bin" in order to be
 	 * send to the cube
 	 */
+	//TODO change it by a dynamic list
 	private Instruction instructionToWrite[];
 
 	/**
@@ -54,7 +55,6 @@ public class Application implements ApplicationPolling {
 	 */
 	private final Display display;
 
-	private final ChoiceAsker choice;
 
 	/**
 	 * Read only list of instructions supported by the cube they are loaded from
@@ -70,18 +70,17 @@ public class Application implements ApplicationPolling {
 	 * @param d
 	 *            The display used
 	 */
-	public Application(Display d, ChoiceAsker ch) {
+	public Application(Display d) {
 		
 		this.theCube = new Cube();
 		
 		this.display = d;
-		this.choice = ch;
 
 		this.instructionToWrite = new Instruction[MAX_NUMBER_OF_INSTRUCTION_TO_SAVE];
 		this.cubesInstructions = new ArrayList<Instruction>();
 		this.countInstructions = 0;
 
-		this.display.setUserPolling(this);
+		this.display.setApplicationPolling(this);
 		try {
 			loadInstructionFromFile();
 		} catch (IOException e) {
@@ -133,60 +132,9 @@ public class Application implements ApplicationPolling {
 				count++;
 			}
 		}
+		r.close();
 	}
 
-	/**
-	 * Record instructions until the user stop it or until the instruction tab
-	 * is full
-	 */
-	public void recordInstructions() {
-		Instruction current;
-		for (this.countInstructions = 0; (this.countInstructions < MAX_NUMBER_OF_INSTRUCTION_TO_SAVE); this.countInstructions++) {
-			Instruction[] x = this.cubesInstructions.toArray(new Instruction[this.cubesInstructions.size()]);
-			this.display.displayChoiceOfInstruction(x);
-			this.display.print(END_OF_RECORDING_INSTRUCTION + "-Envoyer les instructions \n");
-			display.displayAskingOfAnArgument("Choix (taper " + END_OF_RECORDING_INSTRUCTION + " pour finir)");
-			int codeOpCurrent = choice.askInteger();
-			if (codeOpCurrent != END_OF_RECORDING_INSTRUCTION) {
-				Iterator<Instruction> iterator = this.cubesInstructions.iterator();
-				Instruction newInstruct;
-				boolean finded = false;
-				while (iterator.hasNext()) {
-					current = iterator.next();
-					if (current.getCodeOp() == codeOpCurrent) {
-						finded = true;
-						List<Short> args = new ArrayList<Short>();
-						for (int j = 0; j < current.getNbArgs(); j++) {
-							String desc = current.getDescriptionArguments()[j];
-							if (desc == null)
-								desc = "Argument " + j + 1;
-							display.displayAskingOfAnArgument(desc + " : ");
-							int tempArg = choice.askInteger();
-							if (tempArg > 0xFF) {
-								args.add((short) (tempArg & 0xFF));
-								j++;
-								args.set(j, (short) (tempArg >> 8));
-							} else {
-								args.add((short) 0);
-								j++;
-								args.set(j,(short) tempArg);
-							}
-						}
-						newInstruct = new Instruction((byte) codeOpCurrent, current.getDescription(), current.getNbArgs());
-						newInstruct.setArgs(args);
-						instructionToWrite[this.countInstructions] = newInstruct;
-						display.displayBuffer(instructionToWrite, countInstructions);
-					}
-				}
-				if (!finded)
-					countInstructions--;
-			} 
-			else
-				break;
-			if (this.countInstructions == Application.MAX_NUMBER_OF_INSTRUCTION_TO_SAVE)
-				display.println("You have reached the end of the instruction buffer");
-		}
-	}
 
 	private void writeLong(long l, DataOutputStream out) throws IOException
 	{

@@ -32,9 +32,18 @@ public interface Display {
 	 */
 	public void print(String str);
 	
-	public void setUserPolling(ApplicationPolling poll);
+	/**
+	 * Set the application polling associated to the display
+	 * the display use it to request the display or the modification of objects contained in the class who implements the interface ApplicationPolling
+	 * @param poll The ApplicationPolling
+	 */
+	public void setApplicationPolling(ApplicationPolling poll);
 	
+	/**
+	 * Display a buffer of instructions
+	 * @param inst The buffer of instruction
+	 * @param countInstructions The number of instructions
+	 */
 	public void displayBuffer(Instruction[] inst,int countInstructions);
 	
-	public void displayAskingOfAnArgument(String str);
 }

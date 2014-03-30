@@ -29,7 +29,6 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 
 	private ApplicationPolling polling;
 	
-	private GuiChoiceAsker choiceComponent;
 	
 	public static final Dimension DEFAULT_DIMENSION = new Dimension(375,175);
 	
@@ -39,9 +38,8 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 	private Menu menuVue;
 	
 	
-	public GUIDisplay(GuiChoiceAsker choice)
+	public GUIDisplay()
 	{
-		this.choiceComponent = choice;
 		this.setBackground(Color.white);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setTitle("Worshop");
@@ -88,7 +86,7 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 		this.getContentPane().validate();
 	}
 	
-	public void setUserPolling(ApplicationPolling poll) {
+	public void setApplicationPolling(ApplicationPolling poll) {
 		this.polling = poll;
 	}
 	
@@ -147,16 +145,5 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 
 	public ApplicationPolling getPolling() {
 		return polling;
-	}
-
-	public GuiChoiceAsker getChoice() {
-		return choiceComponent;
-	}
-	@Override
-	public void displayAskingOfAnArgument(String str) {
-		if(this.getContentPane() instanceof ViewCreateProgram)
-		{
-			((ViewCreateProgram)this.getContentPane()).askArgument(str);
-		}
 	}
 }
