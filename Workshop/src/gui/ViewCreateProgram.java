@@ -2,15 +2,19 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -34,6 +38,7 @@ public class ViewCreateProgram extends View implements ActionListener{
 	private JButton bt_saveOneInstruction;
 	private JButton bt_loadInstructionsOnCube;
 	private JButton bt_retourMenu;
+	private JButton bt_suppr;
 	
 	private final String loadInstructionsIdentifier = "bt_loadInstructions";
 	private final String loadInstructionOnCubeIdentifier = "bt_loadInstructionsOnCube";
@@ -105,7 +110,7 @@ public class ViewCreateProgram extends View implements ActionListener{
 		bt_saveOneInstruction.setBounds(this.CENTER_LEFTPAN , 435, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		left.add(bt_saveOneInstruction);
 
-		bt_loadInstructionsOnCube = new JButton("Enregistrer l'animation sur un fichier");
+		bt_loadInstructionsOnCube = new JButton("Enregistrer l'animation + envoi");
 		bt_loadInstructionsOnCube.addActionListener(this);
 		bt_loadInstructionsOnCube.setName(this.loadInstructionOnCubeIdentifier);
 		bt_loadInstructionsOnCube.setBounds(this.CENTER_LEFTPAN , 475, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
@@ -115,7 +120,17 @@ public class ViewCreateProgram extends View implements ActionListener{
 		bt_retourMenu.addActionListener(this);
 		bt_retourMenu.setName(this.retourMenuIdentifier);
 		bt_retourMenu.setBounds(this.CENTER_LEFTPAN , 515, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
-		left.add(bt_retourMenu);		
+		left.add(bt_retourMenu);
+		
+		bt_suppr = new JButton();
+		try {
+			Image img = ImageIO.read(new File("ressources/poubelle.jpg"));
+		    bt_suppr.setIcon(new ImageIcon(img));
+		    } catch (IOException ex) {}
+		bt_suppr.addActionListener(this);
+		bt_suppr.setName("Suppression");
+		bt_suppr.setBounds(this.CENTER_LEFTPAN + this.BUTTON_WIDTH + 40, 485, 40, 50);
+		left.add(bt_suppr);
 
 		left.setBorder(BorderFactory.createLineBorder(Color.black));
 		right.setBorder(BorderFactory.createLineBorder(Color.black));

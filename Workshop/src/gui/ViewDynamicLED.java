@@ -1,13 +1,17 @@
 package gui;
 
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -25,6 +29,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 	private int numberLayer;
 	
 	private LedJPan pictureLED;
+	private Image img;
 	
 	private JList list_instructionsList;
 	
@@ -36,6 +41,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 	private JButton bt_saveOneInstruction;
 	private JButton bt_loadInstructionsOnCube;
 	private JButton bt_retourMenu;
+	private JButton bt_suppr;
 	
 	private final String upLevelIdentifier = "bt_upLevel";
 	private final String downLevelIdentifier = "bt_downLevel";
@@ -133,7 +139,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 		bt_saveOneInstruction.setBounds(this.CENTER_LEFTPAN , 535, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		left.add(bt_saveOneInstruction);
 
-		bt_loadInstructionsOnCube = new JButton("Enregistrer l'animation sur un fichier");
+		bt_loadInstructionsOnCube = new JButton("Enregistrer l'animation + envoi");
 		bt_loadInstructionsOnCube.addActionListener(this);
 		bt_loadInstructionsOnCube.setName(this.loadInstructionsIdentifier);
 		bt_loadInstructionsOnCube.setBounds(this.CENTER_LEFTPAN , 575, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
@@ -144,6 +150,16 @@ public class ViewDynamicLED extends View implements ActionListener {
 		bt_retourMenu.setName(this.retourMenuIdentifier);
 		bt_retourMenu.setBounds(this.CENTER_LEFTPAN , 615, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		left.add(bt_retourMenu);
+		
+		bt_suppr = new JButton();
+		try {
+			this.img = ImageIO.read(new File("ressources/poubelle.jpg"));
+		    bt_suppr.setIcon(new ImageIcon(this.img));
+		    } catch (IOException ex) {}
+		bt_suppr.addActionListener(this);
+		bt_suppr.setName("Suppression");
+		bt_suppr.setBounds(this.CENTER_LEFTPAN + this.BUTTON_WIDTH + 40, 580, 40, 50);
+		left.add(bt_suppr);
 				
 		
 		/* ------------------- Disposition des Box Gauche et Droite ------------------- */
