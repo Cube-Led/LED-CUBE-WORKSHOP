@@ -180,9 +180,16 @@ public class Application implements ApplicationPolling {
 	}*/
 	
 	public void writeSavedInstructionsInSavefile(File file) {
-		//File file = new File(nameFile);
 		try {
 			DataOutputStream r = new DataOutputStream(new FileOutputStream(file));
+			r.write(0x0);
+			r.write(0x3);
+			r.write(0x0);
+			r.write(0x5);
+			r.write(0x0);
+			r.write(instructionToWrite.length);
+			r.write(0x0);
+			r.write(0x4);
 			for (int i = 0; i < instructionToWrite.length && instructionToWrite[i] != null; i++) {
 				byte s1 = (byte) (instructionToWrite[i].getSize() >> 8);
 				byte s2 = (byte) (instructionToWrite[i].getSize() & 0x00FF);
