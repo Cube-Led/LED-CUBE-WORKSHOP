@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -14,8 +15,11 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -26,6 +30,7 @@ import org.lwjgl.util.glu.Sphere;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector3f;
 
+import Workshop.Cube;
 import Workshop.Instruction;
 import Workshop.Tools;
 import Workshop.ApplicationPolling;
@@ -76,6 +81,8 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 	
 	private final int BUTTON_WIDTH = 200;
 	private final int BUTTON_HEIGHT = 35;
+	private JLabel lb_delai;
+	private JTextField txt_delai;
 
 	public View3D(ApplicationPolling u) {
 
@@ -97,6 +104,17 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 		
 		JPanel upPanel = new JPanel();
 		upPanel.setLayout(null);
+		
+		this.lb_delai = new JLabel(" Delai souhaité :");
+		this.lb_delai.setBackground(Color.white);
+		this.lb_delai.setName("lb_delai");
+		this.lb_delai.setBounds(600, 570, 100, 25);
+		upPanel.add(lb_delai);
+		
+		this.txt_delai = new JTextField("200");
+		this.txt_delai.setName("txt_delai");
+		this.txt_delai.setBounds(700, 570, 50, 25);
+		upPanel.add(txt_delai);
 		
 		canvas = new Canvas();
 		canvas.setBounds(5, 5, 800, 600);
@@ -661,7 +679,15 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 			initVectors(this.INIT_MODE_NEW_LED_SET_ROTATION_SWITCHOFF);
 		if (((JButton) arg0.getSource()).getText().equals("Changer de couleur"))
 			this.currentSelectedColor = JColorChooser.showDialog(this, "Couleur des leds", Led3D.DEFAULT_COLOR);
-		System.out.println(((JButton) arg0.getSource()).getText());
+		if (((JButton) arg0.getSource()).getText().equals("<HTML><BODY>Sauvegarder l'animation,<BR>L'envoyer sur le cube</BODY></HTML>")) {
+			JFileChooser saveFile = new JFileChooser();
+			saveFile.showOpenDialog(this);
+			File saveInFile = saveFile.getSelectedFile();
+			if (saveInFile != null){
+				polling.writeSavedInstructionsInSavefile(saveInFile);
+				polling.sendFile(saveInFile);
+			}
+		}
 	}
 
 }

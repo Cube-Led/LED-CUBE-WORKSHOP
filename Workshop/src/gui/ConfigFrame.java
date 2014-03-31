@@ -22,14 +22,13 @@ public class ConfigFrame extends JFrame implements WindowListener{
 	
 	private JTextField txt_size;
 	private JCheckBox ck_isMono;
-	/*private JCheckBox ck_isRGB;*/
 	
 	ConfigFrame(ApplicationPolling u)
 	{
 		super();
 		this.polling = u;
 		this.setTitle("Configuration");
-		this.setSize(300, 225);
+		this.setSize(300, 200);
 		this.addWindowListener(this);
 		init();
 		this.setVisible(true);
@@ -60,11 +59,6 @@ public class ConfigFrame extends JFrame implements WindowListener{
 		this.ck_isMono.setName("ck_isMono");
 		this.ck_isMono.setBounds(100, 100, 100, 25);
 		defaultPan.add(ck_isMono);
-		
-		/*this.ck_isRGB = new JCheckBox("RGB", false);
-		this.ck_isRGB.setName("ck_isRGB");
-		this.ck_isRGB.setBounds(100, 130, 100, 25);
-		defaultPan.add(ck_isRGB);*/
 		
 		this.setContentPane(defaultPan);
 		this.update(getGraphics());
