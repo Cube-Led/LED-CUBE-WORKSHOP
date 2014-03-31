@@ -236,7 +236,9 @@ public class ViewDynamicLED extends View implements ActionListener {
 				JFileChooser saveFile = new JFileChooser();
 				saveFile.showOpenDialog(this);
 				File saveInFile = saveFile.getSelectedFile();
-				this.motherFrame.getPolling().writeSavedInstructionsInSavefile(saveInFile);
+				if (saveInFile != null){
+					this.motherFrame.getPolling().writeSavedInstructionsInSavefile(saveInFile);
+				}
 			}
 			else if(((JButton)e.getSource()).getName().equals(this.retourMenuIdentifier))
 			{
