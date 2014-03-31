@@ -132,7 +132,7 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 		changecolor.setBounds(15 + this.BUTTON_WIDTH, 10 + this.BUTTON_HEIGHT, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		belowPanel.add(changecolor);
 		
-		JButton test = new JButton("Test instruction");
+		JButton test = new JButton("Enregistrer");
 		test.addActionListener(this);
 		test.setBounds(20 + this.BUTTON_WIDTH * 2, 10 + this.BUTTON_HEIGHT, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		belowPanel.add(test);
@@ -648,7 +648,7 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 	public void actionPerformed(ActionEvent arg0) {
 
 		if (arg0.getSource() instanceof JButton)
-			if (((JButton) arg0.getSource()).getText().equals("Test inst"))
+			if (((JButton) arg0.getSource()).getText().equals("Enregistrer"))
 				createInstruction();
 		if (((JButton) arg0.getSource()).getText().equals("Tout éteindre"))
 			initVectors(this.INIT_MODE_SWITCHOFF_ONLY);
