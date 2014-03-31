@@ -27,6 +27,7 @@ public interface ApplicationPolling {
 	/**
 	 * Create an instruction with the following arguments.
 	 * Then save it in the list of instructions
+	 * Also refresh display
 	 * @param codeOp
 	 * @param description
 	 * @param nbArg
@@ -35,7 +36,11 @@ public interface ApplicationPolling {
 	 */
 	public void saveOneInstruction(short codeOp, String description, int nbArg,String[] descriptionArgs, List<Short> args);
 	
-	
+	/**
+	 * Save an instruction in the list
+	 * @param inst The instruction to save
+	 */
+	public void saveOneInstruction(Instruction inst);
 	/**
 	 * Service provided by the interface who request the display of list of already saved instructions
 	 */

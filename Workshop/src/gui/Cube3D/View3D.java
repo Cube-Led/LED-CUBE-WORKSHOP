@@ -579,6 +579,10 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 	}
 
 	private void createInstruction() {
+		
+		Instruction delay = new Instruction((short) 0x01,1);
+		delay.setArgs(Tools.transformLongToShort(Long.parseLong(this.txt_delai.getText())));
+		
 		long number = 0;
 		for (int i = 0; i < Math
 				.pow(this.polling.getTheCube().getSizeCube(), 3); i += Math
@@ -602,9 +606,9 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 			args.addAll(Tools.transformLongToShort(number));
 			current.setArgs(args);
 			System.out.println(current);
-			this.polling.saveOneInstruction(current.getCodeOp(),
-					current.getDescription(), current.getNbArgs(),
-					current.getDescriptionArguments(), current.getArgs());
+			
+			this.polling.saveOneInstruction(current);
+			this.polling.saveOneInstruction(delay);
 		}
 	}
 

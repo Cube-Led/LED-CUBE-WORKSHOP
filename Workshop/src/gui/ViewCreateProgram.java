@@ -131,6 +131,7 @@ public class ViewCreateProgram extends View implements ActionListener{
 		this.add(right);	
 
 		motherFrame.getPolling().requestDisplayOfPrimitiveInstructions();
+		this.cb_ReadOnlyInstructions.updateUI();
 	}
 	
 	public void displayBuffer(Instruction[] inst, int countInstructions) {

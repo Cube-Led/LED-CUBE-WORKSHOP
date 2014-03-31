@@ -244,6 +244,12 @@ public class Application implements ApplicationPolling {
 		this.display.displayBuffer(instructionToWrite, countInstructions);
 		this.countInstructions++;
 	}
+	public void saveOneInstruction(Instruction inst) {
+		instructionToWrite[this.countInstructions] = inst;
+		this.display.displayBuffer(instructionToWrite, countInstructions);
+		this.countInstructions++;
+	}
+	
 
 	@Override
 	public void requestDisplayOfPrimitiveInstructions() {
