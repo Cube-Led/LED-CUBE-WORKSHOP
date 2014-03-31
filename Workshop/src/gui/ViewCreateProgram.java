@@ -149,8 +149,8 @@ public class ViewCreateProgram extends View implements ActionListener{
 		this.cb_ReadOnlyInstructions.updateUI();
 	}
 	
-	public void displayBuffer(Instruction[] inst, int countInstructions) {
-		this.list_instructionsList.setListData(inst);
+	public void displayBuffer(List<Instruction> inst, int countInstructions) {
+		this.list_instructionsList.setListData(inst.toArray());
 		this.validate();
 	}
 	
@@ -204,6 +204,13 @@ public class ViewCreateProgram extends View implements ActionListener{
 			else if(((JButton)e.getSource()).getName().equals(this.retourMenuIdentifier))
 			{
 				this.motherFrame.setContentPane(new ViewMainMenu(motherFrame));
+			}
+			else if(((JButton)e.getSource()).getName().equals("Suppression"))
+			{
+				if(this.list_instructionsList.getSelectedIndex() == -1)
+					this.motherFrame.getPolling().deleteListOfInstructions();
+				else
+					this.motherFrame.getPolling().deleteSelectedInstruction(this.list_instructionsList.getSelectedIndex());
 			}
 		}
 		else if(e.getSource() instanceof JComboBox)

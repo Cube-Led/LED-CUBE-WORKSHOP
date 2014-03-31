@@ -209,8 +209,8 @@ public class ViewDynamicLED extends View implements ActionListener {
 		return current;
 	}
 	
-	public void displayBuffer(Instruction[] inst, int countInstructions) {
-		this.list_instructionsList.setListData(inst);
+	public void displayBuffer(List<Instruction> inst, int countInstructions) {
+		this.list_instructionsList.setListData(inst.toArray());
 		this.validate();
 	}
 	
@@ -259,6 +259,13 @@ public class ViewDynamicLED extends View implements ActionListener {
 			else if(((JButton)e.getSource()).getName().equals(this.retourMenuIdentifier))
 			{
 				this.motherFrame.setContentPane(new ViewMainMenu(motherFrame));
+			}
+			else if(((JButton)e.getSource()).getName().equals("Suppression"))
+			{
+				if(this.list_instructionsList.getSelectedIndex() == -1)
+					this.motherFrame.getPolling().deleteListOfInstructions();
+				else
+					this.motherFrame.getPolling().deleteSelectedInstruction(this.list_instructionsList.getSelectedIndex());
 			}
 		}
 	}

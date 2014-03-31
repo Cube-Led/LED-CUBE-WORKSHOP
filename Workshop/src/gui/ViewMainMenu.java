@@ -166,7 +166,9 @@ public class ViewMainMenu extends View implements ActionListener {
 			JFileChooser saveFile = new JFileChooser();
 			saveFile.showOpenDialog(this);
 			File saveInFile = saveFile.getSelectedFile();
-			this.motherFrame.getPolling().sendFile(saveInFile);
+			if (saveInFile != null) {
+				this.motherFrame.getPolling().sendFile(saveInFile);
+			}
 		}
 	}
 	

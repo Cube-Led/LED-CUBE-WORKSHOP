@@ -132,12 +132,17 @@ public class COMManager {
 				System.out.println("ECHEC du transfert");
 				return;
 			}
-			System.out.println("Reponse de l'arduino, envoie en cours de " + data.length + " octets \n  (" +  ((float)data.length*8)/(serialPort.getBaudRate() /10.0F) + " secondes nécéssaires)");
+			System.out.println("Reponse de l'arduino, envoie en cours de " + data.length + " octets \n  (" +  ((float)data.length*8)/(serialPort.getBaudRate() /10.0F)*5+2 + " secondes nécéssaires)");
 			this.comReader.acknowledgement = false;
-			this.comWriter.integerToSend = data.length;
+			
+			this.comWriter.out.write(data.length>>24);
+			this.comWriter.out.write(data.length>>16);
+			this.comWriter.out.write(data.length>>8);
+			this.comWriter.out.write(data.length);
 			Thread.sleep(1000);
 			this.comWriter.setDataToBeWrite(data);
 			this.comWriter.needSending = true;
+			this.comReader.acknowledgement = false;
 			while (comWriter.needSending) {
 				Thread.sleep(5);
 			}
@@ -145,6 +150,9 @@ public class COMManager {
 			Thread.sleep(1000);
 
 		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

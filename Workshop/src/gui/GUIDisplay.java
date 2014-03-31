@@ -9,7 +9,10 @@ import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.List;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -57,6 +60,10 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 		this.menuFichier = new Menu("Fichier");
 		this.menuConfig = new Menu("Options");
 		this.menuVue = new Menu("Vues");
+		
+		MenuItem send = new MenuItem("Envoyer sur l'Arduino");
+		send.addActionListener(this);
+		this.menuFichier.add(send);
 		
 		MenuItem quitter = new MenuItem("Quitter");
 		quitter.addActionListener(this);
@@ -125,11 +132,19 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 				Thread thread = new Thread(new View3D(this.polling));
 				thread.start();
 			}
+			else if(((MenuItem)arg0.getSource()).getLabel().equals("Envoyer sur l'Arduino")) {
+				JFileChooser saveFile = new JFileChooser();
+				saveFile.showOpenDialog(this);
+				File saveInFile = saveFile.getSelectedFile();
+				if (saveInFile != null) {
+					this.getPolling().sendFile(saveInFile);
+				}
+			}
 		}
 			
 	}
 	@Override
-	public void displayBuffer(Instruction[] inst, int countInstructions) {
+	public void displayBuffer(List<Instruction> inst, int countInstructions) {
 
 		if(this.getContentPane() instanceof ViewCreateProgram)
 		{

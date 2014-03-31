@@ -1,4 +1,7 @@
 package Workshop;
+
+import java.util.List;
+
 /**
  * Interface who define general methods for display the application
  * 
@@ -41,9 +44,9 @@ public interface Display {
 	
 	/**
 	 * Display a buffer of instructions
-	 * @param inst The buffer of instruction
+	 * @param instructionToWrite The buffer of instruction
 	 * @param countInstructions The number of instructions
 	 */
-	public void displayBuffer(Instruction[] inst,int countInstructions);
+	public void displayBuffer(List<Instruction> instructionToWrite,int countInstructions);
 	
 }

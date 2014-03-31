@@ -43,7 +43,7 @@ public class Application implements ApplicationPolling {
 	 * send to the cube
 	 */
 	//TODO change it by a dynamic list
-	private Instruction instructionToWrite[];
+	private List<Instruction> instructionToWrite;
 
 	/**
 	 * Number of saved instructions
@@ -76,7 +76,7 @@ public class Application implements ApplicationPolling {
 		
 		this.display = d;
 
-		this.instructionToWrite = new Instruction[MAX_NUMBER_OF_INSTRUCTION_TO_SAVE];
+		this.instructionToWrite = new ArrayList<Instruction>();
 		this.cubesInstructions = new ArrayList<Instruction>();
 		this.countInstructions = 0;
 
@@ -187,21 +187,21 @@ public class Application implements ApplicationPolling {
 			r.write(0x0);
 			r.write(0x5);
 			r.write(0x0);
-			r.write(instructionToWrite.length);
+			r.write(instructionToWrite.size());
 			r.write(0x0);
 			r.write(0x4);
-			for (int i = 0; i < instructionToWrite.length && instructionToWrite[i] != null; i++) {
-				byte s1 = (byte) (instructionToWrite[i].getSize() >> 8);
-				byte s2 = (byte) (instructionToWrite[i].getSize() & 0x00FF);
+			for (int i = 0; i < instructionToWrite.size() && instructionToWrite.get(i) != null; i++) {
+				byte s1 = (byte) (instructionToWrite.get(i).getSize() >> 8);
+				byte s2 = (byte) (instructionToWrite.get(i).getSize() & 0x00FF);
 				r.write(s1);
 				r.write(s2);
-				byte c1 = (byte) (instructionToWrite[i].getCodeOp() >> 8);
-				byte c2 = (byte) (instructionToWrite[i].getCodeOp() & 0x00FF);
+				byte c1 = (byte) (instructionToWrite.get(i).getCodeOp() >> 8);
+				byte c2 = (byte) (instructionToWrite.get(i).getCodeOp() & 0x00FF);
 				r.write(c1);
 				r.write(c2);
-				for (int j = 0; j < instructionToWrite[i].getArgs().size(); j++) {
-					byte b1 = (byte) (instructionToWrite[i].getArgs().get(j) >> 8);
-					byte b2 = (byte) (instructionToWrite[i].getArgs().get(j) & 0x00FF);
+				for (int j = 0; j < instructionToWrite.get(i).getArgs().size(); j++) {
+					byte b1 = (byte) (instructionToWrite.get(i).getArgs().get(j) >> 8);
+					byte b2 = (byte) (instructionToWrite.get(i).getArgs().get(j) & 0x00FF);
 					r.write(b1);
 					r.write(b2);					
 				}
@@ -240,12 +240,12 @@ public class Application implements ApplicationPolling {
 		Instruction current = new Instruction(codeOp, desc, nbArg);
 		current.setArgs(args);
 		current.setDescriptionArguments(descriptionArgs);
-		instructionToWrite[this.countInstructions] = current;
+		instructionToWrite.add(current);
 		this.display.displayBuffer(instructionToWrite, countInstructions);
 		this.countInstructions++;
 	}
 	public void saveOneInstruction(Instruction inst) {
-		instructionToWrite[this.countInstructions] = inst;
+		instructionToWrite.add(inst);
 		this.display.displayBuffer(instructionToWrite, countInstructions);
 		this.countInstructions++;
 	}
@@ -263,5 +263,23 @@ public class Application implements ApplicationPolling {
 	@Override
 	public void setTheCube(Cube c) {
 		this.theCube = c;
+	}
+
+	@Override
+	public void deleteListOfInstructions() {
+		
+		while(instructionToWrite.size() != 0)
+			this.instructionToWrite.remove(0);
+		
+		this.display.displayBuffer(instructionToWrite, countInstructions);
+		
+	}
+
+	@Override
+	public void deleteSelectedInstruction(int selectedIndex) {
+		
+			this.instructionToWrite.remove(selectedIndex);
+		
+		this.display.displayBuffer(instructionToWrite, countInstructions);
 	}	
 }

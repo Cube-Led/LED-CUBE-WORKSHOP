@@ -60,4 +60,8 @@ public interface ApplicationPolling {
 	 */
 	public void setTheCube(Cube c);
 	
+	
+	public void deleteListOfInstructions();
+
+	public void deleteSelectedInstruction(int selectedIndex);
 }

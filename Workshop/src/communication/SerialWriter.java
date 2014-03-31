@@ -79,6 +79,7 @@ public class SerialWriter extends Thread {
 			}
 			if(this.integerToSend != (byte)0xFF)
 			{
+				System.out.println(integerToSend);
 				send(integerToSend);
 				integerToSend = (byte) 0xFF;
 			}
