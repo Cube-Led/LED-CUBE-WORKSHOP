@@ -21,7 +21,7 @@ public interface ApplicationPolling {
 	 * Send the file given in parameter to the Arduino through the serial link
 	 * @param file The file sent.
 	 */
-	public void sendFile(File file);
+	public void sendFileToArduino(File file);
 	
 	
 	/**
@@ -61,7 +61,13 @@ public interface ApplicationPolling {
 	public void setTheCube(Cube c);
 	
 	
+	/**
+	 * Delete the entire list of saved instructions
+	 */
 	public void deleteListOfInstructions();
 
+	/**
+	 * Delete a specified item in the list pf saved instructions
+	 */
 	public void deleteSelectedInstruction(int selectedIndex);
 }

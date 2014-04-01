@@ -17,7 +17,7 @@ public interface Display {
 	 * @param inst
 	 *            Instruction tab to display
 	 */
-	public void displayChoiceOfInstruction(Instruction[] inst);
+	public void displayChoiceOfInstruction(List<Instruction> inst);
 
 	/**
 	 * Display a string with '\n' character at the end

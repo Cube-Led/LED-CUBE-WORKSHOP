@@ -167,7 +167,7 @@ public class ViewMainMenu extends View implements ActionListener {
 			saveFile.showOpenDialog(this);
 			File saveInFile = saveFile.getSelectedFile();
 			if (saveInFile != null) {
-				this.motherFrame.getPolling().sendFile(saveInFile);
+				this.motherFrame.getPolling().sendFileToArduino(saveInFile);
 			}
 		}
 	}

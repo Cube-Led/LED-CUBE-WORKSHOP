@@ -7,9 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import communication.COMManager;
@@ -90,8 +88,7 @@ public class Application implements ApplicationPolling {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		this.display.displayChoiceOfInstruction(this.cubesInstructions
-				.toArray(new Instruction[this.cubesInstructions.size()]));
+		this.display.displayChoiceOfInstruction(this.cubesInstructions);
 	}
 
 	/**
@@ -105,6 +102,7 @@ public class Application implements ApplicationPolling {
 	private void loadInstructionFromFile() throws IOException,
 			FileOfInstructionCorruptedException {
 		File f = new File("instructionsSupportedByTheCube.inst");
+		@SuppressWarnings("resource")
 		DataInputStream r = new DataInputStream(new FileInputStream(f));
 		String buffer;
 		int count = 0;
@@ -136,49 +134,6 @@ public class Application implements ApplicationPolling {
 	}
 
 
-	private void writeLong(long l, DataOutputStream out) throws IOException
-	{
-		ByteBuffer b = ByteBuffer.allocate(Long.SIZE/8);
-		b.clear();
-		b.putLong(l/(long)Math.pow(2,Long.numberOfTrailingZeros(l)));
-		int index =0;
-		while(b.get(index) == 0)
-			index++;
-		for(;index <8;index++)
-				out.writeByte(b.get(index));
-	}
-	
-	/**
-	 * Write the current tab of instruction into the file "instructions.bin"
-	 */
-	/*public void writeSavedInstructionsInSavefile() {
-		File file = new File("instructions.bin");
-		try {
-			DataOutputStream r = new DataOutputStream(
-					new FileOutputStream(file));
-			for (int i = 0; i < instructionToWrite.length
-					&& instructionToWrite[i] != null; i++) {
-				byte c1 = (byte) (instructionToWrite[i].getCodeOp() >> 8);
-				byte c2 = (byte) (instructionToWrite[i].getCodeOp() & 0x00FF);
-				r.write(c1);
-				r.write(c2);
-				for (int j = 0; j < instructionToWrite[i].getArgs().size(); j++) {
-					byte b1 = (byte) (instructionToWrite[i].getArgs().get(j) >> 8);
-					byte b2 = (byte) (instructionToWrite[i].getArgs().get(j) & 0x00FF);
-					r.write(b1);
-					r.write(b2);
-				}
-			}
-			r.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}*/
-	
 	public void writeSavedInstructionsInSavefile(File file) {
 		try {
 			DataOutputStream r = new DataOutputStream(new FileOutputStream(file));
@@ -208,17 +163,15 @@ public class Application implements ApplicationPolling {
 			}
 			r.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			display.print(e.getMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			display.print(e.getMessage());
 		}
 	}
 
 	@Override
 
-	public void sendFile(File file) {
+	public void sendFileToArduino(File file) {
 
 		COMManager l = new COMManager(9600);
 		try {
@@ -232,7 +185,7 @@ public class Application implements ApplicationPolling {
 				f.close();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			display.print(e.getMessage());
 		}
 	}
 
@@ -253,7 +206,7 @@ public class Application implements ApplicationPolling {
 
 	@Override
 	public void requestDisplayOfPrimitiveInstructions() {
-		this.display.displayChoiceOfInstruction(this.cubesInstructions.toArray(new Instruction[this.cubesInstructions.size()]));
+		this.display.displayChoiceOfInstruction(this.cubesInstructions);
 	}
 
 	@Override

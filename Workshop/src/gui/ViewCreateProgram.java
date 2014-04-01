@@ -59,6 +59,7 @@ public class ViewCreateProgram extends View implements ActionListener{
 		this.CENTER_LEFTPAN = (this.LEFTPAN_WIDTH /2) - ((int)(this.BUTTON_WIDTH / 2));
 		init();
 		this.motherFrame.setContentPane(this);
+		this.motherFrame.getPolling().requestDisplayOfPrimitiveInstructions();
 		this.updateUI();
 		this.setVisible(true);
 	}
@@ -154,9 +155,9 @@ public class ViewCreateProgram extends View implements ActionListener{
 		this.validate();
 	}
 	
-	public void displayChoiceOfInstruction(Instruction[] inst) {
-		for(int i=0; i<inst.length; i++)
-			this.cb_ReadOnlyInstructions.addItem(inst[i]);
+	public void displayChoiceOfInstruction(List inst) {
+		for(int i=0; i<inst.size(); i++)
+			this.cb_ReadOnlyInstructions.addItem(inst.get(i));
 		this.validate();
 	}
 

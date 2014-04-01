@@ -23,7 +23,7 @@ public class COMManager {
 	}
 
 	public boolean connect(String portName) throws PortInUseException,
-			UnsupportedCommOperationException, IOException {
+			UnsupportedCommOperationException, IOException, NoPortFoundException, NoSerialPortException {
 		CommPortIdentifier portIdentifier = null;
 		int identifier = 0;
 		boolean givenPortOK = false;
@@ -67,8 +67,7 @@ public class COMManager {
 				}
 			} else // Pas de port trouvé;
 			{
-				System.err.println("No port found in range COM0 and COM20, check if your Arduino is correctly connected ...");
-				return false;
+				throw new NoPortFoundException("No port found in range COM0 and COM20, check if your Arduino is correctly connected ...");
 			}
 		}
 		if (portIdentifier != null) { // On a trouvé un port existant et non
@@ -95,8 +94,7 @@ public class COMManager {
 					System.out.println("Connection successful to COM" + identifier);
 				return true;
 			} else {
-				System.err.println("Error: Only serial ports can be handle, see Arduino reference if no serial port is created by you arduino");
-				return false;
+				throw new NoSerialPortException("Error: Only serial ports can be handle, see Arduino reference if no serial port is created by you arduino");
 			}
 		}
 		return false;
@@ -109,19 +107,15 @@ public class COMManager {
 		this.serialPort.close();
 	}
 
-	public void writeData(byte[] data) {
-		try {
-			comWriter.out.write(9600);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+	public void writeData(byte[] data) throws IOException, InterruptedException {
+		
+		//comWriter.out.write(9600);
 		
 		int timeCount = 0;
 		this.comWriter.start();
 		this.comReader.start();
 		System.out.println("Debut de transmision");
-		try {
+		
 			Thread.sleep(2000);
 			this.comWriter.integerToSend = SIG_BEGIN;
 			while (!this.comReader.acknowledgement && timeCount < 500) {
@@ -148,14 +142,6 @@ public class COMManager {
 			}
 			System.out.println("Fin de transmission");
 			Thread.sleep(1000);
-
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	public int getRate() {

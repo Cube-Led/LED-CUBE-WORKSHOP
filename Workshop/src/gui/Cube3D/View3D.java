@@ -581,6 +581,7 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 	private void createInstruction() {
 		
 		Instruction delay = new Instruction((short) 0x01,1);
+		if(Long.parseLong(this.txt_delai.getText()) !=0)
 		delay.setArgs(Tools.transformLongToShort(Long.parseLong(this.txt_delai.getText())));
 		
 		long number = 0;
@@ -597,18 +598,22 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 					number += Math.pow(2, count);
 				count++;
 			}
-			System.out.println(number);
-			current = new Instruction(LIGHT_LAYER_CODE_OP, "lightLayer", 2);
-			current.setDescriptionArguments(new String[] { "Couche", "Mask" });
-			args = new ArrayList<Short>();
-			args.add(((short) (i
-					/ Math.pow(this.polling.getTheCube().getSizeCube(), 2) + 1)));
-			args.addAll(Tools.transformLongToShort(number));
-			current.setArgs(args);
-			System.out.println(current);
+			if(number !=0)
+			{
+				current = new Instruction(LIGHT_LAYER_CODE_OP, "lightLayer", 2);
+				current.setDescriptionArguments(new String[] { "Couche", "Mask" });
+				args = new ArrayList<Short>();
+				args.add(((short) (i
+						/ Math.pow(this.polling.getTheCube().getSizeCube(), 2) + 1)));
+				args.addAll(Tools.transformLongToShort(number));
+				current.setArgs(args);
+				
+				this.polling.saveOneInstruction(current);
+				
+				if(Long.parseLong(this.txt_delai.getText()) !=0)
+					this.polling.saveOneInstruction(delay);
+			}
 			
-			this.polling.saveOneInstruction(current);
-			this.polling.saveOneInstruction(delay);
 		}
 	}
 
@@ -689,7 +694,7 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 			File saveInFile = saveFile.getSelectedFile();
 			if (saveInFile != null){
 				polling.writeSavedInstructionsInSavefile(saveInFile);
-				polling.sendFile(saveInFile);
+				polling.sendFileToArduino(saveInFile);
 			}
 		}
 	}

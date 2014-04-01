@@ -98,7 +98,7 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 	}
 	
 	@Override
-	public void displayChoiceOfInstruction(Instruction[] inst) {
+	public void displayChoiceOfInstruction(List<Instruction> inst) {
 		if(this.getContentPane() instanceof ViewCreateProgram)
 		{
 			((ViewCreateProgram)this.getContentPane()).displayChoiceOfInstruction(inst);
@@ -109,13 +109,9 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 	public void println(String str) {
 		JOptionPane.showMessageDialog(this.getContentPane(), str);
 	}
-
-	private void displayMessageInMsgBox(String str) {
-		JOptionPane.showMessageDialog(this.getContentPane(), str);
-	}
 	
 	@Override
-	public void print(String str) {}
+	public void print(String str) {this.println(str);}
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
@@ -137,7 +133,7 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 				saveFile.showOpenDialog(this);
 				File saveInFile = saveFile.getSelectedFile();
 				if (saveInFile != null) {
-					this.getPolling().sendFile(saveInFile);
+					this.getPolling().sendFileToArduino(saveInFile);
 				}
 			}
 		}
