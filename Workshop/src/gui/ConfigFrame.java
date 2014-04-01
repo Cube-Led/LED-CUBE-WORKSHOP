@@ -11,20 +11,19 @@ import javax.swing.JTextField;
 import Workshop.Cube;
 import Workshop.ApplicationPolling;
 
-public class ConfigFrame extends JFrame implements WindowListener{
-	
+public class ConfigFrame extends JFrame implements WindowListener {
+
 	private static final long serialVersionUID = 752538686633551204L;
 
 	private final ApplicationPolling polling;
-	
+
 	private JLabel lb_size;
 	private JLabel lb_isMono;
-	
+
 	private JTextField txt_size;
 	private JCheckBox ck_isMono;
-	
-	ConfigFrame(ApplicationPolling u)
-	{
+
+	ConfigFrame(ApplicationPolling u) {
 		super();
 		this.polling = u;
 		this.setTitle("Configuration");
@@ -33,23 +32,22 @@ public class ConfigFrame extends JFrame implements WindowListener{
 		init();
 		this.setVisible(true);
 	}
-	
-	public void init()
-	{
+
+	public void init() {
 		JPanel defaultPan = new JPanel();
 		defaultPan.setLayout(null);
-		
+
 		this.lb_size = new JLabel("Taille du cube :");
 		this.lb_size.setName("lb_size");
 		this.lb_size.setBounds(50, 25, 100, 25);
 		defaultPan.add(lb_size);
-		
+
 		this.txt_size = new JTextField("" + Cube.DEFAULT_CUBE_SIZE);
 		this.txt_size.setName("txt_size");
 		this.txt_size.setAlignmentX(RIGHT_ALIGNMENT);
 		this.txt_size.setBounds(150, 25, 25, 25);
 		defaultPan.add(txt_size);
-		
+
 		this.lb_isMono = new JLabel("Cube composé de LED : ");
 		this.lb_isMono.setName("lb_isMono");
 		this.lb_isMono.setBounds(50, 65, 150, 25);
@@ -59,21 +57,23 @@ public class ConfigFrame extends JFrame implements WindowListener{
 		this.ck_isMono.setName("ck_isMono");
 		this.ck_isMono.setBounds(100, 100, 100, 25);
 		defaultPan.add(ck_isMono);
-		
+
 		this.setContentPane(defaultPan);
 		this.update(getGraphics());
 	}
 
-	private void saveData()
-	{
-		this.polling.setTheCube(new Cube(Integer.parseInt(this.txt_size.getText()), ck_isMono.isSelected()));
+	private void saveData() {
+		this.polling.setTheCube(new Cube(Integer.parseInt(this.txt_size
+				.getText()), ck_isMono.isSelected()));
 	}
 
 	@Override
-	public void windowActivated(WindowEvent arg0) {}
+	public void windowActivated(WindowEvent arg0) {
+	}
 
 	@Override
-	public void windowClosed(WindowEvent arg0) {}
+	public void windowClosed(WindowEvent arg0) {
+	}
 
 	@Override
 	public void windowClosing(WindowEvent arg0) {
@@ -81,16 +81,19 @@ public class ConfigFrame extends JFrame implements WindowListener{
 	}
 
 	@Override
-	public void windowDeactivated(WindowEvent arg0) {}
+	public void windowDeactivated(WindowEvent arg0) {
+	}
 
 	@Override
-	public void windowDeiconified(WindowEvent arg0) {}
+	public void windowDeiconified(WindowEvent arg0) {
+	}
 
 	@Override
-	public void windowIconified(WindowEvent arg0) {}
+	public void windowIconified(WindowEvent arg0) {
+	}
 
 	@Override
-	public void windowOpened(WindowEvent arg0) {}
-	
-	
+	public void windowOpened(WindowEvent arg0) {
+	}
+
 }
