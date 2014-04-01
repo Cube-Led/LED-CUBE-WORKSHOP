@@ -33,6 +33,7 @@ public class ViewMainMenu extends View implements ActionListener {
 	private JButton bt_creaDraw;
 	private JButton bt_crea3D;
 	private JButton bt_loadProg;
+	private JButton bt_config;
 	private JButton bt_exit;
 	
 	private final int PAN_WIDTH = 400; //this.motherFrame.getWidth() /2;
@@ -123,10 +124,15 @@ public class ViewMainMenu extends View implements ActionListener {
 		this.bt_creaPicture.setBounds(this.CENTER_PAN, this.BUTTON_HEIGHT *2, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		right.add(this.bt_creaPicture, BorderLayout.CENTER);
 		
-		this.bt_loadProg = new JButton("Charger un programme");
+		this.bt_loadProg = new JButton("Envoyer un programme sur l'Arduino");
 		this.bt_loadProg.addActionListener(this);
 		this.bt_loadProg.setBounds(this.CENTER_PAN, this.BUTTON_HEIGHT *4, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		right.add(this.bt_loadProg, BorderLayout.CENTER);
+		
+		this.bt_config = new JButton("Configurer le cube");
+		this.bt_config.addActionListener(this);
+		this.bt_config.setBounds(this.CENTER_PAN, this.BUTTON_HEIGHT *6, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		right.add(this.bt_config, BorderLayout.CENTER);
 		
 		this.bt_exit = new JButton("Quitter");
 		this.bt_exit.addActionListener(this);
@@ -169,6 +175,9 @@ public class ViewMainMenu extends View implements ActionListener {
 			if (saveInFile != null) {
 				this.motherFrame.getPolling().sendFileToArduino(saveInFile);
 			}
+		}
+		else if(e.getSource() instanceof JButton && ((JButton)e.getSource()).equals(this.bt_config)){
+			new ConfigFrame(this.motherFrame.getPolling());
 		}
 	}
 	
