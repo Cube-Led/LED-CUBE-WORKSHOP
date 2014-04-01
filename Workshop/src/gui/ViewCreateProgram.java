@@ -196,6 +196,7 @@ public class ViewCreateProgram extends View implements ActionListener{
 			else if(((JButton)e.getSource()).getName().equals(this.loadInstructionOnCubeIdentifier))
 			{
 				JFileChooser saveFile = new JFileChooser();
+				saveFile.setApproveButtonText("Sauvegarder");
 				saveFile.showOpenDialog(this);
 				File saveInFile = saveFile.getSelectedFile();
 				if (saveInFile != null) {

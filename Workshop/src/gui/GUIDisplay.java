@@ -130,6 +130,7 @@ public class GUIDisplay extends JFrame implements Display, ActionListener{
 			}
 			else if(((MenuItem)arg0.getSource()).getLabel().equals("Envoyer sur l'Arduino")) {
 				JFileChooser saveFile = new JFileChooser();
+				saveFile.setApproveButtonText("Envoyer");
 				saveFile.showOpenDialog(this);
 				File saveInFile = saveFile.getSelectedFile();
 				if (saveInFile != null) {
