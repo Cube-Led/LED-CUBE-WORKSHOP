@@ -70,4 +70,6 @@ public interface ApplicationPolling {
 	 * Delete a specified item in the list pf saved instructions
 	 */
 	public void deleteSelectedInstruction(int selectedIndex);
+	
+	public List<Instruction> getListofInstruction();
 }

@@ -234,5 +234,10 @@ public class Application implements ApplicationPolling {
 			this.instructionToWrite.remove(selectedIndex);
 		
 		this.display.displayBuffer(instructionToWrite, countInstructions);
+	}
+
+	@Override
+	public List<Instruction> getListofInstruction() {
+		return this.instructionToWrite;
 	}	
 }

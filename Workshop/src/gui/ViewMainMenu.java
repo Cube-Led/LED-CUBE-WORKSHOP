@@ -179,6 +179,10 @@ public class ViewMainMenu extends View implements ActionListener {
 		else if(e.getSource() instanceof JButton && ((JButton)e.getSource()).equals(this.bt_config)){
 			new ConfigFrame(this.motherFrame.getPolling());
 		}
+		else if (e.getSource() instanceof JButton && ((JButton)e.getSource()).equals(this.bt_creaPicture))
+		{
+			new ViewCreateImage(motherFrame);
+		}
 	}
 	
 	public void paintComponent(Graphics g){
