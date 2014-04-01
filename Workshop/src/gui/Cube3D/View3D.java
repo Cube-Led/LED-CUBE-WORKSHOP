@@ -690,6 +690,7 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 			this.currentSelectedColor = JColorChooser.showDialog(this, "Couleur des leds", Led3D.DEFAULT_COLOR);
 		if (((JButton) arg0.getSource()).getText().equals("<HTML><BODY>Sauvegarder l'animation,<BR>L'envoyer sur le cube</BODY></HTML>")) {
 			JFileChooser saveFile = new JFileChooser();
+			saveFile.setApproveButtonText("Sauvegarder");
 			saveFile.showOpenDialog(this);
 			File saveInFile = saveFile.getSelectedFile();
 			if (saveInFile != null){
