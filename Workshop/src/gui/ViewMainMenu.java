@@ -162,7 +162,7 @@ public class ViewMainMenu extends View implements ActionListener {
 			this.updateUI();
 		}			
 		else if (e.getSource() instanceof JButton && ((JButton)e.getSource()).equals(this.bt_creaDraw)){
-			this.motherFrame.setContentPane(new ViewDynamicLED(motherFrame));
+			this.motherFrame.setContentPane(new View2D(motherFrame));
 		}
 		else if(e.getSource() instanceof JButton && ((JButton)e.getSource()).equals(this.bt_crea3D)){
 			 Thread view3D = new Thread(new View3D(this.motherFrame.getPolling()));

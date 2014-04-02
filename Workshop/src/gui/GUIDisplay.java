@@ -124,7 +124,7 @@ public class GUIDisplay extends JFrame implements Display, ActionListener {
 					"VueArguments"))
 				new ViewCreateProgram(this);
 			else if (((MenuItem) arg0.getSource()).getLabel().equals("VueLED"))
-				new ViewDynamicLED(this);
+				new View2D(this);
 			else if (((MenuItem) arg0.getSource()).getLabel().equals("Vue3D")) {
 				Thread thread = new Thread(new View3D(this.polling));
 				thread.start();
@@ -149,8 +149,8 @@ public class GUIDisplay extends JFrame implements Display, ActionListener {
 			((ViewCreateProgram) this.getContentPane()).displayBuffer(inst,
 					countInstructions);
 		}
-		if (this.getContentPane() instanceof ViewDynamicLED) {
-			((ViewDynamicLED) this.getContentPane()).displayBuffer(inst,
+		if (this.getContentPane() instanceof View2D) {
+			((View2D) this.getContentPane()).displayBuffer(inst,
 					countInstructions);
 		}
 	}

@@ -22,7 +22,11 @@ import javax.swing.JScrollPane;
 import Workshop.Instruction;
 import Workshop.Tools;
 
-public class ViewDynamicLED extends View implements ActionListener {
+/**
+ * @author Clement
+ *
+ */
+public class View2D extends View implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -69,7 +73,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 		return cube_size;
 	}
 
-	public ViewDynamicLED(GUIDisplay motherFrame) {
+	public View2D(GUIDisplay motherFrame) {
 		super(motherFrame);
 		this.motherFrame = motherFrame;
 		this.motherFrame.setSize(800, 700);
@@ -128,7 +132,7 @@ public class ViewDynamicLED extends View implements ActionListener {
 		/* ---------------- Milieu ---------------- */
 
 		pictureLED = new LedJPan(this.cube_size,
-				(int) (this.motherFrame.getWidth() * ViewDynamicLED.RATIO_LED),
+				(int) (this.motherFrame.getWidth() * View2D.RATIO_LED),
 				this.ledGrid);
 		pictureLED.setBounds(0, 135, this.LEFTPAN_WIDTH, 395);
 		left.add(pictureLED);
@@ -194,7 +198,10 @@ public class ViewDynamicLED extends View implements ActionListener {
 		List<Short> args;
 		for (int i = 0; i < this.cube_size * this.cube_size; i++) {
 			if (this.ledGrid[i].getState() == Led.ON)
-				number += Math.pow(2, i);
+				{
+				System.out.println("Led n° "+ i + " allumée");
+					number += Math.pow(2, i);
+				}
 		}
 
 		if (number == (Math.pow(2, this.cube_size * this.cube_size) - 1)) {
