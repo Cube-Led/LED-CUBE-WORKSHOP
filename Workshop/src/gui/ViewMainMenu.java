@@ -170,6 +170,7 @@ public class ViewMainMenu extends View implements ActionListener {
 		}
 		else if (e.getSource() instanceof JButton && ((JButton)e.getSource()).equals(this.bt_loadProg)){
 			JFileChooser saveFile = new JFileChooser();
+			saveFile.setApproveButtonText("Envoyer");
 			saveFile.showOpenDialog(this);
 			File saveInFile = saveFile.getSelectedFile();
 			if (saveInFile != null) {
