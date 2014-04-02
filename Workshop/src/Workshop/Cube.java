@@ -10,7 +10,7 @@ public class Cube {
 	/**
 	 * The size by default of a cube
 	 */
-	public static final int DEFAULT_CUBE_SIZE = 4;
+	public static final int DEFAULT_CUBE_SIZE = 8;
 	
 	/**
 	 * The size of the current cube, the size is the number of LEDs on one edge
