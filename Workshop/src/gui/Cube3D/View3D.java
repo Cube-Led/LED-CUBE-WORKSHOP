@@ -1,5 +1,7 @@
 package gui.Cube3D;
 
+import gui.Led;
+
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -580,24 +582,31 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 
 	private void createInstruction() {
 		
-		Instruction delay = new Instruction((short) 0x01,1);
+		Instruction delay = new Instruction((short) 0x01,"Delay",1);
+		delay.setDescriptionArguments(new String[] {"Temps"});
+		
 		if(Long.parseLong(this.txt_delai.getText()) !=0)
 		delay.setArgs(Tools.transformLongToShort(Long.parseLong(this.txt_delai.getText())));
 		
 		long number = 0;
-		for (int i = 0; i < Math
-				.pow(this.polling.getTheCube().getSizeCube(), 3); i += Math
-				.pow(this.polling.getTheCube().getSizeCube(), 2)) {
+		
+		for (int i = 0; i < Math.pow(this.polling.getTheCube().getSizeCube(), 3); i += Math.pow(this.polling.getTheCube().getSizeCube(), 2)) {
+			
 			number = 0;
+			if(this.staticLed.length == 64 && this.staticLed[63].getIsOn())
+				number = (long) (-1 * Math.pow(2, 63));
+			
 			List<Short> args;
 			Instruction current;
 			int count = 0;
-			for (int j = i; j < i
-					+ Math.pow(this.polling.getTheCube().getSizeCube(), 2); j++) {
+			for (int j = i; j < i + Math.pow(this.polling.getTheCube().getSizeCube()-1, 2); j++)
+			{
 				if (this.staticLed[j].getIsOn())
-					number += Math.pow(2, count);
+					number += (long)Math.pow(2, count);
+				
 				count++;
 			}
+			
 			if(number !=0)
 			{
 				current = new Instruction(LIGHT_LAYER_CODE_OP, "lightLayer", 2);

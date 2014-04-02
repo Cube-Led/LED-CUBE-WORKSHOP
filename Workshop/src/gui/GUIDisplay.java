@@ -123,7 +123,7 @@ public class GUIDisplay extends JFrame implements Display, ActionListener {
 			else if (((MenuItem) arg0.getSource()).getLabel().equals(
 					"VueArguments"))
 				new ViewCreateProgram(this);
-			else if (((MenuItem) arg0.getSource()).getLabel().equals("VueLED"))
+			else if (((MenuItem) arg0.getSource()).getLabel().equals("Vue2D"))
 				new View2D(this);
 			else if (((MenuItem) arg0.getSource()).getLabel().equals("Vue3D")) {
 				Thread thread = new Thread(new View3D(this.polling));
@@ -139,7 +139,6 @@ public class GUIDisplay extends JFrame implements Display, ActionListener {
 				}
 			}
 		}
-
 	}
 
 	@Override

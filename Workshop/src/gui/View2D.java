@@ -96,7 +96,6 @@ public class View2D extends View implements ActionListener {
 
 		this.setLayout(null);
 		left.setLayout(null);
-
 		/* ------------------- Coté Droit ------------------- */
 
 		JScrollPane scrollPane = new JScrollPane();
@@ -196,24 +195,16 @@ public class View2D extends View implements ActionListener {
 		long number = 0;
 		Instruction current;
 		List<Short> args;
-		for (int i = 0; i < this.cube_size * this.cube_size; i++) {
+		if(this.ledGrid.length == 64 && this.ledGrid[63].getState() == Led.ON)
+			number = (long) (-1 * Math.pow(2, 63));
+		
+		for (int i = 0; i < this.cube_size * this.cube_size-1; i++) {
 			if (this.ledGrid[i].getState() == Led.ON)
 				{
-				System.out.println("Led n° "+ i + " allumée");
-					number += Math.pow(2, i);
+					number += (long)Math.pow(2, i);
 				}
 		}
-
-		if (number == (Math.pow(2, this.cube_size * this.cube_size) - 1)) {
-			current = new Instruction(this.LIGHT_ALL_LED_CODE_OP,
-					"lightAllLedOnLayer", 1);
-			args = new ArrayList<Short>();
-			args.add((short) this.numberLayer);
-			current.setArgs(args);
-			this.descript_Args = new String[1];
-			this.descript_Args[0] = "Layer";
-			current.setDescriptionArguments(this.descript_Args);
-		} else {
+		
 			current = new Instruction(this.LIGHT_LAYER_CODE_OP, "lightLayer", 2);
 			args = new ArrayList<Short>();
 			args.add((short) this.numberLayer);
@@ -223,7 +214,7 @@ public class View2D extends View implements ActionListener {
 			this.descript_Args[0] = "Layer";
 			this.descript_Args[1] = "Number";
 			current.setDescriptionArguments(this.descript_Args);
-		}
+			
 		this.motherFrame.getPolling().saveOneInstruction(current.getCodeOp(),
 				current.getDescription(), current.getNbArgs(),
 				current.getDescriptionArguments(), current.getArgs());
