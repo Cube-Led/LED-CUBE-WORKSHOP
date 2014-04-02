@@ -245,42 +245,33 @@ public class View2D extends View implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		if (e.getSource() instanceof JButton) {
-			if (((JButton) e.getSource()).getName().equals(
-					this.upLevelIdentifier)) {
+			if (((JButton) e.getSource()).getName().equals(this.upLevelIdentifier)) {
 				this.numberLayer++;
 				if (this.numberLayer == this.cube_size)
 					this.bt_upLevel.setEnabled(false);
 				this.bt_downLevel.setEnabled(true);
-				this.lbl_currentLayer.setText(this.currentLayerText
-						+ this.numberLayer);
+				this.lbl_currentLayer.setText(this.currentLayerText+ this.numberLayer);
 				this.resetStateLed(this.ledGrid);
-			} else if (((JButton) e.getSource()).getName().equals(
-					this.downLevelIdentifier)) {
+			} else if (((JButton) e.getSource()).getName().equals(this.downLevelIdentifier)) {
 				this.numberLayer--;
 				if (this.numberLayer == 1)
 					this.bt_downLevel.setEnabled(false);
 				this.bt_upLevel.setEnabled(true);
-				this.lbl_currentLayer.setText(this.currentLayerText
-						+ this.numberLayer);
+				this.lbl_currentLayer.setText(this.currentLayerText+ this.numberLayer);
 				this.resetStateLed(this.ledGrid);
-			} else if (((JButton) e.getSource()).getName().equals(
-					this.saveOneInstructionIdentifier)) {
+			} else if (((JButton) e.getSource()).getName().equals(this.saveOneInstructionIdentifier)) {
 				createInstruction();
-			} else if (((JButton) e.getSource()).getName().equals(
-					this.loadInstructionsIdentifier)) {
+			} else if (((JButton) e.getSource()).getName().equals(this.loadInstructionsIdentifier)) {
 				JFileChooser saveFile = new JFileChooser();
 				saveFile.setApproveButtonText("Sauvegarder");
 				saveFile.showOpenDialog(this);
 				File saveInFile = saveFile.getSelectedFile();
 				if (saveInFile != null) {
-					this.motherFrame.getPolling()
-							.writeSavedInstructionsInSavefile(saveInFile);
+					this.motherFrame.getPolling().writeSavedInstructionsInSavefile(saveInFile);
 				}
-			} else if (((JButton) e.getSource()).getName().equals(
-					this.retourMenuIdentifier)) {
+			} else if (((JButton) e.getSource()).getName().equals(this.retourMenuIdentifier)) {
 				this.motherFrame.setContentPane(new ViewMainMenu(motherFrame));
-			} else if (((JButton) e.getSource()).getName()
-					.equals("Suppression")) {
+			} else if (((JButton) e.getSource()).getName().equals("Suppression")) {
 				if (this.list_instructionsList.getSelectedIndex() == -1)
 					this.motherFrame.getPolling().deleteListOfInstructions();
 				else
