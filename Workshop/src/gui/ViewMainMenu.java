@@ -100,7 +100,7 @@ public class ViewMainMenu extends View implements ActionListener {
 		this.bt_creaProg.setBounds(this.CENTER_PAN, this.BUTTON_HEIGHT *2, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		left.add(this.bt_creaProg);
 		
-		this.bt_creaDraw = new JButton("Création à partir d'une vue dessinée des LEDs");
+		this.bt_creaDraw = new JButton("Création à partir d'une vue 2D");
 		this.bt_creaDraw.addActionListener(this);
 		this.bt_creaDraw.setBounds(this.CENTER_PAN, this.BUTTON_HEIGHT *4, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		left.add(this.bt_creaDraw);

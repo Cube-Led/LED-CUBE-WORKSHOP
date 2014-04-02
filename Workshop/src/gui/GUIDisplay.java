@@ -74,7 +74,7 @@ public class GUIDisplay extends JFrame implements Display, ActionListener {
 		viewCreateProg.addActionListener(this);
 		this.menuVue.add(viewCreateProg);
 
-		MenuItem viewDynLED = new MenuItem("VueLED");
+		MenuItem viewDynLED = new MenuItem("Vue2D");
 		viewDynLED.addActionListener(this);
 		this.menuVue.add(viewDynLED);
 
