@@ -133,35 +133,45 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 		newcube.setBounds(10, 5, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		belowPanel.add(newcube);
 
-		JButton reinit = new JButton("Reinitialiser et centrer");
-		reinit.addActionListener(this);
-		reinit.setBounds(15 + this.BUTTON_WIDTH, 5, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
-		belowPanel.add(reinit);
-		
-		JButton recentrer = new JButton("Vue isometrique");
-		recentrer.addActionListener(this);
-		recentrer.setBounds(20 + this.BUTTON_WIDTH * 2, 5, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
-		belowPanel.add(recentrer);
-		
 		JButton switchoff = new JButton("Tout éteindre");
 		switchoff.addActionListener(this);
 		switchoff.setBounds(10 , 10 + this.BUTTON_HEIGHT, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		belowPanel.add(switchoff);
+		
+		JButton reinit = new JButton("Reinitialiser et centrer");
+		reinit.addActionListener(this);
+		reinit.setBounds(15 + this.BUTTON_WIDTH, 5, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		belowPanel.add(reinit);
 
 		JButton changecolor = new JButton("Changer de couleur");
 		changecolor.addActionListener(this);
 		changecolor.setBounds(15 + this.BUTTON_WIDTH, 10 + this.BUTTON_HEIGHT, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		belowPanel.add(changecolor);
 		
-		JButton test = new JButton("Enregistrer");
-		test.addActionListener(this);
-		test.setBounds(20 + this.BUTTON_WIDTH * 2, 10 + this.BUTTON_HEIGHT, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
-		belowPanel.add(test);
+		JButton recentrer = new JButton("Vue isometrique");
+		recentrer.addActionListener(this);
+		recentrer.setBounds(20 + this.BUTTON_WIDTH * 2, 5, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		belowPanel.add(recentrer);
+		
+		JButton aChanger1 = new JButton("aChanger1");
+		aChanger1.addActionListener(this);
+		aChanger1.setBounds(20 + this.BUTTON_WIDTH * 2, 10 + this.BUTTON_HEIGHT, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		belowPanel.add(aChanger1);
 		
 		JButton allLight = new JButton("Allumer tout un étage");
 		allLight.addActionListener(this);
 		allLight.setBounds(25 + this.BUTTON_WIDTH * 3, 5, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		belowPanel.add(allLight);
+		
+		JButton saveInstruction = new JButton("Enregistrer");
+		saveInstruction.addActionListener(this);
+		saveInstruction.setBounds(25 + this.BUTTON_WIDTH * 3, 10 + this.BUTTON_HEIGHT, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		belowPanel.add(saveInstruction);
+		
+		JButton aChanger2 = new JButton("aChanger2");
+		aChanger2.addActionListener(this);
+		aChanger2.setBounds(30 + this.BUTTON_WIDTH * 4, 5, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		belowPanel.add(aChanger2);
 		
 		JButton saveInFileAndSend = new JButton("Sauvegarder l'animation");
 		saveInFileAndSend.addActionListener(this);
