@@ -114,7 +114,7 @@ public class ViewCreateProgram extends View implements ActionListener {
 		left.add(bt_saveOneInstruction);
 
 		bt_loadInstructionsOnCube = new JButton(
-				"Enregistrer l'animation + envoi");
+				"Enregistrer l'animation");
 		bt_loadInstructionsOnCube.addActionListener(this);
 		bt_loadInstructionsOnCube.setName(this.loadInstructionOnCubeIdentifier);
 		bt_loadInstructionsOnCube.setBounds(this.CENTER_LEFTPAN, 475,
@@ -201,15 +201,13 @@ public class ViewCreateProgram extends View implements ActionListener {
 			} else if (((JButton) e.getSource()).getName().equals(
 					this.saveOneInstructionIdentifier)) {
 				recomposeInstruction();
-			} else if (((JButton) e.getSource()).getName().equals(
-					this.loadInstructionOnCubeIdentifier)) {
+			} else if (((JButton) e.getSource()).getName().equals(this.loadInstructionOnCubeIdentifier)) {
 				JFileChooser saveFile = new JFileChooser();
 				saveFile.setApproveButtonText("Sauvegarder");
 				saveFile.showOpenDialog(this);
 				File saveInFile = saveFile.getSelectedFile();
 				if (saveInFile != null) {
-					this.motherFrame.getPolling()
-							.writeSavedInstructionsInSavefile(saveInFile);
+					this.motherFrame.getPolling().writeSavedInstructionsInSavefile(saveInFile);
 				}
 			} else if (((JButton) e.getSource()).getName().equals(
 					this.retourMenuIdentifier)) {

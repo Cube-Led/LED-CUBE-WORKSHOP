@@ -1,5 +1,6 @@
 package gui.Cube3D;
 
+import gui.GUIDisplay;
 import gui.Led;
 
 import java.awt.Canvas;
@@ -97,7 +98,7 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 		System.out.println(Short.SIZE);
 		this.setTitle("Concepteur 3D");
 
-		this.setSize(825, 735);
+		this.setSize(1055, 735);
 		this.setLayout(null);
 		this.setLocationRelativeTo(null);
 		
@@ -110,16 +111,16 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 		this.lb_delai = new JLabel(" Delai souhaité :");
 		this.lb_delai.setBackground(Color.white);
 		this.lb_delai.setName("lb_delai");
-		this.lb_delai.setBounds(600, 570, 100, 25);
+		this.lb_delai.setBounds(870, 570, 100, 25);
 		upPanel.add(lb_delai);
 		
 		this.txt_delai = new JTextField("200");
 		this.txt_delai.setName("txt_delai");
-		this.txt_delai.setBounds(700, 570, 50, 25);
+		this.txt_delai.setBounds(970, 570, 50, 25);
 		upPanel.add(txt_delai);
 		
 		canvas = new Canvas();
-		canvas.setBounds(5, 5, 800, 600);
+		canvas.setBounds(10, 10, 1020, 600);
 		upPanel.add(canvas);
 		
 		/* ------------------- Bas ------------------- */
@@ -157,16 +158,21 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 		test.setBounds(20 + this.BUTTON_WIDTH * 2, 10 + this.BUTTON_HEIGHT, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		belowPanel.add(test);
 		
-		JButton saveInFileAndSend = new JButton("<HTML><BODY>Sauvegarder l'animation,<BR>L'envoyer sur le cube</BODY></HTML>");
+		JButton allLight = new JButton("Allumer tout un étage");
+		allLight.addActionListener(this);
+		allLight.setBounds(25 + this.BUTTON_WIDTH * 3, 5, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
+		belowPanel.add(allLight);
+		
+		JButton saveInFileAndSend = new JButton("Sauvegarder l'animation");
 		saveInFileAndSend.addActionListener(this);
-		saveInFileAndSend.setBounds(30 + this.BUTTON_WIDTH * 3, 8, 175, this.BUTTON_HEIGHT *2);
+		saveInFileAndSend.setBounds(30 + this.BUTTON_WIDTH * 4, 10 + this.BUTTON_HEIGHT, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		belowPanel.add(saveInFileAndSend);
 		
 		
 		/* ------------------- Disposition ------------------- */
 		
-		upPanel.setBounds(0, 0, 830, 610);
-		belowPanel.setBounds(0, 610, 805, 85);
+		upPanel.setBounds(0, 0, 1050, 610);
+		belowPanel.setBounds(0, 610, 1050, 85);
 		
 		this.add(upPanel);
 		this.add(belowPanel);
@@ -457,7 +463,6 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 								(float) (y * ratioForMarginBetweenLeds),
 								(float) (z * ratioForMarginBetweenLeds));
 
-						System.out.println("blog");
 						if (temp != null) {
 							staticLed[count].switchLed(temp.getIsOn(), temp.getColor());
 						}
@@ -593,20 +598,24 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 		for (int i = 0; i < Math.pow(this.polling.getTheCube().getSizeCube(), 3); i += Math.pow(this.polling.getTheCube().getSizeCube(), 2)) {
 			
 			number = 0;
-			if(this.staticLed.length == 64 && this.staticLed[63].getIsOn())
+			if(this.staticLed.length == 512 && this.staticLed[i+63].getIsOn())
 				number = (long) (-1 * Math.pow(2, 63));
 			
+			System.out.println(number);
 			List<Short> args;
 			Instruction current;
 			int count = 0;
-			for (int j = i; j < i + Math.pow(this.polling.getTheCube().getSizeCube()-1, 2); j++)
+			for (int j = i; j < i + Math.pow(this.polling.getTheCube().getSizeCube(), 2)-1; j++)
 			{
 				if (this.staticLed[j].getIsOn())
+				{
 					number += (long)Math.pow(2, count);
+					System.out.println("Led :" + j);
+				}
 				
 				count++;
 			}
-			
+			System.out.println(number);
 			if(number !=0)
 			{
 				current = new Instruction(LIGHT_LAYER_CODE_OP, "lightLayer", 2);
@@ -683,8 +692,7 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 
-		if (arg0.getSource() instanceof JButton)
-			if (((JButton) arg0.getSource()).getText().equals("Enregistrer"))
+		if (((JButton) arg0.getSource()).getText().equals("Enregistrer"))
 				createInstruction();
 		if (((JButton) arg0.getSource()).getText().equals("Tout éteindre"))
 			initVectors(this.INIT_MODE_SWITCHOFF_ONLY);
@@ -697,16 +705,16 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 			initVectors(this.INIT_MODE_NEW_LED_SET_ROTATION_SWITCHOFF);
 		if (((JButton) arg0.getSource()).getText().equals("Changer de couleur"))
 			this.currentSelectedColor = JColorChooser.showDialog(this, "Couleur des leds", Led3D.DEFAULT_COLOR);
-		if (((JButton) arg0.getSource()).getText().equals("<HTML><BODY>Sauvegarder l'animation,<BR>L'envoyer sur le cube</BODY></HTML>")) {
+		if (((JButton) arg0.getSource()).getText().equals("Sauvegarder l'animation")) {
 			JFileChooser saveFile = new JFileChooser();
 			saveFile.setApproveButtonText("Sauvegarder");
 			saveFile.showOpenDialog(this);
 			File saveInFile = saveFile.getSelectedFile();
-			if (saveInFile != null){
+			if (saveInFile != null)
 				polling.writeSavedInstructionsInSavefile(saveInFile);
-				polling.sendFileToArduino(saveInFile);
-			}
 		}
+		if (((JButton) arg0.getSource()).getText().equals("Allumer tout un étage"))
+			GUIDisplay.askSomething("Quel étage souhaitez vous allumer ?");
 	}
 
 }

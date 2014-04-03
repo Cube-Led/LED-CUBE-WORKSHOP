@@ -146,7 +146,7 @@ public class View2D extends View implements ActionListener {
 		left.add(bt_saveOneInstruction);
 
 		bt_loadInstructionsOnCube = new JButton(
-				"Enregistrer l'animation + envoi");
+				"Enregistrer l'animation");
 		bt_loadInstructionsOnCube.addActionListener(this);
 		bt_loadInstructionsOnCube.setName(this.loadInstructionsIdentifier);
 		bt_loadInstructionsOnCube.setBounds(this.CENTER_LEFTPAN, 575,

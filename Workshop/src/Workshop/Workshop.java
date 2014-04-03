@@ -21,6 +21,7 @@ public class Workshop {
 	public static void main(String[] args) {
 		
 		GUIDisplay display = new GUIDisplay();
+		
 
 		new Application(display);
 		double d = 9223372036854775808D;

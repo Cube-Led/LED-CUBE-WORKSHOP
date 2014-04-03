@@ -153,7 +153,14 @@ public class GUIDisplay extends JFrame implements Display, ActionListener {
 					countInstructions);
 		}
 	}
-
+	
+	public static String askSomething(String desc)
+	{
+		JOptionPane jop = new JOptionPane();
+	    String argument = jop.showInputDialog(null, desc, "Question", JOptionPane.QUESTION_MESSAGE);
+		return argument;
+	}
+	
 	public ApplicationPolling getPolling() {
 		return polling;
 	}
