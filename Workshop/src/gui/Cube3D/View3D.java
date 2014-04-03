@@ -153,7 +153,7 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 		recentrer.setBounds(20 + this.BUTTON_WIDTH * 2, 5, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		belowPanel.add(recentrer);
 		
-		JButton aChanger1 = new JButton("aChanger1");
+		JButton aChanger1 = new JButton("Allumer une led sur 2");
 		aChanger1.addActionListener(this);
 		aChanger1.setBounds(20 + this.BUTTON_WIDTH * 2, 10 + this.BUTTON_HEIGHT, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		belowPanel.add(aChanger1);
@@ -168,7 +168,7 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 		saveInstruction.setBounds(25 + this.BUTTON_WIDTH * 3, 10 + this.BUTTON_HEIGHT, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		belowPanel.add(saveInstruction);
 		
-		JButton aChanger2 = new JButton("aChanger2");
+		JButton aChanger2 = new JButton("Rotation verticale");
 		aChanger2.addActionListener(this);
 		aChanger2.setBounds(30 + this.BUTTON_WIDTH * 4, 5, this.BUTTON_WIDTH, this.BUTTON_HEIGHT);
 		belowPanel.add(aChanger2);
@@ -191,6 +191,14 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 		this.addWindowListener(this);
 	}
 
+	private void lightAllLedOnlayer()
+	{
+		int layer = Integer.parseInt(GUIDisplay.askSomething("Niveau à allumer (1-" + polling.getTheCube().getSizeCube() + ") : ")) -1;
+		
+		for(int i = layer * polling.getTheCube().getSizeCube() * polling.getTheCube().getSizeCube(); i< (1+layer)* polling.getTheCube().getSizeCube() * polling.getTheCube().getSizeCube(); i++)
+			staticLed[i].switchLed(true, currentSelectedColor);
+	}
+	
 	private float getMinDepth(Led3D[] v) {
 		float depth = Integer.MIN_VALUE;
 
@@ -724,7 +732,27 @@ public class View3D extends JFrame implements WindowListener, ActionListener,
 				polling.writeSavedInstructionsInSavefile(saveInFile);
 		}
 		if (((JButton) arg0.getSource()).getText().equals("Allumer tout un étage"))
-			GUIDisplay.askSomething("Quel étage souhaitez vous allumer ?");
+			lightAllLedOnlayer();
+		if (((JButton) arg0.getSource()).getText().equals("Allumer une led sur 2"))
+			lightOneLedOfTwo();
+		if (((JButton) arg0.getSource()).getText().equals("Rotation verticale"))
+			rotationVerticale();
+	}
+
+	private void rotationVerticale() {
+		for(int i = 0; i < staticLed.length; i++)
+		{
+			staticLed[(i+this.polling.getTheCube().getSizeCube()*this.polling.getTheCube().getSizeCube())%512].switchLed(staticLed[i].getIsOn(), currentSelectedColor);
+		}
+	}
+
+	private void lightOneLedOfTwo() {
+		for (int i = 0; i < staticLed.length; i++)
+		{
+			if(i%2 == 0)
+				staticLed[i].switchLed(true, currentSelectedColor);
+		}
+		
 	}
 
 }
